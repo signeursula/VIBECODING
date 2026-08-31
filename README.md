@@ -1,8 +1,6 @@
 # Signe's Vibecoding Projects
-
-This is my first little documented journey of vibecoding.
-Link to hub: https://signeursula.github.io/vibecoding.github.io/
-
-### Praktik ved TDC Erhverv
-
-Link: https://signeursula.github.io/vibecoding.github.io/praktik-TDCE/index.html
+This <a href="https://signeursula.github.io/vibecoding.github.io/" target="_blank">repository</a> is my first small documented journey of vibecoding.
+<br>
+<br>
+#### Projects:
+Project 01: <a href="https://signeursula.github.io/vibecoding.github.io/praktik-TDCE/index.html" target="_blank">Praktik ved TDC Erhverv</a>.
