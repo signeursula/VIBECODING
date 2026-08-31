@@ -1,0 +1,479 @@
+* **Top margin above the title reduced by 20%:** `50px → 40px`
+* **More bottom margin below the PDF:** increased from `24px → 48px`
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Den Super Nemme Kogebog</title>
+
+  <!-- Zilla Slab -->
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- PDF.js -->
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs"
+    type="module"
+  ></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000000;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      touch-action: none;
+    }
+
+    /* Title outside and above the PDF */
+    #book-title {
+      flex: 0 0 auto;
+
+      /* Top margin reduced by 20%: 50px → 40px */
+      margin: 40px 0 14px 0;
+
+      padding: 0 20px;
+      color: #ffffff;
+      font-family: "Zilla Slab", Georgia, serif;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* PDF viewing area */
+    #viewer {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+
+      /*
+        Margins around the PDF.
+        Bottom margin increased from 24px to 48px.
+      */
+      padding: 0 24px 48px 24px;
+    }
+
+    #page-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #page-number {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: #ffffff;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #page-number.visible {
+      opacity: 1;
+    }
+
+    #loading {
+      position: fixed;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    /* Smaller screens */
+    @media (max-width: 600px) {
+      #book-title {
+        font-size: 14px;
+
+        /* 20% less than the previous 35px mobile margin */
+        margin-top: 28px;
+
+        margin-bottom: 10px;
+      }
+
+      #viewer {
+        padding: 0 14px 36px 14px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div id="loading">Loading...</div>
+
+  <!-- Title outside and above the PDF -->
+
+  <div id="book-title">Den Super Nemme Kogebog</div>
+
+  <div id="viewer">
+    <div id="page-wrapper">
+      <canvas id="pdf-canvas"></canvas>
+    </div>
+  </div>
+
+  <div id="page-number"></div>
+
+  <script type="module">
+    import * as pdfjsLib from
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs";
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
+
+
+    const PDF_URL = "Den-super-nemme-kogebog.pdf";
+
+
+    const viewer =
+      document.getElementById("viewer");
+
+    const wrapper =
+      document.getElementById("page-wrapper");
+
+    const canvas =
+      document.getElementById("pdf-canvas");
+
+    const context =
+      canvas.getContext("2d");
+
+    const loading =
+      document.getElementById("loading");
+
+    const pageNumberDisplay =
+      document.getElementById("page-number");
+
+
+    let pdfDocument = null;
+    let currentPage = 1;
+    let totalPages = 0;
+
+    let pageChanging = false;
+    let hidePageNumberTimer;
+
+
+    async function loadPDF() {
+      const loadingTask =
+        pdfjsLib.getDocument(PDF_URL);
+
+      pdfDocument =
+        await loadingTask.promise;
+
+      totalPages =
+        pdfDocument.numPages;
+
+      loading.style.display =
+        "none";
+
+      await renderPage(
+        currentPage
+      );
+    }
+
+
+    async function renderPage(pageNumber) {
+      if (!pdfDocument) return;
+
+      const page =
+        await pdfDocument.getPage(
+          pageNumber
+        );
+
+      const unscaledViewport =
+        page.getViewport({
+          scale: 1
+        });
+
+
+      /*
+        Use the viewer dimensions so there is
+        room for the title and PDF margins.
+      */
+      const availableWidth =
+        viewer.clientWidth;
+
+      const availableHeight =
+        viewer.clientHeight;
+
+
+      const horizontalMargin = 48;
+      const verticalMargin = 48;
+
+
+      const scale = Math.min(
+        (availableWidth - horizontalMargin) /
+          unscaledViewport.width,
+
+        (availableHeight - verticalMargin) /
+          unscaledViewport.height
+      );
+
+
+      const deviceScale =
+        window.devicePixelRatio || 1;
+
+
+      const viewport =
+        page.getViewport({
+          scale:
+            scale * deviceScale
+        });
+
+
+      const cssWidth =
+        viewport.width /
+        deviceScale;
+
+      const cssHeight =
+        viewport.height /
+        deviceScale;
+
+
+      canvas.width =
+        viewport.width;
+
+      canvas.height =
+        viewport.height;
+
+
+      canvas.style.width =
+        cssWidth + "px";
+
+      canvas.style.height =
+        cssHeight + "px";
+
+
+      wrapper.style.width =
+        cssWidth + "px";
+
+      wrapper.style.height =
+        cssHeight + "px";
+
+
+      await page.render({
+        canvasContext: context,
+        viewport: viewport
+      }).promise;
+
+
+      showPageNumber();
+    }
+
+
+    function showPageNumber() {
+      pageNumberDisplay.textContent =
+        currentPage +
+        " / " +
+        totalPages;
+
+
+      pageNumberDisplay.classList.add(
+        "visible"
+      );
+
+
+      clearTimeout(
+        hidePageNumberTimer
+      );
+
+
+      hidePageNumberTimer =
+        setTimeout(() => {
+          pageNumberDisplay.classList.remove(
+            "visible"
+          );
+        }, 1200);
+    }
+
+
+    async function goToNextPage() {
+      if (
+        pageChanging ||
+        currentPage >= totalPages
+      ) {
+        return;
+      }
+
+
+      pageChanging = true;
+
+      currentPage++;
+
+
+      await renderPage(
+        currentPage
+      );
+
+
+      pageChanging = false;
+    }
+
+
+    async function goToPreviousPage() {
+      if (
+        pageChanging ||
+        currentPage <= 1
+      ) {
+        return;
+      }
+
+
+      pageChanging = true;
+
+      currentPage--;
+
+
+      await renderPage(
+        currentPage
+      );
+
+
+      pageChanging = false;
+    }
+
+
+    /*
+      CLICK / TAP NAVIGATION
+
+      Left half of PDF:
+      Previous page
+
+      Right half of PDF:
+      Next page
+    */
+    canvas.addEventListener(
+      "click",
+      async event => {
+        if (pageChanging) return;
+
+
+        const rect =
+          canvas.getBoundingClientRect();
+
+
+        const clickX =
+          event.clientX -
+          rect.left;
+
+
+        const isLeftSide =
+          clickX <
+          rect.width / 2;
+
+
+        if (isLeftSide) {
+          await goToPreviousPage();
+
+        } else {
+          await goToNextPage();
+        }
+      }
+    );
+
+
+    /*
+      KEYBOARD NAVIGATION
+
+      Right Arrow → Next page
+      Left Arrow  → Previous page
+    */
+    window.addEventListener(
+      "keydown",
+      async event => {
+        if (
+          event.key === "ArrowRight" ||
+          event.key === "ArrowLeft"
+        ) {
+          event.preventDefault();
+        }
+
+
+        if (
+          event.key === "ArrowRight"
+        ) {
+          await goToNextPage();
+        }
+
+
+        if (
+          event.key === "ArrowLeft"
+        ) {
+          await goToPreviousPage();
+        }
+      }
+    );
+
+
+    /*
+      RE-RENDER WHEN
+      SCREEN SIZE CHANGES
+    */
+    let resizeTimer;
+
+
+    window.addEventListener(
+      "resize",
+      () => {
+        clearTimeout(
+          resizeTimer
+        );
+
+
+        resizeTimer =
+          setTimeout(() => {
+            renderPage(
+              currentPage
+            );
+          }, 200);
+      }
+    );
+
+
+    /*
+      LOAD PDF
+    */
+    loadPDF();
+  </script>
+
+</body>
+</html>
