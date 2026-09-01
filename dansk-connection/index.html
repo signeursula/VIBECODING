@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="da">
 <head>
 <meta charset="UTF-8">
@@ -30,6 +29,7 @@ background: var(--bg);
 color: var(--ink);
 font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 min-height: 100vh;
+overflow-x: hidden;
 }
 
 /* ---------- Top bar ---------- */
@@ -154,6 +154,7 @@ max-width: 520px;
 margin: 0 auto;
 padding: 30px 16px 60px;
 text-align: center;
+overflow-x: hidden;
 }
 
 .instructions{
@@ -171,14 +172,14 @@ margin: 0 0 4px;
 
 #board{
 display:grid;
-grid-template-columns: repeat(4, 1fr);
+grid-template-columns: repeat(4, minmax(0, 1fr));
 gap: 8px;
 margin-bottom: 20px;
 }
 
 .solved-row{
 display:grid;
-grid-template-columns: 1fr;
+grid-template-columns: minmax(0, 1fr);
 border-radius: 10px;
 padding: 16px 10px;
 margin-bottom: 8px;
@@ -189,9 +190,13 @@ font-weight: 700;
 font-size: 15px;
 letter-spacing: 0.3px;
 margin-bottom: 4px;
+overflow-wrap: break-word;
+word-break: break-word;
 }
 .solved-row .cat-words{
 font-size: 14px;
+overflow-wrap: break-word;
+word-break: break-word;
 }
 
 @keyframes reveal{
@@ -201,6 +206,7 @@ to{ transform: scale(1); opacity: 1; }
 
 .tile{
 aspect-ratio: 1.4 / 1;
+min-width: 0;
 background: var(--tile);
 border: none;
 border-radius: 8px;
@@ -211,10 +217,14 @@ text-align:center;
 padding: 6px;
 font-weight: 700;
 font-size: 14px;
+line-height: 1.15;
 cursor: pointer;
 color: var(--ink);
 transition: transform 0.08s ease, background 0.12s ease, color 0.12s ease;
 user-select: none;
+overflow-wrap: break-word;
+word-break: break-word;
+hyphens: auto;
 }
 .tile:hover{ transform: translateY(-1px); }
 .tile.selected{
@@ -295,10 +305,13 @@ margin-top: 24px;
 background: var(--ink);
 color: #fff;
 }
-.new-puzzle-btn:hover
 
 @media (max-width: 400px){
-.tile{ font-size: 12.5px; }
+.tile{ font-size: 12px; }
+}
+
+@media (max-width: 340px){
+.tile{ font-size: 10.5px; padding: 4px; }
 }
 
 @media (prefers-reduced-motion: reduce){
