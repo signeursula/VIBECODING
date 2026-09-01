@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Signes læsehjørne</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=Londrina+Solid:wght@400&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      background: #bbb894;
+      color: #171612;
+      font-family: Inter, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /*
+      This wrapper gets its height from JavaScript.
+      The entire 1728px-wide Figma design is scaled
+      proportionally to the browser width.
+    */
+    .page-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /*
+      Original Figma design dimensions.
+      JavaScript scales this entire element.
+    */
+    .page {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 1728px;
+      height: 2840px;
+
+      overflow: hidden;
+      background: #bbb894;
+
+      transform-origin: top left;
+    }
+
+    /* =====================================================
+       BANNER
+       ===================================================== */
+
+    .hero-image {
+      position: absolute;
+      left: 0;
+      top: 130px;
+
+      width: 1728px;
+      height: 698.976px;
+
+      object-fit: cover;
+      display: block;
+    }
+
+    /* =====================================================
+       MAIN TITLE
+       ===================================================== */
+
+    .main-title {
+      position: absolute;
+      top: 130px;
+      left: 0;
+
+      width: 1728px;
+      height: 265px;
+
+      padding: 0 80px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      font-family: "Londrina Solid", sans-serif;
+      font-size: 200px;
+      line-height: 1;
+
+      color: white;
+      white-space: nowrap;
+    }
+
+    /* =====================================================
+       NAVIGATION BAR
+       ===================================================== */
+
+    .navbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 1728px;
+      height: 130px;
+
+      background: #171612;
+    }
+
+    .navbar p {
+      position: absolute;
+      left: 88px;
+      top: 38px;
+
+      margin: 0;
+
+      font-family: "Londrina Solid", sans-serif;
+      font-size: 48px;
+      line-height: 1;
+
+      color: white;
+    }
+
+    /* =====================================================
+       GENERAL PANELS
+       ===================================================== */
+
+    .panel {
+      position: absolute;
+
+      border: 7.539px solid #bbb894;
+      border-radius: 15.079px;
+
+      overflow: hidden;
+
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.2),
+        #bbb894
+      );
+    }
+
+    /* =====================================================
+       FEATURE PANELS
+       ===================================================== */
+
+    .feature-panel {
+      width: 711.71px;
+      height: 408.63px;
+
+      top: 515px;
+    }
+
+    .last-book {
+      left: 125px;
+    }
+
+    .favorite-book {
+      left: 892px;
+      top: 514px;
+    }
+
+    .panel-heading {
+      position: absolute;
+
+      top: 18.85px;
+
+      margin: 0;
+
+      font-family: "Londrina Solid", sans-serif;
+      font-size: 36.189px;
+      line-height: 1;
+
+      color: white;
+      white-space: nowrap;
+    }
+
+    .last-book .panel-heading {
+      left: 161.59px;
+
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    .favorite-book .panel-heading {
+      left: 18.09px;
+    }
+
+    /* =====================================================
+       BOOK COVERS
+       ===================================================== */
+
+    .book-cover {
+      position: absolute;
+
+      overflow: hidden;
+
+      background: white;
+
+      box-shadow: 0 3.016px 3.016px rgba(0, 0, 0, 0.25);
+    }
+
+    .feature-panel .book-cover {
+      left: 53.53px;
+      top: 117.61px;
+
+      width: 156.269px;
+      height: 229.195px;
+    }
+
+    .book-cover img {
+      display: block;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+    }
+
+    /* =====================================================
+       BOOK INFORMATION
+       ===================================================== */
+
+    .book-info {
+      position: absolute;
+
+      left: 233.72px;
+      top: 128.17px;
+
+      font-size: 15.079px;
+      line-height: 22.618px;
+    }
+
+    .book-info h3 {
+      margin: 0 0 8px;
+
+      font-size: 15.079px;
+      line-height: normal;
+
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .book-info p {
+      margin: 0;
+    }
+
+    .book-info .rating-title {
+      margin-top: 25px;
+
+      font-weight: 800;
+      line-height: normal;
+    }
+
+    .book-info .comment {
+      width: 438px;
+    }
+
+    /* =====================================================
+       READING HISTORY
+       ===================================================== */
+
+    .history {
+      position: absolute;
+
+      left: 125px;
+      top: 970px;
+
+      width: 1099px;
+      height: 1846px;
+    }
+
+    .history > .panel-heading {
+      left: 39.2px;
+      top: 20.36px;
+    }
+
+    .history-book {
+      position: absolute;
+
+      left: 39.46px;
+
+      width: 1000px;
+      height: 260px;
+    }
+
+    .history-book .book-cover {
+      left: 7.54px;
+      top: 0;
+
+      width: 156.269px;
+      height: 229.195px;
+    }
+
+    .history-book .book-info {
+      left: 187.73px;
+      top: 10px;
+    }
+
+    /* =====================================================
+       MOST READ GENRES
+       ===================================================== */
+
+    .genre {
+      position: absolute;
+
+      left: 1265px;
+      top: 970px;
+
+      width: 339.269px;
+      height: 408.63px;
+    }
+
+    .genre .panel-heading {
+      left: 161.7px;
+      top: 20.36px;
+
+      transform: translateX(-50%);
+    }
+
+    .genre-row {
+      position: absolute;
+
+      width: 290px;
+      height: 72.377px;
+
+      display: flex;
+      align-items: center;
+
+      gap: 19px;
+
+      font-weight: 800;
+      font-size: 18.094px;
+    }
+
+    /*
+      The original first row started at 113.84px.
+
+      The space between "Mest læste genre:"
+      and the first genre has been reduced
+      by approximately 30%.
+    */
+
+    .genre-row.row-1 {
+      left: 22.62px;
+      top: 96.7px;
+    }
+
+    .genre-row.row-2 {
+      left: 24.88px;
+      top: 184.16px;
+    }
+
+    .genre-row.row-3 {
+      left: 24.88px;
+      top: 271.62px;
+    }
+
+    .number {
+      flex: 0 0 72.377px;
+
+      width: 72.377px;
+      height: 72.377px;
+
+      border-radius: 50%;
+
+      background: #171612;
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-family: "Londrina Solid", sans-serif;
+      font-size: 36.189px;
+      font-weight: 400;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-wrapper" id="page-wrapper">
+
+    <main class="page" id="page">
+
+      <!-- =================================================
+           BOOKCASE BANNER
+           ================================================= -->
+
+      <img
+        class="hero-image"
+        src="images/bookcase-banner.png"
+        alt="Bogreol"
+      >
+
+
+      <!-- =================================================
+           MAIN TITLE
+           ================================================= -->
+
+      <div class="main-title">
+        <span>HVAD</span>
+        <span>LÆSER</span>
+        <span>JEG?</span>
+      </div>
+
+
+      <!-- =================================================
+           NAVIGATION
+           ================================================= -->
+
+      <header class="navbar">
+        <p>Signes læsehjørne</p>
+      </header>
+
+
+      <!-- =================================================
+           LAST BOOK
+           ================================================= -->
+
+      <section class="panel feature-panel last-book">
+
+        <h2 class="panel-heading">
+          Sidste bog jeg læste:
+        </h2>
+
+        <div class="book-cover">
+          <img
+            src="images/little-women.png"
+            alt="Forsiden af Little Women"
+          >
+        </div>
+
+        <div class="book-info">
+
+          <h3>Little Women</h3>
+
+          <p>Forfatter: Louisa May Alcott</p>
+          <p>Udgivet: 1868</p>
+
+          <p class="rating-title">
+            Vurdering
+          </p>
+
+          <p>Læst: August 2026</p>
+
+          <p>
+            Bedømmelse: 4/5.
+          </p>
+
+          <p class="comment">
+            Kommentar: Virkelig sød slice-of-life bog med karismatiske
+            karaktere. Bogen ledte meget op til at læse 2'eren.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           FAVORITE BOOK
+           ================================================= -->
+
+      <section class="panel feature-panel favorite-book">
+
+        <h2 class="panel-heading">
+          Yndlingsbog for tiden:
+        </h2>
+
+        <div class="book-cover">
+          <img
+            src="images/pinlige-onkler.png"
+            alt="Forsiden af Pinlige onkler"
+          >
+        </div>
+
+        <div class="book-info">
+
+          <h3>
+            Pinlige onkler og andet vi får bruf for i en fremtid med AI
+          </h3>
+
+          <p>Forfatter: Christiane Vejlø</p>
+          <p>Udgivet: 2026</p>
+
+          <p class="rating-title">
+            Vurdering
+          </p>
+
+          <p>Læst: Juli 2026</p>
+
+          <p>
+            Bedømmelse: 5/5.
+          </p>
+
+          <p class="comment">
+            Kommentar: Jeg må indrømme, at jeg er kæmpe Christiane Vejlø
+            fan, og at jeg fik et signeret eksemplar af bogen.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           READING HISTORY
+           ================================================= -->
+
+      <section class="panel history">
+
+        <h2 class="panel-heading">
+          Læsehistorik:
+        </h2>
+
+
+        <!-- BOOK 1 -->
+
+        <article
+          class="history-book"
+          style="top: 101.46px"
+        >
+
+          <div class="book-cover">
+            <img
+              src="images/argumenter-imod-kvinder.png"
+              alt="Forsiden af Argumenter imod kvinder"
+            >
+          </div>
+
+          <div class="book-info">
+
+            <h3>
+              Argumenter imod kvinder
+            </h3>
+
+            <p>Forfatter: Birgitte Possing</p>
+            <p>Udgivet: 2018</p>
+
+            <p class="rating-title">
+              Vurdering
+            </p>
+
+            <p>Læst: August 2026</p>
+            <p>Bedømmelse: 4,5/5.</p>
+
+            <p class="comment">
+              Kommentar: Den ragebaiter mig med Joachim B. Olsen citater,
+              men den var velskrevet og inspirerende.
+            </p>
+
+          </div>
+
+        </article>
+
+
+        <!-- BOOK 2 -->
+
+        <article
+          class="history-book"
+          style="top: 397.46px"
+        >
+
+          <div class="book-cover">
+            <img
+              src="images/jytte.png"
+              alt="Forsiden af Jytte fra Marketing er desværre gået for i dag"
+            >
+          </div>
+
+          <div class="book-info">
+
+            <h3>
+              Jytte fra Marketing er desværre gået for i dag
+            </h3>
+
+            <p>Forfatter: Morten Münster</p>
+            <p>Udgivet: 2017</p>
+
+            <p class="rating-title">
+              Vurdering
+            </p>
+
+            <p>Læst: August 2026</p>
+            <p>Bedømmelse: 3,5/5.</p>
+
+            <p class="comment">
+              Kommentar: Den var meget spændende, og jeg kunne relatere
+              mere til mine UX-kompetencer.
+            </p>
+
+          </div>
+
+        </article>
+
+
+        <!-- BOOK 3 -->
+
+        <article
+          class="history-book"
+          style="top: 693.46px"
+        >
+
+          <div class="book-cover">
+            <img
+              src="images/pinlige-onkler.png"
+              alt="Forsiden af Pinlige onkler"
+            >
+          </div>
+
+          <div class="book-info">
+
+            <h3>
+              Pinlige onkler og andet vi får bruf for i en fremtid med AI
+            </h3>
+
+            <p>Forfatter: Christiane Vejlø</p>
+            <p>Udgivet: 2026</p>
+
+            <p class="rating-title">
+              Vurdering
+            </p>
+
+            <p>Læst: Juli 2026</p>
+            <p>Bedømmelse: 5/5.</p>
+
+            <p class="comment">
+              Kommentar: Jeg må indrømme, at jeg er kæmpe Christiane Vejlø
+              fan, og at jeg fik et signeret eksemplar af bogen.
+            </p>
+
+          </div>
+
+        </article>
+
+
+        <!-- BOOK 4 -->
+
+        <article
+          class="history-book"
+          style="top: 989.46px"
+        >
+
+          <div class="book-cover">
+            <img
+              src="images/wuthering-heights.png"
+              alt="Forsiden af Wuthering Heights"
+            >
+          </div>
+
+          <div class="book-info">
+
+            <h3>
+              Wuthering Heights
+            </h3>
+
+            <p>Forfatter: Emily Brontë</p>
+            <p>Udgivet: 1847</p>
+
+            <p class="rating-title">
+              Vurdering
+            </p>
+
+            <p>Læst: Maj 2026</p>
+            <p>Bedømmelse: 3/5.</p>
+
+            <p class="comment">
+              Kommentar: Dyster på den fede måde. Jeg havde forventet
+              kærlighed, men i stedet fik jeg misundelse og hævn.
+            </p>
+
+          </div>
+
+        </article>
+
+
+        <!-- BOOK 5 -->
+
+        <article
+          class="history-book"
+          style="top: 1285.46px"
+        >
+
+          <div class="book-cover">
+            <img
+              src="images/pride-and-prejudice.png"
+              alt="Forsiden af Pride and Prejudice"
+            >
+          </div>
+
+          <div class="book-info">
+
+            <h3>
+              Pride and Prejudice
+            </h3>
+
+            <p>Forfatter: Jane Austen</p>
+            <p>Udgivet: 1813</p>
+
+            <p class="rating-title">
+              Vurdering
+            </p>
+
+            <p>Læst: Maj 2026</p>
+            <p>Bedømmelse: 4/5.</p>
+
+            <p class="comment">
+              Kommentar: Fængende og romantisk! Bedre end filmen.
+            </p>
+
+          </div>
+
+        </article>
+
+
+        <!-- BOOK 6 -->
+
+        <article
+          class="history-book"
+          style="top: 1581.46px"
+        >
+
+          <div class="book-cover">
+            <img
+              src="images/gopler.png"
+              alt="Forsiden af Gopler ældes baglæns"
+            >
+          </div>
+
+          <div class="book-info">
+
+            <h3>
+              Gopler ældes baglæns
+            </h3>
+
+            <p>Forfatter: Nicklas Brendborg</p>
+            <p>Udgivet: 2021</p>
+
+            <p class="rating-title">
+              Vurdering
+            </p>
+
+            <p>Læst: April 2026</p>
+            <p>Bedømmelse: 3/5.</p>
+
+            <p class="comment">
+              Kommentar: Jeg lærte en masse, men jeg må indrømme, at jeg
+              ikke interesserer mig så meget for biologi.
+            </p>
+
+          </div>
+
+        </article>
+
+      </section>
+
+
+      <!-- =================================================
+           MOST READ GENRES
+           ================================================= -->
+
+      <aside class="panel genre">
+
+        <h2 class="panel-heading">
+          Mest læste genre:
+        </h2>
+
+
+        <div class="genre-row row-1">
+
+          <span class="number">
+            1.
+          </span>
+
+          <span>
+            IT og teknologi
+          </span>
+
+        </div>
+
+
+        <div class="genre-row row-2">
+
+          <span class="number">
+            2.
+          </span>
+
+          <span>
+            Period dramas
+          </span>
+
+        </div>
+
+
+        <div class="genre-row row-3">
+
+          <span class="number">
+            3.
+          </span>
+
+          <span>
+            Psykologi
+          </span>
+
+        </div>
+
+      </aside>
+
+    </main>
+
+  </div>
+
+
+  <!-- =====================================================
+       RESPONSIVE SCALING
+       ===================================================== -->
+
+  <script>
+    const DESIGN_WIDTH = 1728;
+    const DESIGN_HEIGHT = 2840;
+
+    const page = document.getElementById("page");
+    const wrapper = document.getElementById("page-wrapper");
+
+    function scaleWebsite() {
+      /*
+        Calculate how much the original 1728px design
+        needs to scale to exactly match the browser width.
+      */
+      const scale = window.innerWidth / DESIGN_WIDTH;
+
+      /*
+        Scale the complete design.
+      */
+      page.style.transform = `scale(${scale})`;
+
+      /*
+        Because CSS transform does not affect the document's
+        normal height, we manually set the wrapper height.
+      */
+      wrapper.style.height = `${DESIGN_HEIGHT * scale}px`;
+    }
+
+    /*
+      Scale immediately when the page loads.
+    */
+    scaleWebsite();
+
+    /*
+      Scale again whenever the browser window changes size.
+    */
+    window.addEventListener("resize", scaleWebsite);
+  </script>
+
+</body>
+</html>
