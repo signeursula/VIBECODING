@@ -6,4 +6,4 @@ This <a href="https://signeursula.github.io/VIBECODING" target="_blank">reposito
 Project 01: <a href="https://signeursula.github.io/VIBECODING/praktik-TDCE/index.html" target="_blank">Praktik ved TDC Erhverv</a> (supports pc). <br>
 Project 02: <a href="https://signeursula.github.io/VIBECODING/den-super-nemme-kogebog/index.html" target="_blank">Den super nemme kogebog</a> (supports pc and phone). <br>
 Project 03: <a href="https://signeursula.github.io/VIBECODING/signes-læsehjørne/index.html" target="_blank">Signes læsehjørne</a> (supports pc). <br>
-Project 04: <a href="https://signeursula.github.io/VIBECODING/dansk-connection" target="_blank">Dansk Connection</a> (supports pc and phone). <br>
+Project 04: <a href="https://signeursula.github.io/VIBECODING/dansk-connection/index.html" target="_blank">Dansk Connection</a> (supports pc and phone). <br>
