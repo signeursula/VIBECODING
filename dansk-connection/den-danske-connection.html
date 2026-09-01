@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Den Danske Connection</title>
+<style>
+  :root{
+    --bg: #faf8f4;
+    --ink: #1a1a1a;
+    --paper: #efece5;
+    --tile: #efece5;
+    --tile-selected: #5a5a5a;
+    --tile-selected-text: #ffffff;
+    --yellow: #f3c94f;
+    --green: #9dc35f;
+    --blue: #a0c3e8;
+    --purple: #b389c9;
+    --border: #d8d3c8;
+    --danish-red: #c8102e;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .burger{
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+  }
+  .burger:hover{ background: var(--paper); }
+  .burger span{
+    display:block;
+    width: 22px;
+    height: 2px;
+    background: var(--ink);
+  }
+
+  .brand{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22px;
+    letter-spacing: 0.2px;
+  }
+  .brand .flag-dot{
+    display:inline-block;
+    width: 9px;
+    height: 9px;
+    background: var(--danish-red);
+    border-radius: 50%;
+    margin-left: 6px;
+    transform: translateY(-1px);
+  }
+
+  /* ---------- Side menu ---------- */
+  .overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 20;
+  }
+  .overlay.open{ opacity: 1; pointer-events: auto; }
+
+  .side-menu{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 21;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+  }
+  .side-menu.open{ transform: translateX(0); }
+
+  .side-menu h2{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    font-weight: normal;
+    color: #7a7a7a;
+    margin: 0 20px 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .puzzle-list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+  }
+
+  .puzzle-list button{
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 16px;
+    padding: 12px 20px;
+    cursor: pointer;
+    color: var(--ink);
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: inherit;
+  }
+  .puzzle-list button:hover{ background: var(--paper); }
+  .puzzle-list button.active{
+    background: var(--paper);
+    font-weight: 600;
+  }
+  .puzzle-list .check{
+    color: var(--green);
+    font-size: 14px;
+  }
+
+  /* ---------- Game area ---------- */
+  main{
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 30px 16px 60px;
+    text-align: center;
+  }
+
+  .instructions{
+    font-size: 15px;
+    color: #444;
+    margin: 0 0 20px;
+  }
+
+  .puzzle-title{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    color: #7a7a7a;
+    margin: 0 0 4px;
+  }
+
+  #board{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .solved-row{
+    display:grid;
+    grid-template-columns: 1fr;
+    border-radius: 10px;
+    padding: 16px 10px;
+    margin-bottom: 8px;
+    animation: reveal 0.4s ease;
+  }
+  .solved-row .cat-name{
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+  .solved-row .cat-words{
+    font-size: 14px;
+  }
+
+  @keyframes reveal{
+    from{ transform: scale(0.9); opacity: 0; }
+    to{ transform: scale(1); opacity: 1; }
+  }
+
+  .tile{
+    aspect-ratio: 1.4 / 1;
+    background: var(--tile);
+    border: none;
+    border-radius: 8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--ink);
+    transition: transform 0.08s ease, background 0.12s ease, color 0.12s ease;
+    user-select: none;
+  }
+  .tile:hover{ transform: translateY(-1px); }
+  .tile.selected{
+    background: var(--tile-selected);
+    color: var(--tile-selected-text);
+  }
+  .tile.shake{ animation: shake 0.4s ease; }
+  .tile.pop{ animation: pop 0.3s ease; }
+
+  @keyframes shake{
+    0%,100%{ transform: translateX(0); }
+    20%{ transform: translateX(-6px); }
+    40%{ transform: translateX(6px); }
+    60%{ transform: translateX(-4px); }
+    80%{ transform: translateX(4px); }
+  }
+  @keyframes pop{
+    0%{ transform: scale(1); }
+    50%{ transform: scale(1.06); }
+    100%{ transform: scale(1); }
+  }
+
+  .status{
+    min-height: 22px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .status.error{ color: var(--danish-red); }
+  .status.info{ color: #444; }
+  .status.win{ color: #4c7a2e; }
+
+  .mistakes{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .dots{ display:flex; gap: 6px; }
+  .dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #b8b3a8;
+  }
+  .dot.lost{ background: transparent; border: 1.5px solid #b8b3a8; }
+
+  .controls{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn{
+    padding: 10px 22px;
+    border-radius: 24px;
+    border: 1.5px solid var(--ink);
+    background: transparent;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--ink);
+    font-family: inherit;
+    transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  }
+  .btn:hover{ background: var(--ink); color: #fff; }
+  .btn:disabled{
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .new-puzzle-btn{
+    margin-top: 24px;
+    background: var(--ink);
+    color: #fff;
+  }
+  .new-puzzle-btn:hover{ background: #333; }
+
+  @media (max-width: 400px){
+    .tile{ font-size: 12.5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="burger" id="burgerBtn" aria-label="Åbn menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="brand">Den Danske Connection<span class="flag-dot"></span></div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<nav class="side-menu" id="sideMenu">
+  <h2>Vælg et spil</h2>
+  <ul class="puzzle-list" id="puzzleList"></ul>
+</nav>
+
+<main>
+  <p class="puzzle-title" id="puzzleTitle"></p>
+  <p class="instructions">Find grupper af fire ord, der har noget til fælles.</p>
+
+  <div id="board"></div>
+
+  <p class="status" id="statusMsg"></p>
+
+  <div class="mistakes">
+    <span>Fejl tilbage:</span>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="shuffleBtn">Bland</button>
+    <button class="btn" id="deselectBtn">Fravælg alle</button>
+    <button class="btn" id="submitBtn">Indsend</button>
+  </div>
+
+  <div class="controls">
+    <button class="btn new-puzzle-btn" id="nextBtn" style="display:none;">Næste spil</button>
+  </div>
+</main>
+
+<script>
+(function(){
+
+  // ---------- Puzzle data ----------
+  // Colour order (easiest to hardest, like NYT): yellow, green, blue, purple
+  const COLORS = ['yellow', 'green', 'blue', 'purple'];
+
+  const PUZZLES = [
+    {
+      id: 1,
+      categories: [
+        { name: 'Medina sange', words: ['Ensom', 'Jalousi', 'Kl. 10', '12 dage'] },
+        { name: 'Sommerfugletyper', words: ['Citron', 'Admiral', 'Tidsel', 'Nælde'] },
+        { name: 'Fod____', words: ['Svamp', 'Lænke', 'Soldat', 'Spor'] },
+        { name: 'Udkørt', words: ['Slidt', 'Drænet', 'Tørskoet', 'Flad'] },
+      ]
+    }
+  ];
+
+  // ---------- State ----------
+  let currentPuzzleIndex = 0;
+  let words = [];          // current shuffled tile order: {word, catIndex}
+  let selected = [];        // array of word strings currently selected
+  let solvedCats = [];      // indices of solved categories
+  let mistakesLeft = 4;
+  let gameOver = false;
+
+  // ---------- DOM refs ----------
+  const boardEl = document.getElementById('board');
+  const statusEl = document.getElementById('statusMsg');
+  const dotsEl = document.getElementById('dots');
+  const puzzleTitleEl = document.getElementById('puzzleTitle');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  const deselectBtn = document.getElementById('deselectBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const burgerBtn = document.getElementById('burgerBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+  const puzzleListEl = document.getElementById('puzzleList');
+
+  // ---------- Menu ----------
+  function buildMenu(){
+    puzzleListEl.innerHTML = '';
+    PUZZLES.forEach((p, idx) => {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.textContent = '#' + p.id;
+      if (idx === currentPuzzleIndex) btn.classList.add('active');
+      btn.addEventListener('click', () => {
+        loadPuzzle(idx);
+        closeMenu();
+      });
+      li.appendChild(btn);
+      puzzleListEl.appendChild(li);
+    });
+  }
+
+  function openMenu(){
+    sideMenu.classList.add('open');
+    overlay.classList.add('open');
+  }
+  function closeMenu(){
+    sideMenu.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+  burgerBtn.addEventListener('click', openMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  // ---------- Game setup ----------
+  function shuffleArray(arr){
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function loadPuzzle(idx){
+    currentPuzzleIndex = idx;
+    const puzzle = PUZZLES[idx];
+    puzzleTitleEl.textContent = 'Spil #' + puzzle.id;
+
+    words = [];
+    puzzle.categories.forEach((cat, catIndex) => {
+      cat.words.forEach(w => {
+        words.push({ word: w, catIndex });
+      });
+    });
+    words = shuffleArray(words);
+
+    selected = [];
+    solvedCats = [];
+    mistakesLeft = 4;
+    gameOver = false;
+
+    statusEl.textContent = '';
+    statusEl.className = 'status';
+    nextBtn.style.display = 'none';
+
+    buildMenu();
+    render();
+  }
+
+  // ---------- Rendering ----------
+  function render(){
+    boardEl.innerHTML = '';
+
+    const puzzle = PUZZLES[currentPuzzleIndex];
+
+    // Solved rows on top
+    solvedCats.forEach(catIndex => {
+      const cat = puzzle.categories[catIndex];
+      const row = document.createElement('div');
+      row.className = 'solved-row ' + COLORS[catIndex];
+      row.style.gridColumn = '1 / -1';
+      row.innerHTML =
+        '<div class="cat-name">' + escapeHtml(cat.name) + '</div>' +
+        '<div class="cat-words">' + cat.words.map(escapeHtml).join(', ') + '</div>';
+      boardEl.appendChild(row);
+    });
+
+    // Remaining tiles
+    const remaining = words.filter(w => !solvedCats.includes(w.catIndex));
+    remaining.forEach(item => {
+      const tile = document.createElement('button');
+      tile.className = 'tile';
+      tile.textContent = item.word;
+      tile.dataset.word = item.word;
+      if (selected.includes(item.word)) tile.classList.add('selected');
+      tile.disabled = gameOver;
+      tile.addEventListener('click', () => onTileClick(item.word));
+      boardEl.appendChild(tile);
+    });
+
+    renderDots();
+
+    const solvedAll = solvedCats.length === puzzle.categories.length;
+    deselectBtn.disabled = selected.length === 0 || gameOver;
+    shuffleBtn.disabled = gameOver;
+    submitBtn.disabled = selected.length !== 4 || gameOver;
+
+    if (solvedAll){
+      statusEl.textContent = 'Flot! Du løste dagens Connection.';
+      statusEl.className = 'status win';
+      endGame();
+    } else if (mistakesLeft <= 0 && !gameOver){
+      revealRemaining();
+      statusEl.textContent = 'Ikke flere forsøg. Her er svarene.';
+      statusEl.className = 'status error';
+      endGame();
+    }
+  }
+
+  function renderDots(){
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < 4; i++){
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (i >= mistakesLeft ? ' lost' : '');
+      dotsEl.appendChild(dot);
+    }
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function endGame(){
+    gameOver = true;
+    nextBtn.style.display = 'inline-block';
+    render();
+  }
+
+  function revealRemaining(){
+    const puzzle = PUZZLES[currentPuzzleIndex];
+    puzzle.categories.forEach((cat, idx) => {
+      if (!solvedCats.includes(idx)) solvedCats.push(idx);
+    });
+    solvedCats.sort((a,b) => a - b);
+    selected = [];
+  }
+
+  // ---------- Interactions ----------
+  function onTileClick(word){
+    if (gameOver) return;
+    if (selected.includes(word)){
+      selected = selected.filter(w => w !== word);
+    } else {
+      if (selected.length >= 4) return;
+      selected.push(word);
+    }
+    statusEl.textContent = '';
+    statusEl.className = 'status';
+    render();
+  }
+
+  shuffleBtn.addEventListener('click', () => {
+    words = shuffleArray(words);
+    render();
+  });
+
+  deselectBtn.addEventListener('click', () => {
+    selected = [];
+    render();
+  });
+
+  submitBtn.addEventListener('click', () => {
+    if (selected.length !== 4 || gameOver) return;
+
+    const puzzle = PUZZLES[currentPuzzleIndex];
+    const catIndices = selected.map(w => words.find(x => x.word === w).catIndex);
+    const allSame = catIndices.every(c => c === catIndices[0]);
+
+    if (allSame){
+      const catIndex = catIndices[0];
+      solvedCats.push(catIndex);
+      solvedCats.sort((a,b) => a - b);
+      const solvedWords = selected.slice();
+      selected = [];
+      statusEl.textContent = 'Rigtigt!';
+      statusEl.className = 'status win';
+      render();
+      pulseTiles(solvedWords);
+    } else {
+      // check "one away"
+      const counts = {};
+      catIndices.forEach(c => counts[c] = (counts[c] || 0) + 1);
+      const maxCount = Math.max(...Object.values(counts));
+
+      mistakesLeft -= 1;
+      shakeSelected();
+
+      if (maxCount === 3){
+        statusEl.textContent = 'Tæt på! Ét ord er forkert.';
+      } else {
+        statusEl.textContent = 'Forkert gruppe.';
+      }
+      statusEl.className = 'status error';
+
+      setTimeout(() => {
+        render();
+      }, 420);
+    }
+  });
+
+  function shakeSelected(){
+    document.querySelectorAll('.tile.selected').forEach(el => {
+      el.classList.add('shake');
+    });
+  }
+
+  function pulseTiles(wordsList){
+    // brief visual pulse handled by the solved-row reveal animation via render()
+  }
+
+  nextBtn.addEventListener('click', () => {
+    const nextIdx = (currentPuzzleIndex + 1) % PUZZLES.length;
+    loadPuzzle(nextIdx);
+  });
+
+  // ---------- Init ----------
+  loadPuzzle(0);
+
+})();
+</script>
+
+</body>
+</html>
