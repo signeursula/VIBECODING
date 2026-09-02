@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="da">
 <head>
 <meta charset="UTF-8">
@@ -961,7 +960,14 @@ main{
       selected.length !== 4 ||
       gameOver;
 
-    if (solvedAll){
+    // NOTE: both branches below are guarded with `!gameOver`.
+    // Without that guard, once the game ends by losing,
+    // revealRemaining() fills solvedCats completely, which makes
+    // `solvedAll` true too — so the win message would immediately
+    // overwrite the loss message (and re-trigger endGame() forever).
+    // Guarding on `!gameOver` means each message is set exactly once.
+
+    if (!gameOver && solvedAll){
 
       statusEl.textContent =
         'Flot! Du løste dagens Connection.';
@@ -974,14 +980,14 @@ main{
     }
 
     else if (
-      mistakesLeft <= 0 &&
-      !gameOver
+      !gameOver &&
+      mistakesLeft <= 0
     ){
 
       revealRemaining();
 
       statusEl.textContent =
-        'Ikke flere forsøg. Her er svarene.';
+        'Desværre! Du vandt ikke denne gang.';
 
       statusEl.className =
         'status error';
