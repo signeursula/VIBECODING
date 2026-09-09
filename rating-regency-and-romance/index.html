@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regency & Romance – Rating af Signe</title>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: rgb(84, 26, 26);
+            --card-bg: rgb(129, 11, 56);
+            --card-bg-hover: rgb(150, 20, 70);
+            --accent-color: rgb(220, 195, 170);
+            --text-main: rgb(241, 226, 209);
+            --text-muted: rgb(220, 195, 170);
+            --star-color: rgb(241, 226, 209);
+            --border-color: rgb(129, 11, 56);
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .stats-badge {
+            display: inline-block;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid var(--accent-color);
+        }
+
+        .stats-badge span {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Filter Knapper */
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border-color: var(--accent-color);
+        }
+
+        /* Grid Layout for Film & Serie Cards */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        /* Kort for Film & Serie */
+        .movie-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-4px);
+            background-color: var(--card-bg-hover);
+        }
+
+        /* Plakat beholder med fast højde og beskæring */
+        .poster-placeholder {
+            width: 100%;
+            height: 380px;
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poster-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .movie-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .movie-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .movie-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .rating-stars {
+            color: var(--star-color);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .movie-comment {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            font-style: italic;
+            margin-top: auto;
+            background: rgba(84, 26, 26, 0.5);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(220, 195, 170, 0.2);
+        }
+
+        /* Seneste Titel Highlight */
+        .recent-card {
+            display: flex;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--accent-color);
+            overflow: hidden;
+            max-width: 600px;
+        }
+
+        .recent-card .poster-placeholder {
+            width: 180px;
+            height: 270px;
+            flex-shrink: 0;
+            border-bottom: none;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .recent-card .movie-info {
+            padding: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .recent-card {
+                flex-direction: column;
+            }
+            .recent-card .poster-placeholder {
+                width: 100%;
+                height: 380px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP HEADER -->
+    <header>
+        <h1>Regency & Romance <br> Rating af Signe</h1>
+        <div class="stats-badge">
+            Antal sete titler: <span id="total-count">0</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- SENEST SETE -->
+        <section>
+            <h2> Senest sete</h2>
+            <div id="recent-movie-container">
+                <!-- Indsættes dynamisk med JavaScript -->
+            </div>
+        </section>
+
+        <!-- BIBLIOTEK OVER SETE FILM OG SERIER -->
+        <section>
+            <h2> Alle sete Film & Serier</h2>
+            
+            <!-- Filtreringsknapper (Kun hele stjerner) -->
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterMovies('all', event)">Alle</button>
+                <button class="filter-btn" onclick="filterMovies(5, event)">5 ★</button>
+                <button class="filter-btn" onclick="filterMovies(4, event)">4 ★</button>
+                <button class="filter-btn" onclick="filterMovies(3, event)">3 ★</button>
+                <button class="filter-btn" onclick="filterMovies(2, event)">2 ★</button>
+                <button class="filter-btn" onclick="filterMovies(1, event)">1 ★</button>
+            </div>
+
+            <div class="movie-grid" id="watched-grid">
+                <!-- Sete titler genereres via JS -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // DATAGRUNDLAG FOR FILM OG SERIER (Sidste element er den senest sete)
+        const watchedMovies = [
+            { title: "Pride and Prejudice", type: "Film", year: 2005, rating: 4, comment: "Skøn skøn skøn Jane Austen roman! Den bliver jeg aldrig træt af.", poster: "plakater/prideandprejudice.jpg" },
+            { title: "Atonement", type: "Film", year: 2007, rating: 2, comment: "Hjerteskærende og ubehagelig, men også en lille smule kedelig.", poster: "plakater/atonement.jpg" },
+            { title: "Little Women", type: "Film", year: 2019, rating: 5, comment: "Virkelig sød film, med SÅ søde piger. De spiller alle sammen så karismatisk godt", poster: "plakater/littlewomen.jpg" },
+            { title: "Enola Holmes", type: "Film", year: 2020, rating: 5, comment: "Så fedt med en romantisk krimi med kvinde-power, og Millie Bobby Brown er fantastisk i rollen.", poster: "plakater/enolaholmes1.jpg" },
+            { title: "Enola Holmes 2", type: "Film", year: 2022, rating: 3, comment: "Rigtig god efterfølger, men slår ikke 1'eren.", poster: "plakater/enolaholmes2.jpg" },
+            { title: "Enola Holmes 3", type: "Film", year: 2026, rating: 4, comment: "Spændende film, og fedt med nye mysterier på Cypern. Som altid søde charmerende karakterer.", poster: "plakater/enolaholmes3.jpg" },
+            { title: "Wuthering Heights", type: "Film", year: 2026, rating: 2, comment: "Trods at mange taler dårligt om denne film på nettet, synes jeg, at den gjorde det ret godt. Jeg kunne godt lide deres passion.", poster: "plakater/wutheringheights.jpg" },
+            { title: "Victoria, sæson 1", type: "Serie", year: 2016, rating: 1, comment: "I princippet kan jeg godt lide en serie om dronning Victoria. Men denne serie var ret kedelig.", poster: "plakater/victoria.jpg" },
+            { title: "Bridgerton, sæson 1", type: "Serie", year: 2020, rating: 5, comment: "Det er 100% min yndlingsserie. Hold op den er bare fængende og god!", poster: "plakater/bridgerton1.jpg" },
+            { title: "Bridgerton, sæson 2", type: "Serie", year: 2020, rating: 5, comment: "Det er 100% min yndlingsserie. Hold op den er bare fængende og god!", poster: "plakater/bridgerton2.jpg" },
+            { title: "Bridgerton, sæson 3", type: "Serie", year: 2020, rating: 5, comment: "Det er 100% min yndlingsserie. Hold op den er bare fængende og god!", poster: "plakater/bridgerton3.jpg" },
+            { title: "Bridgerton, sæson 4", type: "Serie", year: 2026, rating: 5, comment: "Det er 100% min yndlingsserie. Hold op den er bare fængende og god!", poster: "plakater/bridgerton4.webp" },
+            { title: "Queen Charlotte: A Bridgerton Story", type: "Serie", year: 2023, rating: 4, comment: "Meget sød, men ikke lige så god som selve Bridgerton.", poster: "plakater/queencharlotte.jpg" },
+            { title: "The Buccaneers", type: "Serie", year: 2023, rating: 3, comment: "Den er okay", poster: "plakater/thebuccaneers.jpg" },
+            { title: "Love Through a Prism", type: "Serie", year: 2026, rating: 3, comment: "Meget nuser anime.", poster: "plakater/lovethroughaprism.jpg" },
+            { title: "The Other Bennet Sister", type: "Serie", year: 2026, rating: 5, comment: "Elsker elsker elsker Mary Bennet. Hvor var denne serie charmerende.", poster: "plakater/theotherbennetsister.jpeg" },
+            { title: "My Brilliant Career", type: "Serie", year: 2026, rating: 4, comment: "Virkelig god serie med den sødeste hovedperson. Dog var slutningen skuffende...", poster: "plakater/mybrilliantcareer.jpg" }
+        ];
+
+        // Funktion til kun at vise hele stjerner (f.eks. 4 -> ★★★★☆)
+        function getStarRatingHTML(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '★';
+                } else {
+                    stars += '☆';
+                }
+            }
+            return stars;
+        }
+
+        // Vis samlet antal titler
+        function renderTotalCount() {
+            document.getElementById('total-count').innerText = `${watchedMovies.length} titler`;
+        }
+
+        // Vis den senest sete titel (sidste element i arrayet før sortering)
+        function renderRecentMovie() {
+            const container = document.getElementById('recent-movie-container');
+            const recent = watchedMovies[watchedMovies.length - 1];
+
+            container.innerHTML = `
+                <div class="recent-card">
+                    <div class="poster-placeholder">
+                        ${recent.poster ? `<img src="${recent.poster}" alt="${recent.title}">` : '[ Plakat ]'}
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-title">${recent.title}</div>
+                        <div class="movie-meta">${recent.type} • ${recent.year}</div>
+                        <div class="rating-stars">${getStarRatingHTML(recent.rating)} (${recent.rating}/5)</div>
+                        <div class="movie-comment">"${recent.comment}"</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Vis alle sete titler i grid sorteret alfabetisk
+        function renderWatchedMovies(filterRating = 'all') {
+            const grid = document.getElementById('watched-grid');
+            grid.innerHTML = '';
+
+            // Opret kopi og sorter alfabetisk efter titel
+            const sortedMovies = [...watchedMovies].sort((a, b) => a.title.localeCompare(b.title, 'da'));
+
+            const filtered = filterRating === 'all' 
+                ? sortedMovies 
+                : sortedMovies.filter(m => m.rating === Number(filterRating));
+
+            if(filtered.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted);">Ingen titler fundet med denne rangering.</p>';
+                return;
+            }
+
+            filtered.forEach(movie => {
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.innerHTML = `
+                    <div class="poster-placeholder">
+                        ${movie.poster ? `<img src="${movie.poster}" alt="${movie.title}">` : '[ Plakat ]'}
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-title">${movie.title}</div>
+                        <div class="movie-meta">${movie.type} • ${movie.year}</div>
+                        <div class="rating-stars">${getStarRatingHTML(movie.rating)}</div>
+                        <div class="movie-comment">"${movie.comment}"</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filtrering af titler
+        function filterMovies(rating, evt) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            }
+
+            renderWatchedMovies(rating);
+        }
+
+        // Kør ved indlæsning
+        renderTotalCount();
+        renderRecentMovie();
+        renderWatchedMovies();
+    </script>
+</body>
+</html>
