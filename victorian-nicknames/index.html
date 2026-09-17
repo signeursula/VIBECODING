@@ -6,14 +6,14 @@
 <title>Victorian Nickname Challenge</title>
 <style>
 :root {
---bg-color: #f7f5f0;
+--bg-color: #fcf6f7;
 --card-bg: #ffffff;
---text-color: #2c2a29;
---accent-color: #5c4033;
---accent-hover: #705344;
---border-color: #d6d0c4;
---success-color: #4a6b47;
---error-color: #8c3f3f;
+--text-color: #4a3b3e;
+--accent-color: #8c5a66;
+--accent-hover: #734752;
+--border-color: #e6d3d7;
+--success-color: #537352;
+--error-color: #9c4a4a;
 }
 
 body {
@@ -34,7 +34,7 @@ max-width: 600px;
 background-color: var(--card-bg);
 border: 1px solid var(--border-color);
 padding: 30px;
-box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+box-shadow: 0 4px 12px rgba(140, 90, 102, 0.06);
 box-sizing: border-box;
 }
 
@@ -51,7 +51,7 @@ letter-spacing: 1px;
 p.subtitle {
 text-align: center;
 font-style: italic;
-color: #666;
+color: #7d6b70;
 margin-top: 0;
 margin-bottom: 25px;
 font-size: 0.95rem;
@@ -67,7 +67,7 @@ display: flex;
 justify-content: space-between;
 font-size: 0.85rem;
 margin-bottom: 6px;
-color: #555;
+color: #7d6b70;
 text-transform: uppercase;
 letter-spacing: 0.5px;
 }
@@ -75,7 +75,7 @@ letter-spacing: 0.5px;
 .progress-bar-bg {
 width: 100%;
 height: 6px;
-background-color: #e6e2d8;
+background-color: #f2e6e8;
 border-radius: 3px;
 overflow: hidden;
 }
@@ -93,7 +93,7 @@ text-align: center;
 font-size: 1.2rem;
 margin-bottom: 25px;
 padding: 15px;
-background-color: #faf9f6;
+background-color: #fbf5f6;
 border-left: 3px solid var(--accent-color);
 }
 
@@ -123,12 +123,12 @@ transition: all 0.2s ease;
 }
 
 .option-btn:hover:not(:disabled) {
-background-color: #f0ece1;
+background-color: #f7eff1;
 border-color: var(--accent-color);
 }
 
 .option-btn.selected {
-background-color: #e6e0d4;
+background-color: #f0e2e5;
 border-color: var(--accent-color);
 font-weight: bold;
 }
@@ -139,13 +139,13 @@ opacity: 0.8;
 }
 
 .option-btn.correct {
-background-color: #e2ede1 !important;
+background-color: #e5ede5 !important;
 border-color: var(--success-color) !important;
 color: var(--success-color);
 }
 
 .option-btn.incorrect {
-background-color: #fae6e6 !important;
+background-color: #fcebeb !important;
 border-color: var(--error-color) !important;
 color: var(--error-color);
 }
@@ -173,7 +173,7 @@ background-color: var(--accent-hover);
 }
 
 .btn-primary:disabled {
-background-color: #ccc;
+background-color: #d9c8cc;
 cursor: not-allowed;
 }
 
@@ -187,15 +187,15 @@ display: none;
 }
 
 .feedback-box.correct-msg {
-background-color: #e2ede1;
+background-color: #e5ede5;
 color: var(--success-color);
-border: 1px solid #c2dec0;
+border: 1px solid #cce0cc;
 }
 
 .feedback-box.incorrect-msg {
-background-color: #fae6e6;
+background-color: #fcebeb;
 color: var(--error-color);
-border: 1px solid #f2c4c4;
+border: 1px solid #f7c9c9;
 }
 
 /* Results Screen */
@@ -219,7 +219,7 @@ color: var(--accent-color);
 .score-percentage {
 font-size: 1.1rem;
 margin-bottom: 25px;
-color: #555;
+color: #7d6b70;
 }
 </style>
 </head>
