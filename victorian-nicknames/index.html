@@ -232,7 +232,7 @@ color: #7d6b70;
 
 <div class="progress-container">
 <div class="progress-info">
-<span id="progress-text">Question 1/21</span>
+<span id="progress-text">Question 1/22</span>
 <span id="score-text">Correct: 0</span>
 </div>
 <div class="progress-bar-bg">
@@ -258,7 +258,7 @@ What is <span id="nickname-target"></span> a nickname for?
 <div id="results-screen" class="results-screen">
 <h2>Challenge Complete</h2>
 <p class="subtitle">You have navigated through all historical names.</p>
-<div id="final-score" class="score-display">0/21</div>
+<div id="final-score" class="score-display">0/22</div>
 <div id="final-percentage" class="score-percentage">0% Correct Answers</div>
 <button class="btn-primary" onclick="restartGame()">Play Again</button>
 </div>
@@ -352,10 +352,10 @@ explanation: "Kitty → Katty (or Kathy) → Kat → Kathrine.",
 excludeFromFillers: []
 },
 {
-nickname: "Betty",
+nickname: "Betsy",
 answer: "Elisabeth",
 gender: "female",
-explanation: "Betty → Beth → Elisabeth.",
+explanation: "Betsy → Betty → Beth → Elisabeth.",
 excludeFromFillers: ["Annabeth"]
 },
 {
@@ -413,10 +413,17 @@ answer: "Cornelius",
 gender: "male",
 explanation: "Neil → Nelius → Cornelius.",
 excludeFromFillers: []
+},
+{
+nickname: "Tilly",
+answer: "Mathilda",
+gender: "female",
+explanation: "Tilly → Tilda → Mathilda.",
+excludeFromFillers: []
 }
 ];
 
-const femaleFillers = ["Victoria", "Florence", "Josephine", "Charlotte", "Henrietta", "Helena", "Penelope", "Cornelia", "Ophelia", "Alice", "Matilda", "Agnes"];
+const femaleFillers = ["Victoria", "Florence", "Josephine", "Charlotte", "Henrietta", "Helena", "Penelope", "Cornelia", "Ophelia", "Alice", "Evelyn", "Agnes"];
 const maleFillers = ["Arthur", "Thomas", "Theodor", "Ernest", "Andrew", "Benjamin", "Alfred", "Herbert", "Michael", "Eugene", "Harvey", "Edgar", "George", "Charles", "Henry", "Frederick"];
 
 let currentIndex = 0;
