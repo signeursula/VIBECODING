@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signe's Travels</title>
+    <!-- Google Fonts for clean typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #2d3b27;
+            --text-muted: #66755e;
+            --map-default: #e4eadf;
+            --map-hover: #ccd6c2;
+            --map-visited: #7cb853;
+            --map-visited-hover: #69a143;
+            --border-color: rgba(219, 229, 210, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Alive, vibrant soft lime-to-mint gradient background */
+            background: linear-gradient(135deg, #f2f7ec 0%, #e6f2dc 50%, #f7faf4 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px -5px rgba(102, 117, 94, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Styling the vector world map */
+        svg {
+            width: 100%;
+            height: auto;
+            max-height: 550px;
+        }
+
+        path {
+            fill: var(--map-default);
+            stroke: #ffffff;
+            stroke-width: 0.5px;
+            transition: fill 0.15s ease-in-out, transform 0.1s ease;
+            cursor: pointer;
+        }
+
+        path:hover {
+            fill: var(--map-hover) !important;
+        }
+
+        /* Visited countries coloring */
+        path.visited {
+            fill: var(--map-visited);
+        }
+
+        path.visited:hover {
+            fill: var(--map-visited-hover) !important;
+        }
+
+        /* Legend style */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-color.visited {
+            background-color: var(--map-visited);
+        }
+
+        .legend-color.unvisited {
+            background-color: var(--map-default);
+        }
+
+        /* Floating Tooltip */
+        #tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: rgba(45, 59, 39, 0.95);
+            backdrop-filter: blur(4px);
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            z-index: 1000;
+            opacity: 0;
+            transform: translate(-50%, -150%);
+            transition: opacity 0.1s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Subtle load animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>Signe's Travels</h1>
+            <p class="subtitle">The few countries I have visited across the globe</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="map-wrapper">
+            <!-- Embedded Lightweight SVG World Map using ISO Alpha-2 IDs -->
+            <svg id="world-map" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+                <!-- SVG injected dynamically -->
+            </svg>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color visited"></div>
+                <span>Visited</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color unvisited"></div>
+                <span>Not visited</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating tooltip element -->
+    <div id="tooltip"></div>
+
+    <footer>
+        <p></p>
+    </footer>
+
+    <script>
+        // Updated list of visited countries (using ISO Alpha-2 lowercase codes)
+        // dk: Denmark, se: Sweden, no: Norway, de: Germany, fr: France, 
+        // it: Italy, hr: Croatia, ch: Switzerland, gr: Greece, cy: Cyprus, nl: Netherlands, jp: Japan
+        const visitedCountries = ['dk', 'se', 'no', 'de', 'fr', 'it', 'hr', 'ch', 'gr', 'cy', 'nl', 'jp'];
+
+        // Fetching world map structure dynamically
+        async function loadMap() {
+            const mapContainer = document.getElementById('world-map');
+            try {
+                const response = await fetch('https://cdn.jsdelivr.net/npm/@svg-maps/world@1.0.1/world.svg');
+                const svgText = await response.text();
+                
+                // Parse and inject the SVG content
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(svgText, 'image/svg+xml');
+                const svgElement = doc.querySelector('svg');
+                
+                if (svgElement) {
+                    mapContainer.innerHTML = svgElement.innerHTML;
+                    mapContainer.setAttribute('viewBox', svgElement.getAttribute('viewBox') || '0 0 2000 1000');
+                    initMapInteractivity();
+                }
+            } catch (error) {
+                // Fallback text if offline/network fails
+                mapContainer.innerHTML = '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#66755e" font-family="Inter" font-size="14">Unable to load map vector stream online. Please check connection.</text>';
+            }
+        }
+
+        function initMapInteractivity() {
+            const paths = document.querySelectorAll('#world-map path');
+            const tooltip = document.getElementById('tooltip');
+
+            paths.forEach(path => {
+                const countryId = path.id.toLowerCase();
+                const countryName = path.getAttribute('name') || countryId.toUpperCase();
+
+                // Style visited countries
+                if (visitedCountries.includes(countryId)) {
+                    path.classList.add('visited');
+                }
+
+                // Event Listeners for Tooltip
+                path.addEventListener('mousemove', (e) => {
+                    const isVisited = visitedCountries.includes(countryId);
+                    const statusText = isVisited ? 'Visited' : 'Not visited';
+                    
+                    tooltip.innerHTML = `${countryName} — <span style="font-weight: 300; opacity: 0.85;">${statusText}</span>`;
+                    tooltip.style.left = `${e.clientX}px`;
+                    tooltip.style.top = `${e.clientY}px`;
+                    tooltip.style.opacity = '1';
+                });
+
+                path.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                });
+            });
+        }
+
+        // Run map loader on startup
+        loadMap();
+    </script>
+</body>
+</html>
