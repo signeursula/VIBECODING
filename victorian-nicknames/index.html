@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Victorian Nickname Challenge</title>
+<style>
+:root {
+--bg-color: #f7f5f0;
+--card-bg: #ffffff;
+--text-color: #2c2a29;
+--accent-color: #5c4033;
+--accent-hover: #705344;
+--border-color: #d6d0c4;
+--success-color: #4a6b47;
+--error-color: #8c3f3f;
+}
+
+body {
+font-family: Georgia, serif;
+background-color: var(--bg-color);
+color: var(--text-color);
+margin: 0;
+padding: 20px;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+}
+
+.container {
+width: 100%;
+max-width: 600px;
+background-color: var(--card-bg);
+border: 1px solid var(--border-color);
+padding: 30px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+box-sizing: border-box;
+}
+
+h1 {
+font-size: 1.5rem;
+margin-top: 0;
+margin-bottom: 10px;
+text-align: center;
+color: var(--accent-color);
+font-weight: normal;
+letter-spacing: 1px;
+}
+
+p.subtitle {
+text-align: center;
+font-style: italic;
+color: #666;
+margin-top: 0;
+margin-bottom: 25px;
+font-size: 0.95rem;
+}
+
+/* Progress Bar Styles */
+.progress-container {
+margin-bottom: 25px;
+}
+
+.progress-info {
+display: flex;
+justify-content: space-between;
+font-size: 0.85rem;
+margin-bottom: 6px;
+color: #555;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.progress-bar-bg {
+width: 100%;
+height: 6px;
+background-color: #e6e2d8;
+border-radius: 3px;
+overflow: hidden;
+}
+
+.progress-bar-fill {
+height: 100%;
+background-color: var(--accent-color);
+width: 0%;
+transition: width 0.3s ease;
+}
+
+/* Question Box */
+.question-box {
+text-align: center;
+font-size: 1.2rem;
+margin-bottom: 25px;
+padding: 15px;
+background-color: #faf9f6;
+border-left: 3px solid var(--accent-color);
+}
+
+.question-box span {
+font-weight: bold;
+color: var(--accent-color);
+}
+
+/* Options Grid */
+.options-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+margin-bottom: 25px;
+}
+
+.option-btn {
+background-color: #fff;
+border: 1px solid var(--border-color);
+padding: 12px 15px;
+font-family: Georgia, serif;
+font-size: 0.95rem;
+color: var(--text-color);
+cursor: pointer;
+text-align: left;
+transition: all 0.2s ease;
+}
+
+.option-btn:hover:not(:disabled) {
+background-color: #f0ece1;
+border-color: var(--accent-color);
+}
+
+.option-btn.selected {
+background-color: #e6e0d4;
+border-color: var(--accent-color);
+font-weight: bold;
+}
+
+.option-btn:disabled {
+cursor: default;
+opacity: 0.8;
+}
+
+.option-btn.correct {
+background-color: #e2ede1 !important;
+border-color: var(--success-color) !important;
+color: var(--success-color);
+}
+
+.option-btn.incorrect {
+background-color: #fae6e6 !important;
+border-color: var(--error-color) !important;
+color: var(--error-color);
+}
+
+/* Action Buttons */
+.action-container {
+display: flex;
+justify-content: flex-end;
+}
+
+.btn-primary {
+background-color: var(--accent-color);
+color: #fff;
+border: none;
+padding: 12px 25px;
+font-family: Georgia, serif;
+font-size: 0.95rem;
+cursor: pointer;
+transition: background-color 0.2s ease;
+letter-spacing: 0.5px;
+}
+
+.btn-primary:hover:not(:disabled) {
+background-color: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+background-color: #ccc;
+cursor: not-allowed;
+}
+
+/* Feedback Display */
+.feedback-box {
+margin-top: 20px;
+padding: 15px;
+text-align: center;
+font-size: 0.95rem;
+display: none;
+}
+
+.feedback-box.correct-msg {
+background-color: #e2ede1;
+color: var(--success-color);
+border: 1px solid #c2dec0;
+}
+
+.feedback-box.incorrect-msg {
+background-color: #fae6e6;
+color: var(--error-color);
+border: 1px solid #f2c4c4;
+}
+
+/* Results Screen */
+.results-screen {
+text-align: center;
+display: none;
+}
+
+.results-screen h2 {
+color: var(--accent-color);
+font-weight: normal;
+margin-top: 0;
+}
+
+.score-display {
+font-size: 2.5rem;
+margin: 20px 0;
+color: var(--accent-color);
+}
+
+.score-percentage {
+font-size: 1.1rem;
+margin-bottom: 25px;
+color: #555;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div id="game-screen">
+<h1>Victorian Nickname Origins</h1>
+<p class="subtitle">Discover historical British name transformations (Late 1800s - Early 1900s)</p>
+
+<div class="progress-container">
+<div class="progress-info">
+<span id="progress-text">Question 1/19</span>
+<span id="score-text">Correct: 0</span>
+</div>
+<div class="progress-bar-bg">
+<div id="progress-fill" class="progress-bar-fill"></div>
+</div>
+</div>
+
+<div class="question-box">
+What is <span id="nickname-target"></span> a nickname for?
+</div>
+
+<div id="options-grid" class="options-grid">
+<!-- Dynamically generated options -->
+</div>
+
+<div class="action-container">
+<button id="reveal-btn" class="btn-primary" disabled onclick="handleReveal()">Reveal Answer</button>
+</div>
+
+<div id="feedback-box" class="feedback-box"></div>
+</div>
+
+<div id="results-screen" class="results-screen">
+<h2>Challenge Complete</h2>
+<p class="subtitle">You have navigated through all historical names.</p>
+<div id="final-score" class="score-display">0/19</div>
+<div id="final-percentage" class="score-percentage">0% Correct Answers</div>
+<button class="btn-primary" onclick="restartGame()">Play Again</button>
+</div>
+</div>
+
+<script>
+// Game Data Set with integrated historical transformation explanations
+const questions = [
+{
+nickname: "Lizzy",
+answer: "Elisabeth",
+gender: "female",
+explanation: "Lizzy → Liz → Lis → Elisabeth.",
+excludeFromFillers: []
+},
+{
+nickname: "Dick",
+answer: "Richard",
+gender: "male",
+explanation: "Dick → Rick → Richard.",
+excludeFromFillers: []
+},
+{
+nickname: "Peggy",
+answer: "Margaret",
+gender: "female",
+explanation: "Peggy → Peg → Meg → Margaret.",
+excludeFromFillers: []
+},
+{
+nickname: "Polly",
+answer: "Mary",
+gender: "female",
+explanation: "Polly → Molly → Mary.",
+excludeFromFillers: []
+},
+{
+nickname: "Ted",
+answer: "Edward",
+gender: "male",
+explanation: "Ted → Ed → Edward.",
+excludeFromFillers: ["Edgar"]
+},
+{
+nickname: "Trixie",
+answer: "Beatrice",
+gender: "female",
+explanation: "Trixie → Trix → Trice → Beatrice.",
+excludeFromFillers: []
+},
+{
+nickname: "Liddy",
+answer: "Lydia",
+gender: "female",
+explanation: "Liddy → Lyddi → Lydia.",
+excludeFromFillers: []
+},
+{
+nickname: "Bob",
+answer: "Robert",
+gender: "male",
+explanation: "Bob → Rob → Robert.",
+excludeFromFillers: []
+},
+{
+nickname: "Nan",
+answer: "Annabeth",
+gender: "female",
+explanation: "Nan → Ann → Annabeth.",
+excludeFromFillers: []
+},
+{
+nickname: "Bill",
+answer: "William",
+gender: "male",
+explanation: "Bill → Will → William.",
+excludeFromFillers: []
+},
+{
+nickname: "Meg",
+answer: "Margaret",
+gender: "female",
+explanation: "Meg → Mag → Margaret.",
+excludeFromFillers: []
+},
+{
+nickname: "Kitty",
+answer: "Kathrine",
+gender: "female",
+explanation: "Kitty → Katty (or Kathy) → Kat → Kathrine.",
+excludeFromFillers: []
+},
+{
+nickname: "Betty",
+answer: "Elisabeth",
+gender: "female",
+explanation: "Betty → Beth → Elisabeth.",
+excludeFromFillers: ["Annabeth"]
+},
+{
+nickname: "Lola",
+answer: "Dolores",
+gender: "female",
+explanation: "Lola → Dolola → Dolores.",
+excludeFromFillers: []
+},
+{
+nickname: "Tony",
+answer: "Anthony",
+gender: "male",
+explanation: "Tony → Thony → Anthony.",
+excludeFromFillers: []
+},
+{
+nickname: "Fanny",
+answer: "Francesca",
+gender: "female",
+explanation: "Fanny → Fan → Fran → Francesca.",
+excludeFromFillers: []
+},
+{
+nickname: "Millie",
+answer: "Mildred",
+gender: "female",
+explanation: "Millie → Mill → Mildred.",
+excludeFromFillers: []
+},
+{
+nickname: "Nelly",
+answer: "Eleanor",
+gender: "female",
+explanation: "Nelly → Elly → El → Eleanor.",
+excludeFromFillers: ["Cornelia", "Penelope", "Helena"]
+},
+{
+nickname: "Amy",
+answer: "Amelia",
+gender: "female",
+explanation: "Amy → Amee → Amelia.",
+excludeFromFillers: []
+}
+];
+
+const femaleFillers = ["Victoria", "Florence", "Josephine", "Charlotte", "Henrietta", "Helena", "Penelope", "Cornelia", "Ophelia", "Alice", "Matilda", "Agnes"];
+const maleFillers = ["Arthur", "Thomas", "Theodor", "Ernest", "Andrew", "Benjamin", "Alfred", "Herbert", "Michael", "Eugene", "Harvey", "Edgar", "George", "Charles", "Henry", "Frederick"];
+
+let currentIndex = 0;
+let score = 0;
+let selectedOption = null;
+let isRevealed = false;
+let currentOptions = [];
+
+// Shuffle array helper
+function shuffle(array) {
+let currentIndex = array.length, randomIndex;
+while (currentIndex !== 0) {
+randomIndex = Math.floor(Math.random() * currentIndex);
+currentIndex--;
+[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+}
+return array;
+}
+
+function initGame() {
+currentIndex = 0;
+score = 0;
+loadQuestion();
+}
+
+function loadQuestion() {
+isRevealed = false;
+selectedOption = null;
+document.getElementById('reveal-btn').disabled = true;
+document.getElementById('reveal-btn').innerText = "Reveal Answer";
+
+const feedbackBox = document.getElementById('feedback-box');
+feedbackBox.style.display = 'none';
+feedbackBox.className = 'feedback-box';
+
+const q = questions[currentIndex];
+document.getElementById('nickname-target').innerText = q.nickname;
+
+// Update Progress UI
+document.getElementById('progress-text').innerText = `Question ${currentIndex + 1}/${questions.length}`;
+document.getElementById('score-text').innerText = `Correct: ${score}`;
+const progressPercent = ((currentIndex) / questions.length) * 100;
+document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+
+// Generate options (8 options total: correct answer + 7 fillers)
+let pool = q.gender === 'female' ? [...femaleFillers] : [...maleFillers];
+
+// Filter out excluded options specific to rules
+if (q.excludeFromFillers && q.excludeFromFillers.length > 0) {
+pool = pool.filter(name => !q.excludeFromFillers.includes(name));
+}
+
+// Ensure correct answer is not accidentally in the pool duplicate
+pool = pool.filter(name => name !== q.answer);
+
+// Shuffle pool and take 7 items
+shuffle(pool);
+let selectedFillers = pool.slice(0, 7);
+
+// Combine with correct answer and shuffle
+currentOptions = [...selectedFillers, q.answer];
+shuffle(currentOptions);
+
+renderOptions();
+}
+
+function renderOptions() {
+const grid = document.getElementById('options-grid');
+grid.innerHTML = '';
+
+currentOptions.forEach((optionText, idx) => {
+const btn = document.createElement('button');
+btn.className = 'option-btn';
+btn.innerText = optionText;
+btn.onclick = () => selectOption(optionText, btn);
+grid.appendChild(btn);
+});
+}
+
+function selectOption(optionText, btnElement) {
+if (isRevealed) return;
+
+// Clear previous selections
+document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+
+btnElement.classList.add('selected');
+selectedOption = optionText;
+
+document.getElementById('reveal-btn').disabled = false;
+}
+
+function handleReveal() {
+if (!isRevealed) {
+// First click: Reveal
+isRevealed = true;
+const q = questions[currentIndex];
+const isCorrect = (selectedOption === q.answer);
+
+if (isCorrect) {
+score++;
+document.getElementById('score-text').innerText = `Correct: ${score}`;
+}
+
+// Style buttons
+const buttons = document.querySelectorAll('.option-btn');
+buttons.forEach(btn => {
+btn.disabled = true;
+if (btn.innerText === q.answer) {
+btn.classList.add('correct');
+} else if (btn.innerText === selectedOption && !isCorrect) {
+btn.classList.add('incorrect');
+}
+});
+
+// Show feedback message including the specific explanation
+const feedbackBox = document.getElementById('feedback-box');
+feedbackBox.style.display = 'block';
+if (isCorrect) {
+feedbackBox.className = 'feedback-box correct-msg';
+feedbackBox.innerHTML = `<strong>Correct!</strong> ${q.nickname} historically originates from ${q.answer}.<br><em style="font-size: 0.9rem; margin-top: 5px; display: block;">${q.explanation}</em>`;
+} else {
+feedbackBox.className = 'feedback-box incorrect-msg';
+feedbackBox.innerHTML = `<strong>Incorrect.</strong> ${q.nickname} was actually a historical shortening of ${q.answer}.<br><em style="font-size: 0.9rem; margin-top: 5px; display: block;">${q.explanation}</em>`;
+}
+
+// Change button text for next step
+const revealBtn = document.getElementById('reveal-btn');
+if (currentIndex < questions.length - 1) {
+revealBtn.innerText = "Next Question";
+} else {
+revealBtn.innerText = "View Final Results";
+}
+revealBtn.disabled = false;
+
+} else {
+// Second click: Advance
+currentIndex++;
+if (currentIndex < questions.length) {
+loadQuestion();
+} else {
+showResults();
+}
+}
+}
+
+function showResults() {
+document.getElementById('game-screen').style.display = 'none';
+document.getElementById('results-screen').style.display = 'block';
+
+document.getElementById('final-score').innerText = `${score}/${questions.length}`;
+const percentage = Math.round((score / questions.length) * 100);
+document.getElementById('final-percentage').innerText = `${percentage}% Correct Answers`;
+
+// Update progress bar full
+document.getElementById('progress-fill').style.width = `100%`;
+}
+
+function restartGame() {
+document.getElementById('results-screen').style.display = 'none';
+document.getElementById('game-screen').style.display = 'block';
+initGame();
+}
+
+// Initialize game on load
+window.onload = initGame;
+</script>
+
+</body>
+</html>
