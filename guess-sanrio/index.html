@@ -3,22 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Which Sanrio character is this?</title>
+<title>Sanrio Pop! Quiz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --pink-bg: #ffeef3;
-    --pink-card: #ffffff;
-    --pink-primary: #ff8fb1;
-    --pink-primary-dark: #f26d95;
-    --pink-soft: #ffd6e4;
-    --pink-text: #7a4a58;
-    --pink-text-light: #b47f8e;
-    --green-correct: #7ed6a5;
-    --red-wrong: #ff8f8f;
-    --shadow: rgba(242, 109, 149, 0.18);
+    --bg-gradient: linear-gradient(135deg, #ec7b7f 0%, #fecfdf 50%, #ffc0cb 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --primary-pop: #ff3399;
+    --primary-dark: #cc0066;
+    --accent-yellow: #f1dc19;
+    --accent-red-bright: #ff5252;
+    --accent-red-deep: #b71c1c;
+    --text-color: #4a154b;
+    --text-light: #ff4d91;
+    --green-correct: #00e676;
+    --red-wrong: #ff1744;
+    --shadow: 0 15px 35px rgba(255, 51, 153, 0.3);
   }
 
   * { box-sizing: border-box; }
@@ -29,172 +31,230 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at top, #fff5f8 0%, var(--pink-bg) 60%, #ffe0eb 100%);
-    font-family: 'Nunito', sans-serif;
-    color: var(--pink-text);
-    padding: 24px;
+    background: var(--bg-gradient);
+    background-size: 200% 200%;
+    animation: gradientShift 10s ease infinite;
+    font-family: 'Fredoka', cursive, sans-serif;
+    color: var(--text-color);
+    padding: 16px;
+    overflow-x: hidden;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Floating decorative background stickers */
+  .floating-sticker {
+    position: absolute;
+    font-size: 2.5rem;
+    pointer-events: none;
+    animation: floatAround 6s ease-in-out infinite;
+    opacity: 0.85;
+    z-index: 0;
+  }
+  .sticker-1 { top: 5%; left: 8%; animation-delay: 0s; }
+  .sticker-2 { top: 10%; right: 10%; animation-delay: 1.5s; }
+  .sticker-3 { bottom: 8%; left: 12%; animation-delay: 3s; }
+  .sticker-4 { bottom: 10%; right: 8%; animation-delay: 4.5s; }
+
+  @keyframes floatAround {
+    0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+    50% { transform: translateY(-12px) rotate(8deg) scale(1.08); }
   }
 
   .game {
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
+    position: relative;
+    z-index: 10;
   }
 
   h1 {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.9rem;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 2.1rem;
     text-align: center;
     margin: 0 0 4px;
-    color: var(--pink-primary-dark);
+    color: var(--primary-dark);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    letter-spacing: 0.5px;
   }
 
   .subtitle {
     text-align: center;
-    font-size: 0.95rem;
-    color: var(--pink-text-light);
-    margin-bottom: 18px;
+    font-size: 1.05rem;
+    color: var(--primary-dark);
+    opacity: 0.9;
+    margin-bottom: 16px;
+    font-weight: 600;
   }
 
   .card {
-    background: var(--pink-card);
-    border-radius: 28px;
-    padding: 22px;
-    box-shadow: 0 10px 30px var(--shadow);
+    background: var(--card-bg);
+    border-radius: 32px;
+    padding: 24px;
+    box-shadow: var(--shadow);
     position: relative;
     overflow: hidden;
-  }
-
-  .card::before {
-    content: "";
-    position: absolute;
-    top: -40px;
-    right: -40px;
-    width: 120px;
-    height: 120px;
-    background: var(--pink-soft);
-    border-radius: 50%;
-    opacity: 0.6;
+    border: 4px solid #fff;
   }
 
   .top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
-    position: relative;
-    z-index: 1;
+    margin-bottom: 12px;
   }
 
   .level-badge {
-    background: var(--pink-soft);
-    color: var(--pink-primary-dark);
+    background: var(--accent-yellow);
+    color: #d81b60;
     font-weight: 700;
-    font-family: 'Baloo 2', cursive;
-    padding: 6px 14px;
+    padding: 6px 16px;
     border-radius: 999px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 10px rgba(255, 235, 59, 0.4);
+    border: 2px solid #fff;
   }
 
   .score-badge {
     font-weight: 700;
-    font-family: 'Baloo 2', cursive;
-    color: var(--pink-text-light);
-    font-size: 0.9rem;
+    color: var(--primary-pop);
+    font-size: 1.05rem;
+    background: #ffe6f0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 2px solid #ff80bf;
   }
 
   .image-frame {
-    width: 100%;
-    max-width: 335px;
+    width: 50%;
+    max-width: 168px;
     aspect-ratio: 335 / 400;
-    margin: 0 auto 18px;
-    background: var(--pink-bg);
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #fff0f5 0%, #ffebee 100%);
     border-radius: 20px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 3px solid var(--pink-soft);
+    border: 4px dashed var(--accent-red-bright);
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);
     position: relative;
-    z-index: 1;
   }
 
   .image-frame img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+  }
+
+  .image-frame:hover img {
+    transform: scale(1.05);
   }
 
   .answers {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    position: relative;
-    z-index: 1;
+    gap: 12px;
+    margin-bottom: 10px;
   }
 
   .answer-btn {
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
+    font-family: 'Fredoka', cursive, sans-serif;
+    font-weight: 600;
     font-size: 0.95rem;
-    padding: 12px 8px;
-    border-radius: 14px;
-    border: 2px solid var(--pink-soft);
-    background: #fff;
-    color: var(--pink-text);
+    padding: 12px 10px;
+    border-radius: 16px;
+    border: 3px solid #ffb3d9;
+    background: linear-gradient(to bottom, #ffffff 0%, #fff0f5 100%);
+    color: var(--text-color);
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 4px 0 #ffb3d9;
+    transition: all 0.15s ease;
   }
 
   .answer-btn:hover:not(:disabled) {
-    background: var(--pink-soft);
+    background: linear-gradient(to bottom, #ffffff 0%, #ffe6f2 100%);
+    border-color: var(--primary-pop);
     transform: translateY(-2px);
+    box-shadow: 0 6px 0 #ff80bf;
+  }
+
+  .answer-btn:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #ff80bf;
   }
 
   .answer-btn:disabled {
     cursor: default;
+    opacity: 0.8;
   }
 
   .answer-btn.correct {
-    background: var(--green-correct);
-    border-color: var(--green-correct);
-    color: #fff;
+    background: linear-gradient(to bottom, #b9f6ca 0%, #00e676 100%) !important;
+    border-color: #00c853 !important;
+    color: #004d40 !important;
+    box-shadow: 0 4px 0 #00a86b !important;
+    animation: popCorrect 0.4s ease;
   }
 
   .answer-btn.wrong {
-    background: var(--red-wrong);
-    border-color: var(--red-wrong);
-    color: #fff;
+    background: linear-gradient(to bottom, #ff8a80 0%, #ff1744 100%) !important;
+    border-color: #d50000 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 0 #b71c1c !important;
+    animation: shakeWrong 0.4s ease;
+  }
+
+  @keyframes popCorrect {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes shakeWrong {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
   }
 
   .feedback {
     text-align: center;
-    font-family: 'Baloo 2', cursive;
-    font-weight: 700;
-    font-size: 1.05rem;
-    min-height: 28px;
-    margin: 14px 0 6px;
-    color: var(--pink-primary-dark);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    min-height: 32px;
+    margin: 8px 0 4px;
+    color: var(--accent-red-deep);
   }
 
   .next-btn {
     display: block;
-    margin: 0 auto;
-    font-family: 'Baloo 2', cursive;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 10px 28px;
+    margin: 8px auto 0;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    padding: 10px 32px;
     border-radius: 999px;
-    border: none;
-    background: var(--pink-primary);
+    border: 3px solid #fff;
+    background: linear-gradient(135deg, var(--accent-red-bright) 0%, var(--primary-pop) 100%);
     color: #fff;
     cursor: pointer;
-    box-shadow: 0 6px 16px var(--shadow);
-    transition: background 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 6px 20px rgba(255, 51, 153, 0.5);
+    transition: all 0.2s ease;
   }
 
   .next-btn:hover {
-    background: var(--pink-primary-dark);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--accent-red-deep) 0%, var(--accent-red-bright) 100%);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(255, 51, 153, 0.7);
   }
 
   .hidden {
@@ -203,26 +263,31 @@
 
   .end-screen {
     text-align: center;
-    position: relative;
-    z-index: 1;
+    padding: 10px 0;
   }
 
   .end-screen p {
-    font-size: 1rem;
-    color: var(--pink-text-light);
-    margin-bottom: 18px;
+    font-size: 1.15rem;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    font-weight: 600;
   }
 
   .end-emoji {
-    font-size: 3rem;
-    margin-bottom: 10px;
+    font-size: 4rem;
+    margin-bottom: 12px;
   }
 </style>
 </head>
 <body>
 
+<div class="floating-sticker sticker-1">🎀</div>
+<div class="floating-sticker sticker-2">⭐</div>
+<div class="floating-sticker sticker-3">🍓</div>
+<div class="floating-sticker sticker-4">💖</div>
+
 <div class="game">
-  <h1>Which Sanrio character is this?</h1>
+  <h1>Sanrio Pop! Quiz</h1>
   <p class="subtitle">Guess the cutie in the picture!</p>
 
   <div class="card">
@@ -240,20 +305,18 @@
 
       <div class="feedback" id="feedback"></div>
 
-      <button class="next-btn hidden" id="nextBtn">Next</button>
+      <button class="next-btn hidden" id="nextBtn">Next Level ➔</button>
     </div>
 
     <div class="end-screen hidden" id="endScreen">
-      <div class="end-emoji">🎀</div>
+      <div class="end-emoji">🌟</div>
       <p id="endMessage"></p>
-      <button class="next-btn" id="restartBtn">Play again</button>
+      <button class="next-btn" id="restartBtn">Play Again! 🎀</button>
     </div>
   </div>
 </div>
 
 <script>
-  // Each level: the image file (in /images), the correct character name,
-  // and the full list of answer options shown to the player.
   const levels = [
     {
       image: "hellokitty.png",
@@ -354,7 +417,7 @@
   function showEndScreen() {
     quizView.classList.add("hidden");
     endScreen.classList.remove("hidden");
-    endMessage.textContent = "You scored " + score + " out of " + levels.length + "! Great job!";
+    endMessage.textContent = "You scored " + score + " out of " + levels.length + "! Awesome job, superstar!";
   }
 
   function restartGame() {
