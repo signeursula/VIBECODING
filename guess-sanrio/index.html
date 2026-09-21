@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Sanrio character is this?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink-bg: #ffeef3;
+    --pink-card: #ffffff;
+    --pink-primary: #ff8fb1;
+    --pink-primary-dark: #f26d95;
+    --pink-soft: #ffd6e4;
+    --pink-text: #7a4a58;
+    --pink-text-light: #b47f8e;
+    --green-correct: #7ed6a5;
+    --red-wrong: #ff8f8f;
+    --shadow: rgba(242, 109, 149, 0.18);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top, #fff5f8 0%, var(--pink-bg) 60%, #ffe0eb 100%);
+    font-family: 'Nunito', sans-serif;
+    color: var(--pink-text);
+    padding: 24px;
+  }
+
+  .game {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.9rem;
+    text-align: center;
+    margin: 0 0 4px;
+    color: var(--pink-primary-dark);
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--pink-text-light);
+    margin-bottom: 18px;
+  }
+
+  .card {
+    background: var(--pink-card);
+    border-radius: 28px;
+    padding: 22px;
+    box-shadow: 0 10px 30px var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: var(--pink-soft);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .level-badge {
+    background: var(--pink-soft);
+    color: var(--pink-primary-dark);
+    font-weight: 700;
+    font-family: 'Baloo 2', cursive;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+  }
+
+  .score-badge {
+    font-weight: 700;
+    font-family: 'Baloo 2', cursive;
+    color: var(--pink-text-light);
+    font-size: 0.9rem;
+  }
+
+  .image-frame {
+    width: 100%;
+    max-width: 335px;
+    aspect-ratio: 335 / 400;
+    margin: 0 auto 18px;
+    background: var(--pink-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--pink-soft);
+    position: relative;
+    z-index: 1;
+  }
+
+  .image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .answer-btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 12px 8px;
+    border-radius: 14px;
+    border: 2px solid var(--pink-soft);
+    background: #fff;
+    color: var(--pink-text);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .answer-btn:hover:not(:disabled) {
+    background: var(--pink-soft);
+    transform: translateY(-2px);
+  }
+
+  .answer-btn:disabled {
+    cursor: default;
+  }
+
+  .answer-btn.correct {
+    background: var(--green-correct);
+    border-color: var(--green-correct);
+    color: #fff;
+  }
+
+  .answer-btn.wrong {
+    background: var(--red-wrong);
+    border-color: var(--red-wrong);
+    color: #fff;
+  }
+
+  .feedback {
+    text-align: center;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 1.05rem;
+    min-height: 28px;
+    margin: 14px 0 6px;
+    color: var(--pink-primary-dark);
+  }
+
+  .next-btn {
+    display: block;
+    margin: 0 auto;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 10px 28px;
+    border-radius: 999px;
+    border: none;
+    background: var(--pink-primary);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 16px var(--shadow);
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+
+  .next-btn:hover {
+    background: var(--pink-primary-dark);
+    transform: translateY(-2px);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .end-screen {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .end-screen p {
+    font-size: 1rem;
+    color: var(--pink-text-light);
+    margin-bottom: 18px;
+  }
+
+  .end-emoji {
+    font-size: 3rem;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="game">
+  <h1>Which Sanrio character is this?</h1>
+  <p class="subtitle">Guess the cutie in the picture!</p>
+
+  <div class="card">
+    <div class="top-row">
+      <span class="level-badge" id="levelBadge">Level 1</span>
+      <span class="score-badge" id="scoreBadge">Score: 0</span>
+    </div>
+
+    <div id="quizView">
+      <div class="image-frame">
+        <img id="characterImage" src="" alt="Guess this Sanrio character">
+      </div>
+
+      <div class="answers" id="answersContainer"></div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <button class="next-btn hidden" id="nextBtn">Next</button>
+    </div>
+
+    <div class="end-screen hidden" id="endScreen">
+      <div class="end-emoji">🎀</div>
+      <p id="endMessage"></p>
+      <button class="next-btn" id="restartBtn">Play again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Each level: the image file (in /images), the correct character name,
+  // and the full list of answer options shown to the player.
+  const levels = [
+    {
+      image: "hellokitty.png",
+      answer: "Hello Kitty",
+      options: ["My Melody", "Mimi", "Usahana", "Hello Kitty", "Mary White", "Macaron"]
+    },
+    {
+      image: "mymelody.png",
+      answer: "My Melody",
+      options: ["My Sweet Piano", "Manaka", "Wish Me Mell", "Usahana", "Cinnamoroll", "My Melody"]
+    },
+    {
+      image: "kuromi.png",
+      answer: "Kuromi",
+      options: ["Usahana", "Kuromi", "Cherry", "Kyorosuke", "Kiki", "Cogimyun"]
+    },
+    {
+      image: "badtz-maru.png",
+      answer: "Badtz-Maru",
+      options: ["Badtz-Maru", "Pochacco", "Otamaro", "Pekkle", "Noberun", "Hangyodon"]
+    }
+  ];
+
+  let currentLevel = 0;
+  let score = 0;
+
+  const levelBadge = document.getElementById("levelBadge");
+  const scoreBadge = document.getElementById("scoreBadge");
+  const characterImage = document.getElementById("characterImage");
+  const answersContainer = document.getElementById("answersContainer");
+  const feedback = document.getElementById("feedback");
+  const nextBtn = document.getElementById("nextBtn");
+  const quizView = document.getElementById("quizView");
+  const endScreen = document.getElementById("endScreen");
+  const endMessage = document.getElementById("endMessage");
+  const restartBtn = document.getElementById("restartBtn");
+
+  function shuffle(array) {
+    const copy = [...array];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function loadLevel(index) {
+    const level = levels[index];
+    levelBadge.textContent = "Level " + (index + 1);
+    scoreBadge.textContent = "Score: " + score;
+    characterImage.src = "images/" + level.image;
+    characterImage.alt = "Guess this Sanrio character";
+    feedback.textContent = "";
+    nextBtn.classList.add("hidden");
+
+    answersContainer.innerHTML = "";
+    const shuffledOptions = shuffle(level.options);
+
+    shuffledOptions.forEach(option => {
+      const btn = document.createElement("button");
+      btn.className = "answer-btn";
+      btn.textContent = option;
+      btn.addEventListener("click", () => handleAnswer(btn, option, level.answer));
+      answersContainer.appendChild(btn);
+    });
+  }
+
+  function handleAnswer(button, selected, correctAnswer) {
+    const allButtons = answersContainer.querySelectorAll(".answer-btn");
+    allButtons.forEach(btn => {
+      btn.disabled = true;
+      if (btn.textContent === correctAnswer) {
+        btn.classList.add("correct");
+      }
+    });
+
+    if (selected === correctAnswer) {
+      score++;
+      feedback.textContent = "Yay! That's right! 🎉";
+      scoreBadge.textContent = "Score: " + score;
+    } else {
+      button.classList.add("wrong");
+      feedback.textContent = "Oops, not quite!";
+    }
+
+    nextBtn.classList.remove("hidden");
+  }
+
+  function goToNextLevel() {
+    currentLevel++;
+    if (currentLevel < levels.length) {
+      loadLevel(currentLevel);
+    } else {
+      showEndScreen();
+    }
+  }
+
+  function showEndScreen() {
+    quizView.classList.add("hidden");
+    endScreen.classList.remove("hidden");
+    endMessage.textContent = "You scored " + score + " out of " + levels.length + "! Great job!";
+  }
+
+  function restartGame() {
+    currentLevel = 0;
+    score = 0;
+    endScreen.classList.add("hidden");
+    quizView.classList.remove("hidden");
+    loadLevel(currentLevel);
+  }
+
+  nextBtn.addEventListener("click", goToNextLevel);
+  restartBtn.addEventListener("click", restartGame);
+
+  loadLevel(currentLevel);
+</script>
+
+</body>
+</html>
