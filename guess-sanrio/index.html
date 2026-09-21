@@ -1,438 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guess the Sanrio Character</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg-gradient: linear-gradient(135deg, #ec7b7f 0%, #fecfdf 50%, #ffc0cb 100%);
-    --card-bg: rgba(255, 255, 255, 0.95);
-    --primary-pop: #ff3399;
-    --primary-dark: #cc0066;
-    --accent-yellow: #f1dc19;
-    --accent-red-bright: #ff5252;
-    --accent-red-deep: #b71c1c;
-    --text-color: #4a154b;
-    --text-light: #ff4d91;
-    --green-correct: #00e676;
-    --red-wrong: #ff1744;
-    --shadow: 0 15px 35px rgba(255, 51, 153, 0.3);
-  }
-
-  * { box-sizing: border-box; }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-gradient);
-    background-size: 200% 200%;
-    animation: gradientShift 10s ease infinite;
-    font-family: 'Fredoka', cursive, sans-serif;
-    color: var(--text-color);
-    padding: 16px;
-    overflow-x: hidden;
-  }
-
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  /* Floating decorative background stickers */
-  .floating-sticker {
-    position: absolute;
-    font-size: 2.5rem;
-    pointer-events: none;
-    animation: floatAround 6s ease-in-out infinite;
-    opacity: 0.85;
-    z-index: 0;
-  }
-  .sticker-1 { top: 5%; left: 8%; animation-delay: 0s; }
-  .sticker-2 { top: 10%; right: 10%; animation-delay: 1.5s; }
-  .sticker-3 { bottom: 8%; left: 12%; animation-delay: 3s; }
-  .sticker-4 { bottom: 10%; right: 8%; animation-delay: 4.5s; }
-
-  @keyframes floatAround {
-    0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
-    50% { transform: translateY(-12px) rotate(8deg) scale(1.08); }
-  }
-
-  .game {
-    width: 100%;
-    max-width: 440px;
-    position: relative;
-    z-index: 10;
-  }
-
-  h1 {
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 700;
-    font-size: 2.1rem;
-    text-align: center;
-    margin: 0 0 4px;
-    color: var(--primary-dark);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    letter-spacing: 0.5px;
-  }
-
-  .subtitle {
-    text-align: center;
-    font-size: 1.05rem;
-    color: var(--primary-dark);
-    opacity: 0.9;
-    margin-bottom: 16px;
-    font-weight: 600;
-  }
-
-  .card {
-    background: var(--card-bg);
-    border-radius: 32px;
-    padding: 24px;
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
-    border: 4px solid #fff;
-  }
-
-  .top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .level-badge {
-    background: var(--accent-yellow);
-    color: #d81b60;
-    font-weight: 700;
-    padding: 6px 16px;
-    border-radius: 999px;
-    font-size: 0.95rem;
-    box-shadow: 0 4px 10px rgba(255, 235, 59, 0.4);
-    border: 2px solid #fff;
-  }
-
-  .score-badge {
-    font-weight: 700;
-    color: var(--primary-pop);
-    font-size: 1.05rem;
-    background: #ffe6f0;
-    padding: 6px 14px;
-    border-radius: 999px;
-    border: 2px solid #ff80bf;
-  }
-
-  .image-frame {
-    width: 50%;
-    max-width: 168px;
-    aspect-ratio: 335 / 400;
-    margin: 0 auto 16px;
-    background: linear-gradient(135deg, #fff0f5 0%, #ffebee 100%);
-    border-radius: 20px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px dashed var(--accent-red-bright);
-    box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);
-    position: relative;
-  }
-
-  .image-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transform: scale(0.95);
-    transition: transform 0.3s ease;
-  }
-
-  .image-frame:hover img {
-    transform: scale(1.05);
-  }
-
-  .answers {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-
-  .answer-btn {
-    font-family: 'Fredoka', cursive, sans-serif;
-    font-weight: 600;
-    font-size: 0.95rem;
-    padding: 12px 10px;
-    border-radius: 16px;
-    border: 3px solid #ffb3d9;
-    background: linear-gradient(to bottom, #ffffff 0%, #fff0f5 100%);
-    color: var(--text-color);
-    cursor: pointer;
-    box-shadow: 0 4px 0 #ffb3d9;
-    transition: all 0.15s ease;
-  }
-
-  .answer-btn:hover:not(:disabled) {
-    background: linear-gradient(to bottom, #ffffff 0%, #ffe6f2 100%);
-    border-color: var(--primary-pop);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #ff80bf;
-  }
-
-  .answer-btn:active:not(:disabled) {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #ff80bf;
-  }
-
-  .answer-btn:disabled {
-    cursor: default;
-    opacity: 0.8;
-  }
-
-  .answer-btn.correct {
-    background: linear-gradient(to bottom, #b9f6ca 0%, #00e676 100%) !important;
-    border-color: #00c853 !important;
-    color: #004d40 !important;
-    box-shadow: 0 4px 0 #00a86b !important;
-    animation: popCorrect 0.4s ease;
-  }
-
-  .answer-btn.wrong {
-    background: linear-gradient(to bottom, #ff8a80 0%, #ff1744 100%) !important;
-    border-color: #d50000 !important;
-    color: #fff !important;
-    box-shadow: 0 4px 0 #b71c1c !important;
-    animation: shakeWrong 0.4s ease;
-  }
-
-  @keyframes popCorrect {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-  }
-
-  @keyframes shakeWrong {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
-  }
-
-  .feedback {
-    text-align: center;
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 600;
-    font-size: 1.2rem;
-    min-height: 32px;
-    margin: 8px 0 4px;
-    color: var(--accent-red-deep);
-  }
-
-  .next-btn {
-    display: block;
-    margin: 8px auto 0;
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 600;
-    font-size: 1.1rem;
-    letter-spacing: 0.5px;
-    padding: 10px 32px;
-    border-radius: 999px;
-    border: 3px solid #fff;
-    background: linear-gradient(135deg, var(--accent-red-bright) 0%, var(--primary-pop) 100%);
-    color: #fff;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(255, 51, 153, 0.5);
-    transition: all 0.2s ease;
-  }
-
-  .next-btn:hover {
-    background: linear-gradient(135deg, var(--accent-red-deep) 0%, var(--accent-red-bright) 100%);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 51, 153, 0.7);
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  .end-screen {
-    text-align: center;
-    padding: 10px 0;
-  }
-
-  .end-screen p {
-    font-size: 1.15rem;
-    color: var(--text-color);
-    margin-bottom: 20px;
-    font-weight: 600;
-  }
-
-  .end-emoji {
-    font-size: 4rem;
-    margin-bottom: 12px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Sanrio Character</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        blush: {
+                            50: '#fff5f7',
+                            100: '#ffe3e8',
+                            200: '#ffccd6',
+                            300: '#ff99ad',
+                        },
+                        sanrio: {
+                            red: '#ff3b5c',
+                            darkRed: '#d91436',
+                            pink: '#ff6685',
+                            softPink: '#fff0f3',
+                            cream: '#fffdfd',
+                            text: '#2d151a',
+                            muted: '#8c6b73'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .animate-pop {
+            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-blush-50 text-sanrio-text min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 font-sans antialiased selection:bg-sanrio-pink selection:text-white">
 
-<div class="floating-sticker sticker-1">🎀</div>
-<div class="floating-sticker sticker-2">⭐</div>
-<div class="floating-sticker sticker-3">🍓</div>
-<div class="floating-sticker sticker-4">💖</div>
-
-<div class="game">
-  <h1>Guess the Sanrio Character</h1>
-  <p class="subtitle">Who is the cutie in the picture?</p>
-
-  <div class="card">
-    <div class="top-row">
-      <span class="level-badge" id="levelBadge">Level 1</span>
-      <span class="score-badge" id="scoreBadge">Score: 0</span>
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-blush-100/60 blur-3xl"></div>
+        <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-rose-100/50 blur-3xl"></div>
     </div>
 
-    <div id="quizView">
-      <div class="image-frame">
-        <img id="characterImage" src="" alt="Guess this Sanrio character">
-      </div>
+    <main class="w-full max-w-xl relative z-10">
+        
+        <header class="text-center mb-6 animate-pop">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-blush-200 shadow-sm text-xs font-semibold uppercase tracking-wider text-sanrio-red mb-3">
+                <span class="w-2 h-2 rounded-full bg-sanrio-red animate-pulse"></span>
+                HELLO KITTY ISLAND ADVENTURE
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-sanrio-text mb-1">
+                Guess the Sanrio Character
+            </h1>
+            <p class="text-sm sm:text-base text-sanrio-muted font-medium">
+                Who is the cutie in the picture?
+            </p>
+        </header>
 
-      <div class="answers" id="answersContainer"></div>
+        <div class="bg-sanrio-cream border border-blush-200/80 rounded-[2.5rem] p-6 sm:p-8 shadow-xl shadow-blush-100/50 backdrop-blur-md relative overflow-hidden transition-all duration-300">
+            
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-blush-100">
+                <div class="flex items-center gap-2">
+                    <span id="levelBadge" class="px-3.5 py-1.5 rounded-xl bg-blush-100 text-sanrio-red font-bold text-xs sm:text-sm tracking-wide">
+                        Level 1
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="scoreBadge" class="px-4 py-1.5 rounded-xl bg-sanrio-red text-white font-bold text-xs sm:text-sm shadow-md shadow-sanrio-red/20">
+                        Score: 0
+                    </span>
+                </div>
+            </div>
 
-      <div class="feedback" id="feedback"></div>
+            <div id="quizView" class="space-y-6">
+                
+                <div class="flex flex-col sm:flex-row items-center gap-6">
+                    <div class="w-full sm:w-1/2 flex justify-center">
+                        <div class="w-44 h-52 sm:w-48 sm:h-56 bg-white border-2 border-blush-200 rounded-3xl p-4 flex items-center justify-center shadow-inner relative group overflow-hidden animate-float">
+                            <div class="absolute inset-0 bg-gradient-to-br from-blush-50/50 to-transparent pointer-events-none"></div>
+                            <img id="characterImage" src="" alt="Guess this Sanrio character" 
+                                 class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 200 200\'><rect width=\'200\' height=\'200\' fill=\'%23fff5f7\' rx=\'20\'/><circle cx=\'100\' cy=\'90\' r=\'45\' fill=\'%23ffccd6\'/><path d=\'M70 140 Q100 170 130 140\' stroke=\'%23ff3b5c\' stroke-width=\'6\' fill=\'none\' stroke-linecap=\'round\'/><circle cx=\'85\' cy=\'80\' r=\'6\' fill=\'%232d151a\'/><circle cx=\'115\' cy=\'80\' r=\'6\' fill=\'%232d151a\'/><path d=\'M95 95 Q100 102 105 95\' stroke=\'%232d151a\' stroke-width=\'3\' fill=\'none\' stroke-linecap=\'round\'/></svg>';">
+                        </div>
+                    </div>
 
-      <button class="next-btn hidden" id="nextBtn">Next Level ➔</button>
-    </div>
+                    <div class="w-full sm:w-1/2">
+                        <div class="grid grid-cols-1 gap-2.5" id="answersContainer">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
 
-    <div class="end-screen hidden" id="endScreen">
-      <div class="end-emoji">🌟</div>
-      <p id="endMessage"></p>
-      <button class="next-btn" id="restartBtn">Play Again! 🎀</button>
-    </div>
-  </div>
-</div>
+                <div class="pt-2 flex flex-col items-center">
+                    <div id="feedback" class="text-sm font-bold min-h-[24px] mb-2 text-center transition-all"></div>
+                    <button id="nextBtn" class="w-full sm:w-auto px-8 py-3 rounded-2xl bg-sanrio-red hover:bg-sanrio-darkRed text-white font-bold text-sm shadow-lg shadow-sanrio-red/25 hover:shadow-xl hover:shadow-sanrio-red/30 active:scale-95 transition-all hidden">
+                        Next Level &rarr;
+                    </button>
+                </div>
+            </div>
 
-<script>
-  const levels = [
-    {
-      image: "hellokitty.png",
-      answer: "Hello Kitty",
-      options: ["My Melody", "Mimi", "Usahana", "Hello Kitty", "Mary White", "Macaron"]
-    },
-    {
-      image: "mymelody.png",
-      answer: "My Melody",
-      options: ["My Sweet Piano", "Manaka", "Wish Me Mell", "Usahana", "Cinnamoroll", "My Melody"]
-    },
-    {
-      image: "kuromi.png",
-      answer: "Kuromi",
-      options: ["Usahana", "Kuromi", "Cherry", "Kyorosuke", "Kiki", "Cogimyun"]
-    },
-    {
-      image: "badtz-maru.png",
-      answer: "Badtz-Maru",
-      options: ["Badtz-Maru", "Pochacco", "Otamaro", "Pekkle", "Noberun", "Hangyodon"]
-    }
-  ];
+            <div id="endScreen" class="hidden text-center py-8 space-y-6 animate-pop">
+                <div class="w-20 h-20 bg-blush-100 text-sanrio-red rounded-3xl mx-auto flex items-center justify-center text-3xl shadow-sm">
+                    🎀
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-extrabold text-sanrio-text">Quiz Completed!</h2>
+                    <p id="endMessage" class="text-base text-sanrio-muted font-medium"></p>
+                </div>
+                <button id="restartBtn" class="px-8 py-3.5 rounded-2xl bg-sanrio-red hover:bg-sanrio-darkRed text-white font-bold text-sm shadow-lg shadow-sanrio-red/25 hover:shadow-xl active:scale-95 transition-all">
+                    Play Again ✨
+                </button>
+            </div>
 
-  let currentLevel = 0;
-  let score = 0;
+        </div>
 
-  const levelBadge = document.getElementById("levelBadge");
-  const scoreBadge = document.getElementById("scoreBadge");
-  const characterImage = document.getElementById("characterImage");
-  const answersContainer = document.getElementById("answersContainer");
-  const feedback = document.getElementById("feedback");
-  const nextBtn = document.getElementById("nextBtn");
-  const quizView = document.getElementById("quizView");
-  const endScreen = document.getElementById("endScreen");
-  const endMessage = document.getElementById("endMessage");
-  const restartBtn = document.getElementById("restartBtn");
+        <footer class="text-center mt-6 text-xs text-sanrio-muted font-medium">
+            Designed with a gigantic love for Hello Kitty Island Adventure.
+        </footer>
+    </main>
 
-  function shuffle(array) {
-    const copy = [...array];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
-    }
-    return copy;
-  }
+    <script>
+        const levels = [
+            {
+                image: "hellokitty.png",
+                answer: "Hello Kitty",
+                options: ["My Melody", "Mimi", "Usahana", "Hello Kitty", "Mary White", "Macaron"]
+            },
+            {
+                image: "mymelody.png",
+                answer: "My Melody",
+                options: ["My Sweet Piano", "Manaka", "Wish Me Mell", "Usahana", "Cinnamoroll", "My Melody"]
+            },
+            {
+                image: "kuromi.png",
+                answer: "Kuromi",
+                options: ["Usahana", "Kuromi", "Cherry", "Kyorosuke", "Kiki", "Cogimyun"]
+            },
+            {
+                image: "badtz-maru.png",
+                answer: "Badtz-Maru",
+                options: ["Badtz-Maru", "Pochacco", "Otamaro", "Pekkle", "Noberun", "Hangyodon"]
+            }
+        ];
 
-  function loadLevel(index) {
-    const level = levels[index];
-    levelBadge.textContent = "Level " + (index + 1);
-    scoreBadge.textContent = "Score: " + score;
-    characterImage.src = "images/" + level.image;
-    characterImage.alt = "Guess this Sanrio character";
-    feedback.textContent = "";
-    nextBtn.classList.add("hidden");
+        let currentLevel = 0;
+        let score = 0;
 
-    answersContainer.innerHTML = "";
-    const shuffledOptions = shuffle(level.options);
+        const levelBadge = document.getElementById("levelBadge");
+        const scoreBadge = document.getElementById("scoreBadge");
+        const characterImage = document.getElementById("characterImage");
+        const answersContainer = document.getElementById("answersContainer");
+        const feedback = document.getElementById("feedback");
+        const nextBtn = document.getElementById("nextBtn");
+        const quizView = document.getElementById("quizView");
+        const endScreen = document.getElementById("endScreen");
+        const endMessage = document.getElementById("endMessage");
+        const restartBtn = document.getElementById("restartBtn");
 
-    shuffledOptions.forEach(option => {
-      const btn = document.createElement("button");
-      btn.className = "answer-btn";
-      btn.textContent = option;
-      btn.addEventListener("click", () => handleAnswer(btn, option, level.answer));
-      answersContainer.appendChild(btn);
-    });
-  }
+        function shuffle(array) {
+            const copy = [...array];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
 
-  function handleAnswer(button, selected, correctAnswer) {
-    const allButtons = answersContainer.querySelectorAll(".answer-btn");
-    allButtons.forEach(btn => {
-      btn.disabled = true;
-      if (btn.textContent === correctAnswer) {
-        btn.classList.add("correct");
-      }
-    });
+        function loadLevel(index) {
+            const level = levels[index];
+            levelBadge.textContent = "Level " + (index + 1) + " / " + levels.length;
+            scoreBadge.textContent = "Score: " + score;
+            characterImage.src = "images/" + level.image;
+            characterImage.alt = "Guess this Sanrio character";
+            feedback.textContent = "";
+            feedback.className = "text-sm font-bold min-h-[24px] mb-2 text-center transition-all";
+            nextBtn.classList.add("hidden");
 
-    if (selected === correctAnswer) {
-      score++;
-      feedback.textContent = "Yay! That's right! 🎉";
-      scoreBadge.textContent = "Score: " + score;
-    } else {
-      button.classList.add("wrong");
-      feedback.textContent = "Oops, not quite!";
-    }
+            answersContainer.innerHTML = "";
+            const shuffledOptions = shuffle(level.options);
 
-    nextBtn.classList.remove("hidden");
-  }
+            shuffledOptions.forEach(option => {
+                const btn = document.createElement("button");
+                btn.className = "w-full py-3 px-4 rounded-2xl bg-white hover:bg-blush-50 text-sanrio-text font-semibold text-sm sm:text-base border border-blush-200/80 shadow-sm hover:border-sanrio-pink active:scale-[0.98] transition-all duration-200 text-left flex items-center justify-between group";
+                
+                const spanText = document.createElement("span");
+                spanText.textContent = option;
+                btn.appendChild(spanText);
 
-  function goToNextLevel() {
-    currentLevel++;
-    if (currentLevel < levels.length) {
-      loadLevel(currentLevel);
-    } else {
-      showEndScreen();
-    }
-  }
+                const indicator = document.createElement("span");
+                indicator.className = "w-5 h-5 rounded-full border border-blush-200 flex items-center justify-center text-xs text-transparent group-hover:border-sanrio-pink transition-colors";
+                indicator.innerHTML = "•";
+                btn.appendChild(indicator);
 
-  function showEndScreen() {
-    quizView.classList.add("hidden");
-    endScreen.classList.remove("hidden");
-    endMessage.textContent = "You scored " + score + " out of " + levels.length + "! Awesome job, superstar!";
-  }
+                btn.addEventListener("click", () => handleAnswer(btn, option, level.answer));
+                answersContainer.appendChild(btn);
+            });
+        }
 
-  function restartGame() {
-    currentLevel = 0;
-    score = 0;
-    endScreen.classList.add("hidden");
-    quizView.classList.remove("hidden");
-    loadLevel(currentLevel);
-  }
+        function handleAnswer(button, selected, correctAnswer) {
+            const allButtons = answersContainer.querySelectorAll("button");
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                const textSpan = btn.querySelector("span");
+                if (textSpan && textSpan.textContent === correctAnswer) {
+                    btn.className = "w-full py-3 px-4 rounded-2xl bg-emerald-50 text-emerald-800 font-bold text-sm sm:text-base border-2 border-emerald-400 shadow-sm text-left flex items-center justify-between animate-pop";
+                }
+            });
 
-  nextBtn.addEventListener("click", goToNextLevel);
-  restartBtn.addEventListener("click", restartGame);
+            if (selected === correctAnswer) {
+                score++;
+                feedback.textContent = "✨ Yay! That's correct!";
+                feedback.className = "text-sm font-bold min-h-[24px] mb-2 text-center text-emerald-600 animate-pop";
+                scoreBadge.textContent = "Score: " + score;
+            } else {
+                button.className = "w-full py-3 px-4 rounded-2xl bg-rose-50 text-rose-800 font-bold text-sm sm:text-base border-2 border-rose-400 shadow-sm text-left flex items-center justify-between animate-pop";
+                feedback.textContent = "🌸 Oops, not quite! Keep going!";
+                feedback.className = "text-sm font-bold min-h-[24px] mb-2 text-center text-sanrio-red animate-pop";
+            }
 
-  loadLevel(currentLevel);
-</script>
+            nextBtn.classList.remove("hidden");
+        }
 
+        function goToNextLevel() {
+            currentLevel++;
+            if (currentLevel < levels.length) {
+                loadLevel(currentLevel);
+            } else {
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            quizView.classList.add("hidden");
+            endScreen.classList.remove("hidden");
+            endMessage.textContent = "You scored " + score + " out of " + levels.length + "! You're a true Sanrio expert! 💖";
+        }
+
+        function restartGame() {
+            currentLevel = 0;
+            score = 0;
+            endScreen.classList.add("hidden");
+            quizView.classList.remove("hidden");
+            loadLevel(currentLevel);
+        }
+
+        nextBtn.addEventListener("click", goToNextLevel);
+        restartBtn.addEventListener("click", restartGame);
+
+        // Initialize first level on load
+        loadLevel(currentLevel);
+    </script>
 </body>
 </html>
