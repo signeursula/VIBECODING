@@ -95,7 +95,6 @@
                 <div class="flex flex-col sm:flex-row items-center gap-6">
                     <div class="w-full sm:w-1/2 flex justify-center">
                         <div class="w-44 h-52 sm:w-48 sm:h-56 bg-white border-2 border-blush-200 rounded-3xl p-4 flex items-center justify-center shadow-inner relative group overflow-hidden animate-float">
-                            <div class="absolute inset-0 bg-gradient-to-br from-blush-50/50 to-transparent pointer-events-none"></div>
                             <img id="characterImage" src="" alt="Guess this Sanrio character" 
                                  class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                                  onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 200 200\'><rect width=\'200\' height=\'200\' fill=\'%23fff5f7\' rx=\'20\'/><circle cx=\'100\' cy=\'90\' r=\'45\' fill=\'%23ffccd6\'/><path d=\'M70 140 Q100 170 130 140\' stroke=\'%23ff3b5c\' stroke-width=\'6\' fill=\'none\' stroke-linecap=\'round\'/><circle cx=\'85\' cy=\'80\' r=\'6\' fill=\'%232d151a\'/><circle cx=\'115\' cy=\'80\' r=\'6\' fill=\'%232d151a\'/><path d=\'M95 95 Q100 102 105 95\' stroke=\'%232d151a\' stroke-width=\'3\' fill=\'none\' stroke-linecap=\'round\'/></svg>';">
@@ -265,7 +264,6 @@
         nextBtn.addEventListener("click", goToNextLevel);
         restartBtn.addEventListener("click", restartGame);
 
-        // Initialize first level on load
         loadLevel(currentLevel);
     </script>
 </body>
