@@ -51,14 +51,37 @@
         .animate-pop {
             animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
+        /* Background icon pattern layer with randomized tilted icons */
+        #patternLayer {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.16;
+            overflow: hidden;
+        }
+        
+        .pattern-icon {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+        }
     </style>
 </head>
 <body class="bg-blush-50 text-sanrio-text min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 font-sans antialiased selection:bg-sanrio-pink selection:text-white">
 
+    <!-- Base pink gradient -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-blush-100/60 blur-3xl"></div>
         <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-rose-100/50 blur-3xl"></div>
     </div>
+
+    <!-- Repeating character-icon pattern with random tilts -->
+    <div id="patternLayer"></div>
 
     <main class="w-full max-w-xl relative z-10">
         
@@ -336,7 +359,7 @@
             {
                 image: "nina.png",
                 answer: "Nina",
-                options: ["Nina", "Marin", "Chico", "Sora", "Puko", "Kabae"]
+                options: ["Marin", "Chico", "Sora", "Puko", "Kabae"]
             },
             {
                 image: "marin.png",
@@ -373,6 +396,7 @@
         const endScreen = document.getElementById("endScreen");
         const endMessage = document.getElementById("endMessage");
         const restartBtn = document.getElementById("restartBtn");
+        const patternLayer = document.getElementById("patternLayer");
 
         function shuffle(array) {
             const copy = [...array];
@@ -381,6 +405,38 @@
                 [copy[i], copy[j]] = [copy[j], copy[i]];
             }
             return copy;
+        }
+
+        // Derives "hellokitty-icon.png" from "hellokitty.png", etc.
+        function getIconFilename(imageFilename) {
+            return imageFilename.replace(/\.png$/i, "-icon.png");
+        }
+
+        function generatePatternBackground(iconFilename) {
+            patternLayer.innerHTML = "";
+            const spacing = 110;
+            const cols = Math.ceil(window.innerWidth / spacing) + 2;
+            const rows = Math.ceil(window.innerHeight / spacing) + 2;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const icon = document.createElement("div");
+                    icon.className = "pattern-icon";
+                    icon.style.backgroundImage = `url('images/icon-images/${iconFilename}')`;
+                    
+                    const x = c * spacing + (r % 2 === 0 ? 0 : spacing / 2);
+                    const y = r * spacing;
+                    
+                    icon.style.left = `${x}px`;
+                    icon.style.top = `${y}px`;
+
+                    // Random tilt between -20 and 20 degrees
+                    const randomTilt = (Math.random() * 40) - 20;
+                    icon.style.transform = `rotate(${randomTilt}deg)`;
+
+                    patternLayer.appendChild(icon);
+                }
+            }
         }
 
         function loadLevel(index) {
@@ -392,6 +448,10 @@
             feedback.textContent = "";
             feedback.className = "text-sm font-bold min-h-[24px] mb-2 text-center transition-all";
             nextBtn.classList.add("hidden");
+
+            // Update the repeating background pattern with tilted icons from the icon-images folder
+            const iconFilename = getIconFilename(level.image);
+            generatePatternBackground(iconFilename);
 
             answersContainer.innerHTML = "";
             const shuffledOptions = shuffle(level.options);
@@ -463,6 +523,13 @@
 
         nextBtn.addEventListener("click", goToNextLevel);
         restartBtn.addEventListener("click", restartGame);
+
+        window.addEventListener("resize", () => {
+            const level = levels[currentLevel];
+            if (level) {
+                generatePatternBackground(getIconFilename(level.image));
+            }
+        });
 
         loadLevel(currentLevel);
     </script>
