@@ -11,5 +11,4 @@ Project 05: <a href="https://signeursula.github.io/VIBECODING/rating-regency-and
 Project 06: <a href="https://signeursula.github.io/VIBECODING/victorian-nicknames/index.html" target="_blank">Guess the Victorian Nicknames</a> (supports pc and phone). <br>
 Project 07: <a href="https://signeursula.github.io/VIBECODING/signes-travels/index.html" target="_blank">Signe's Travels</a> (supports pc and phone). <br>
 Project 08: <a href="https://signeursula.github.io/VIBECODING/guess-sanrio/index.html" target="_blank">Guess the Sanrio Character</a> (supports pc and phone). <br>
-Project 09: <a href="https://signeursula.github.io/VIBECODING/guess-number/index.html" target="_blank">Guess the Number</a> (supports pc and phone). <br>
-Project 10: <a href="https://signeursula.github.io/VIBECODING/signe-green/index.html" target="_blank">Gæt en Signe-grøn</a> (supports pc and phone). <br>
+Project 09: <a href="https://signeursula.github.io/VIBECODING/signe-green/index.html" target="_blank">Gæt en Signe-grøn</a> (supports pc and phone). <br>
