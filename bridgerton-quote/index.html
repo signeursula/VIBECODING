@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guess the Bridgerton Quote</title>
+<style>
+  :root {
+    --pink-light: #fdeef2;
+    --pink-medium: #f7c9d8;
+    --pink-accent: #e79bb5;
+    --pink-dark: #c86e91;
+    --pink-text: #6b3a4c;
+    --correct: #8fc79b;
+    --wrong: #e08787;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--pink-light);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: var(--pink-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 15px 60px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: normal;
+    letter-spacing: 1px;
+    color: var(--pink-dark);
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .game-container {
+    width: 100%;
+    max-width: 800px;
+    background: #fff;
+    border: 1px solid var(--pink-medium);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(200, 110, 145, 0.15);
+    text-align: center;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--pink-medium);
+    margin-bottom: 25px;
+  }
+
+  .image-wrapper img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .quote-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    padding: 14px 12px;
+    font-size: 1.1rem;
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .blank {
+    display: inline-block;
+    min-width: 70px;
+    border-bottom: 2px solid var(--pink-accent);
+    text-align: center;
+  }
+
+  .choices {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 500px) {
+    .choices {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .choice-btn {
+    padding: 12px 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--pink-text);
+    background: var(--pink-light);
+    border: 2px solid var(--pink-medium);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    background: var(--pink-medium);
+    transform: translateY(-1px);
+  }
+
+  .choice-btn:disabled {
+    cursor: default;
+  }
+
+  .choice-btn.correct {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: #fff;
+  }
+
+  .choice-btn.wrong {
+    background: var(--wrong);
+    border-color: var(--wrong);
+    color: #fff;
+  }
+
+  .feedback {
+    min-height: 28px;
+    font-size: 1.05rem;
+    margin-bottom: 15px;
+  }
+
+  .feedback.correct-text {
+    color: #4a7d58;
+  }
+
+  .feedback.wrong-text {
+    color: #a84545;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .next-btn {
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--pink-dark);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: none;
+  }
+
+  .next-btn:hover {
+    background: var(--pink-accent);
+  }
+
+  .progress {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--pink-accent);
+  }
+
+  .final-screen {
+    display: none;
+  }
+
+  .final-screen h2 {
+    color: var(--pink-dark);
+    font-weight: normal;
+  }
+
+  .restart-btn {
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--pink-dark);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+  }
+
+  .restart-btn:hover {
+    background: var(--pink-accent);
+  }
+</style>
+</head>
+<body>
+
+<h1>Guess the Bridgerton Quote</h1>
+
+<div class="game-container">
+
+  <div id="question-screen">
+    <div class="image-wrapper">
+      <img id="scene-image" src="" alt="Bridgerton scene">
+      <div class="quote-overlay" id="quote-overlay"></div>
+    </div>
+
+    <div class="choices" id="choices-container"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="controls">
+      <button class="next-btn" id="next-btn">Next</button>
+    </div>
+
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="final-screen" id="final-screen">
+    <h2 id="final-message"></h2>
+    <button class="restart-btn" id="restart-btn">Play Again</button>
+  </div>
+
+</div>
+
+<script>
+  const questions = [
+    {
+      image: "images/bee-image.jpg",
+      quotePrefix: "I have been stung by a ",
+      quoteSuffix: ".",
+      correct: "bee",
+      wrongs: ["butterfly", "knife", "heartache", "wasp", "floopy baloopy"]
+    },
+    {
+      image: "images/vex-image.png",
+      quotePrefix: "I will always ",
+      quoteSuffix: " you.",
+      correct: "vex",
+      wrongs: ["love", "hate", "alarm", "poop", "tilt"]
+    },
+    {
+      image: "images/look-image.png",
+      quotePrefix: "Why do you have to ",
+      quoteSuffix: " at me?",
+      correct: "look",
+      wrongs: ["stare", "clap", "pee", "wave", "point"]
+    }
+  ];
+
+  let currentIndex = 0;
+  let score = 0;
+
+  const sceneImage = document.getElementById('scene-image');
+  const quoteOverlay = document.getElementById('quote-overlay');
+  const choicesContainer = document.getElementById('choices-container');
+  const feedback = document.getElementById('feedback');
+  const nextBtn = document.getElementById('next-btn');
+  const progress = document.getElementById('progress');
+  const questionScreen = document.getElementById('question-screen');
+  const finalScreen = document.getElementById('final-screen');
+  const finalMessage = document.getElementById('final-message');
+  const restartBtn = document.getElementById('restart-btn');
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function loadQuestion() {
+    feedback.textContent = "";
+    feedback.className = "feedback";
+    nextBtn.style.display = "none";
+
+    const q = questions[currentIndex];
+    sceneImage.src = q.image;
+    sceneImage.alt = "Bridgerton scene";
+
+    quoteOverlay.innerHTML =
+      q.quotePrefix + '<span class="blank">_____</span>' + q.quoteSuffix;
+
+    const allChoices = shuffle([q.correct, ...q.wrongs]);
+    choicesContainer.innerHTML = "";
+
+    allChoices.forEach(choiceWord => {
+      const btn = document.createElement('button');
+      btn.className = "choice-btn";
+      btn.textContent = choiceWord;
+      btn.addEventListener('click', () => handleChoice(btn, choiceWord, q));
+      choicesContainer.appendChild(btn);
+    });
+
+    progress.textContent = "Question " + (currentIndex + 1) + " of " + questions.length;
+  }
+
+  function handleChoice(button, choiceWord, q) {
+    const buttons = choicesContainer.querySelectorAll('.choice-btn');
+    buttons.forEach(b => b.disabled = true);
+
+    if (choiceWord === q.correct) {
+      button.classList.add('correct');
+      feedback.textContent = "Correct!";
+      feedback.classList.add('correct-text');
+      score++;
+    } else {
+      button.classList.add('wrong');
+      feedback.textContent = 'Wrong! The correct answer was "' + q.correct + '".';
+      feedback.classList.add('wrong-text');
+
+      buttons.forEach(b => {
+        if (b.textContent === q.correct) {
+          b.classList.add('correct');
+        }
+      });
+    }
+
+    quoteOverlay.innerHTML =
+      q.quotePrefix + '<span class="blank">' + q.correct + '</span>' + q.quoteSuffix;
+
+    nextBtn.style.display = "inline-block";
+  }
+
+  nextBtn.addEventListener('click', () => {
+    currentIndex++;
+    if (currentIndex < questions.length) {
+      loadQuestion();
+    } else {
+      showFinalScreen();
+    }
+  });
+
+  function showFinalScreen() {
+    questionScreen.style.display = "none";
+    finalScreen.style.display = "block";
+    finalMessage.textContent = "You scored " + score + " out of " + questions.length + "!";
+  }
+
+  restartBtn.addEventListener('click', () => {
+    currentIndex = 0;
+    score = 0;
+    questionScreen.style.display = "block";
+    finalScreen.style.display = "none";
+    loadQuestion();
+  });
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
