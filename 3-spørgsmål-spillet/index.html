@@ -187,17 +187,41 @@
     margin:0 0 22px;
   }
 
-  .question-block{ margin-bottom:20px; }
+  .topic-block{
+    margin-bottom:22px;
+    padding-bottom:20px;
+    border-bottom:1px dashed var(--line);
+  }
+  .topic-block:last-of-type{
+    border-bottom:none;
+    padding-bottom:0;
+  }
+
+  .question-block{ margin-bottom:12px; }
+  .question-block:last-child{ margin-bottom:0; }
   .question-block label{
     display:block;
     font-weight:700;
     margin-bottom:8px;
     line-height:1.4;
   }
-  textarea{
+  .short-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .short-row input[type="text"]{
+    flex:1;
+    max-width:260px;
+  }
+  .char-count{
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+
+  textarea, input[type="text"]{
     width:100%;
-    min-height:78px;
-    resize:vertical;
     padding:12px 14px;
     border-radius:14px;
     border:2px solid var(--line);
@@ -207,7 +231,11 @@
     background:#fff;
     transition:border-color .12s ease;
   }
-  textarea:focus{
+  textarea{
+    min-height:78px;
+    resize:vertical;
+  }
+  textarea:focus, input[type="text"]:focus{
     outline:none;
     border-color:var(--current-color, var(--p1));
   }
@@ -311,18 +339,7 @@
       <h2 class="player-heading" id="playerHeading"></h2>
       <p class="play-hint">Svar ærligt &mdash; ingen andre kigger med endnu.</p>
 
-      <div class="question-block">
-        <label id="qLabel0"></label>
-        <textarea id="qInput0" placeholder="Skriv dit svar her..."></textarea>
-      </div>
-      <div class="question-block">
-        <label id="qLabel1"></label>
-        <textarea id="qInput1" placeholder="Skriv dit svar her..."></textarea>
-      </div>
-      <div class="question-block">
-        <label id="qLabel2"></label>
-        <textarea id="qInput2" placeholder="Skriv dit svar her..."></textarea>
-      </div>
+      <div id="topicsContainer"></div>
 
       <button class="primary-btn" id="nextBtn"></button>
       <div class="validation-hint" id="validationHint"></div>
@@ -343,17 +360,22 @@
 
 <script>
 (function(){
-  const QUESTIONS = [
+  const SHORT_MAX = 30;
+
+  const TOPICS = [
     {
-      q: "Hvad er din yndlingsfarve? Giv 3 grunde til, hvorfor det er din yndlingsfarve.",
+      shortQ: "Hvad er din yndlingsfarve?",
+      longQ: "Giv 3 grunde til, hvorfor det er din yndlingsfarve.",
       statement: "Dette er dit selvbillede af din personlighed:"
     },
     {
-      q: "Hvad er dit yndlingsdyr? Giv 3 grunde til, hvorfor det er dit yndlingsdyr.",
+      shortQ: "Hvad er dit yndlingsdyr?",
+      longQ: "Giv 3 grunde til, hvorfor det er dit yndlingsdyr.",
       statement: "Dette er din ideelle drømmepartner:"
     },
     {
-      q: "Hvad er din yndlings form for vand? Uddyb hvorfor.",
+      shortQ: "Hvad er din yndlings form for vand?",
+      longQ: "Uddyb hvorfor.",
       statement: "Dette er din forestilling om din seksualitet:"
     }
   ];
@@ -362,7 +384,7 @@
 
   let numPlayers = 0;
   let currentIndex = 0;
-  let players = []; // { answers: ["","",""] }
+  let players = []; // { answers: [{short:"", long:""}, ...] }
 
   const screens = {
     start: document.getElementById('screen-start'),
@@ -373,6 +395,10 @@
   function showScreen(name){
     Object.values(screens).forEach(s => s.classList.remove('active'));
     screens[name].classList.add('active');
+  }
+
+  function blankAnswers(){
+    return TOPICS.map(() => ({short:"", long:""}));
   }
 
   // ---------- START SCREEN ----------
@@ -389,9 +415,10 @@
   });
 
   startBtn.addEventListener('click', () => {
-    players = Array.from({length:numPlayers}, () => ({answers:["","",""]}));
+    players = Array.from({length:numPlayers}, () => ({answers: blankAnswers()}));
     currentIndex = 0;
     showScreen('play');
+    buildPlayScreenSkeleton();
     renderPlayScreen();
   });
 
@@ -400,11 +427,70 @@
   const playerHeading = document.getElementById('playerHeading');
   const nextBtn = document.getElementById('nextBtn');
   const validationHint = document.getElementById('validationHint');
-  const qInputs = [0,1,2].map(i => document.getElementById('qInput'+i));
-  const qLabels = [0,1,2].map(i => document.getElementById('qLabel'+i));
+  const topicsContainer = document.getElementById('topicsContainer');
+
+  let shortInputs = [];
+  let longInputs = [];
+
+  function buildPlayScreenSkeleton(){
+    topicsContainer.innerHTML = '';
+    shortInputs = [];
+    longInputs = [];
+
+    TOPICS.forEach((topic, i) => {
+      const topicBlock = document.createElement('div');
+      topicBlock.className = 'topic-block';
+
+      // short question
+      const shortBlock = document.createElement('div');
+      shortBlock.className = 'question-block';
+      const shortLabel = document.createElement('label');
+      shortLabel.setAttribute('for', 'shortInput'+i);
+      shortLabel.textContent = topic.shortQ;
+      const shortRow = document.createElement('div');
+      shortRow.className = 'short-row';
+      const shortInput = document.createElement('input');
+      shortInput.type = 'text';
+      shortInput.id = 'shortInput'+i;
+      shortInput.maxLength = SHORT_MAX;
+      shortInput.placeholder = 'Kort svar...';
+      const charCount = document.createElement('span');
+      charCount.className = 'char-count';
+      charCount.textContent = '0/' + SHORT_MAX;
+      shortInput.addEventListener('input', () => {
+        charCount.textContent = shortInput.value.length + '/' + SHORT_MAX;
+      });
+      shortRow.appendChild(shortInput);
+      shortRow.appendChild(charCount);
+      shortBlock.appendChild(shortLabel);
+      shortBlock.appendChild(shortRow);
+
+      // long question
+      const longBlock = document.createElement('div');
+      longBlock.className = 'question-block';
+      const longLabel = document.createElement('label');
+      longLabel.setAttribute('for', 'longInput'+i);
+      longLabel.textContent = topic.longQ;
+      const longInput = document.createElement('textarea');
+      longInput.id = 'longInput'+i;
+      longInput.placeholder = 'Uddyb dit svar her...';
+      longBlock.appendChild(longLabel);
+      longBlock.appendChild(longInput);
+
+      topicBlock.appendChild(shortBlock);
+      topicBlock.appendChild(longBlock);
+      topicsContainer.appendChild(topicBlock);
+
+      shortInputs.push(shortInput);
+      longInputs.push(longInput);
+    });
+  }
 
   function saveCurrentAnswers(){
-    players[currentIndex].answers = qInputs.map(inp => inp.value.trim());
+    players[currentIndex].answers = TOPICS.map((t, i) => ({
+      short: shortInputs[i].value.trim(),
+      long: longInputs[i].value.trim()
+    }));
   }
 
   function renderTabs(){
@@ -437,9 +523,12 @@
     document.documentElement.style.setProperty('--current-color', color);
     playerHeading.innerHTML = '<span class="dot" style="background:'+color+'"></span>Spiller ' + (currentIndex+1);
 
-    QUESTIONS.forEach((item, i) => {
-      qLabels[i].textContent = item.q;
-      qInputs[i].value = players[currentIndex].answers[i] || '';
+    TOPICS.forEach((topic, i) => {
+      const saved = players[currentIndex].answers[i] || {short:"", long:""};
+      shortInputs[i].value = saved.short;
+      longInputs[i].value = saved.long;
+      const charCountEl = shortInputs[i].parentElement.querySelector('.char-count');
+      charCountEl.textContent = saved.short.length + '/' + SHORT_MAX;
     });
 
     nextBtn.textContent = (currentIndex === numPlayers - 1)
@@ -450,9 +539,11 @@
   }
 
   nextBtn.addEventListener('click', () => {
-    const allFilled = qInputs.every(inp => inp.value.trim().length > 0);
+    const allFilled = TOPICS.every((t, i) =>
+      shortInputs[i].value.trim().length > 0 && longInputs[i].value.trim().length > 0
+    );
     if(!allFilled){
-      validationHint.textContent = 'Udfyld alle tre svar, før I går videre.';
+      validationHint.textContent = 'Udfyld alle felter, før I går videre.';
       return;
     }
     saveCurrentAnswers();
@@ -471,12 +562,12 @@
 
   function renderResults(){
     resultsContainer.innerHTML = '';
-    QUESTIONS.forEach((item, qIndex) => {
+    TOPICS.forEach((topic, tIndex) => {
       const block = document.createElement('div');
       block.className = 'statement-block';
 
       const h3 = document.createElement('h3');
-      h3.textContent = item.statement;
+      h3.textContent = topic.statement;
       block.appendChild(h3);
 
       const grid = document.createElement('div');
@@ -493,7 +584,7 @@
 
         const ta = document.createElement('textarea');
         ta.disabled = true;
-        ta.value = player.answers[qIndex];
+        ta.value = player.answers[tIndex].long;
         ta.rows = 3;
         card.appendChild(ta);
 
