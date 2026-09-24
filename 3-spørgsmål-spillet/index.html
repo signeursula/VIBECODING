@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3-SPØRGSMÅL SPILLET</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fff8ec;
+    --card:#fffdf8;
+    --ink:#2e2440;
+    --ink-soft:#6b6079;
+    --line:#ece1cf;
+    --p1:#e85d75; /* raspberry */
+    --p2:#f2a33a; /* marigold */
+    --p3:#5fa887; /* sage */
+    --p4:#5b8def; /* periwinkle */
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--cream);
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(232,93,117,0.10) 0, transparent 40%),
+      radial-gradient(circle at 88% 82%, rgba(91,141,239,0.10) 0, transparent 42%);
+    font-family:'Nunito', sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:32px 16px 60px;
+  }
+
+  .stage{ width:100%; max-width:660px; }
+
+  .brand{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  .brand .mark{
+    display:inline-block;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:1.9rem;
+    letter-spacing:0.5px;
+    color:var(--ink);
+    line-height:1.15;
+  }
+  .brand .mark span{ color:var(--p1); }
+  .brand .sub{
+    margin-top:6px;
+    color:var(--ink-soft);
+    font-size:0.98rem;
+  }
+
+  .card{
+    background:var(--card);
+    border:2px solid var(--line);
+    border-radius:26px;
+    padding:32px;
+    box-shadow:0 14px 0 -6px rgba(46,36,64,0.06), 0 20px 40px rgba(46,36,64,0.08);
+  }
+
+  .screen{ display:none; }
+  .screen.active{ display:block; }
+
+  /* ---------- START SCREEN ---------- */
+  .intro-text{
+    text-align:center;
+    color:var(--ink-soft);
+    line-height:1.6;
+    margin:0 0 26px;
+  }
+  h2.step-title{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:1.25rem;
+    text-align:center;
+    margin:0 0 20px;
+  }
+  .count-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+  }
+  .count-btn{
+    aspect-ratio:1/1;
+    border-radius:18px;
+    border:2px solid var(--line);
+    background:#fff;
+    font-family:'Baloo 2', sans-serif;
+    font-size:1.6rem;
+    font-weight:700;
+    color:var(--ink);
+    cursor:pointer;
+    transition:transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .count-btn:hover{ border-color:var(--p1); transform:translateY(-2px); }
+  .count-btn.selected{
+    background:var(--p1);
+    border-color:var(--p1);
+    color:#fff;
+  }
+
+  .primary-btn{
+    display:block;
+    width:100%;
+    margin-top:26px;
+    padding:15px 18px;
+    border:none;
+    border-radius:16px;
+    background:var(--p1);
+    color:#fff;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    cursor:pointer;
+    transition:transform .12s ease, opacity .12s ease;
+  }
+  .primary-btn:hover{ transform:translateY(-1px); }
+  .primary-btn:disabled{ opacity:0.45; cursor:not-allowed; transform:none; }
+
+  .ghost-btn{
+    display:block;
+    width:100%;
+    margin-top:14px;
+    padding:13px 18px;
+    border:2px solid var(--line);
+    border-radius:16px;
+    background:transparent;
+    color:var(--ink);
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:1rem;
+    cursor:pointer;
+  }
+  .ghost-btn:hover{ border-color:var(--ink); }
+
+  /* ---------- PLAY SCREEN ---------- */
+  .tab-row{
+    display:flex;
+    gap:8px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .tab{
+    flex:1;
+    min-width:70px;
+    text-align:center;
+    padding:9px 6px;
+    border-radius:12px;
+    border:2px solid var(--line);
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    background:#fff;
+    cursor:default;
+  }
+  .tab.done{ cursor:pointer; color:#fff; }
+  .tab.current{
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .player-heading{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:1.3rem;
+    margin:0 0 4px;
+  }
+  .player-heading .dot{
+    display:inline-block;
+    width:12px; height:12px;
+    border-radius:50%;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .play-hint{
+    color:var(--ink-soft);
+    font-size:0.92rem;
+    margin:0 0 22px;
+  }
+
+  .question-block{ margin-bottom:20px; }
+  .question-block label{
+    display:block;
+    font-weight:700;
+    margin-bottom:8px;
+    line-height:1.4;
+  }
+  textarea{
+    width:100%;
+    min-height:78px;
+    resize:vertical;
+    padding:12px 14px;
+    border-radius:14px;
+    border:2px solid var(--line);
+    font-family:'Nunito', sans-serif;
+    font-size:0.98rem;
+    color:var(--ink);
+    background:#fff;
+    transition:border-color .12s ease;
+  }
+  textarea:focus{
+    outline:none;
+    border-color:var(--current-color, var(--p1));
+  }
+
+  .validation-hint{
+    color:var(--p1);
+    font-size:0.85rem;
+    text-align:center;
+    margin-top:4px;
+    min-height:1.2em;
+  }
+
+  /* ---------- RESULTS SCREEN ---------- */
+  .results-title{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:1.4rem;
+    text-align:center;
+    margin:0 0 6px;
+  }
+  .results-sub{
+    text-align:center;
+    color:var(--ink-soft);
+    margin:0 0 26px;
+    font-size:0.95rem;
+  }
+  .statement-block{ margin-bottom:26px; }
+  .statement-block h3{
+    font-family:'Baloo 2', sans-serif;
+    font-size:1.05rem;
+    margin:0 0 12px;
+    padding-left:2px;
+  }
+  .answers-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:480px){
+    .answers-grid{ grid-template-columns:1fr; }
+  }
+  .answer-card{
+    border-radius:14px;
+    border:2px solid var(--line);
+    padding:12px 14px;
+    background:#faf6ec;
+  }
+  .answer-card .who{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.82rem;
+    margin-bottom:6px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .answer-card .who .dot{
+    width:10px; height:10px; border-radius:50%;
+  }
+  .answer-card textarea{
+    background:#f1ece0;
+    color:#5b5468;
+    border-color:#e4d9c4;
+    cursor:not-allowed;
+  }
+
+  footer.credit{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.8rem;
+    margin-top:22px;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <div class="brand">
+    <div class="mark">3-SPØRGSMÅL<br><span>SPILLET</span></div>
+    <div class="sub">Et lille spil om jer selv &mdash; svar ærligt, tjek resultatet</div>
+  </div>
+
+  <div class="card">
+
+    <!-- START -->
+    <section id="screen-start" class="screen active">
+      <p class="intro-text">I svarer hver især på 3 spørgsmål. Når alle har svaret, låses svarene &mdash; og de tre spørgsmål bliver til tre påstande om jer.</p>
+      <h2 class="step-title">Vælg antal spillere</h2>
+      <div class="count-row" id="countRow">
+        <button class="count-btn" data-count="1">1</button>
+        <button class="count-btn" data-count="2">2</button>
+        <button class="count-btn" data-count="3">3</button>
+        <button class="count-btn" data-count="4">4</button>
+      </div>
+      <button class="primary-btn" id="startBtn" disabled>Start spillet →</button>
+    </section>
+
+    <!-- PLAY -->
+    <section id="screen-play" class="screen">
+      <div class="tab-row" id="tabRow"></div>
+      <h2 class="player-heading" id="playerHeading"></h2>
+      <p class="play-hint">Svar ærligt &mdash; ingen andre kigger med endnu.</p>
+
+      <div class="question-block">
+        <label id="qLabel0"></label>
+        <textarea id="qInput0" placeholder="Skriv dit svar her..."></textarea>
+      </div>
+      <div class="question-block">
+        <label id="qLabel1"></label>
+        <textarea id="qInput1" placeholder="Skriv dit svar her..."></textarea>
+      </div>
+      <div class="question-block">
+        <label id="qLabel2"></label>
+        <textarea id="qInput2" placeholder="Skriv dit svar her..."></textarea>
+      </div>
+
+      <button class="primary-btn" id="nextBtn"></button>
+      <div class="validation-hint" id="validationHint"></div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="screen-results" class="screen">
+      <div class="results-title">Jeres resultater</div>
+      <div class="results-sub">Her er, hvad jeres svar &mdash; helt tilfældigt &mdash; afslører</div>
+      <div id="resultsContainer"></div>
+      <button class="ghost-btn" id="restartBtn">Start spillet forfra ⟳</button>
+    </section>
+
+  </div>
+
+  <footer class="credit">3-SPØRGSMÅL SPILLET &middot; bedst spillet med venner</footer>
+</div>
+
+<script>
+(function(){
+  const QUESTIONS = [
+    {
+      q: "Hvad er din yndlingsfarve? Giv 3 grunde til, hvorfor det er din yndlingsfarve.",
+      statement: "Dette er dit selvbillede af din personlighed:"
+    },
+    {
+      q: "Hvad er dit yndlingsdyr? Giv 3 grunde til, hvorfor det er dit yndlingsdyr.",
+      statement: "Dette er din ideelle drømmepartner:"
+    },
+    {
+      q: "Hvad er din yndlings form for vand? Uddyb hvorfor.",
+      statement: "Dette er din forestilling om din seksualitet:"
+    }
+  ];
+
+  const PLAYER_COLORS = ['var(--p1)', 'var(--p2)', 'var(--p3)', 'var(--p4)'];
+
+  let numPlayers = 0;
+  let currentIndex = 0;
+  let players = []; // { answers: ["","",""] }
+
+  const screens = {
+    start: document.getElementById('screen-start'),
+    play: document.getElementById('screen-play'),
+    results: document.getElementById('screen-results'),
+  };
+
+  function showScreen(name){
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[name].classList.add('active');
+  }
+
+  // ---------- START SCREEN ----------
+  const countRow = document.getElementById('countRow');
+  const startBtn = document.getElementById('startBtn');
+
+  countRow.addEventListener('click', (e) => {
+    const btn = e.target.closest('.count-btn');
+    if(!btn) return;
+    countRow.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    numPlayers = parseInt(btn.dataset.count, 10);
+    startBtn.disabled = false;
+  });
+
+  startBtn.addEventListener('click', () => {
+    players = Array.from({length:numPlayers}, () => ({answers:["","",""]}));
+    currentIndex = 0;
+    showScreen('play');
+    renderPlayScreen();
+  });
+
+  // ---------- PLAY SCREEN ----------
+  const tabRow = document.getElementById('tabRow');
+  const playerHeading = document.getElementById('playerHeading');
+  const nextBtn = document.getElementById('nextBtn');
+  const validationHint = document.getElementById('validationHint');
+  const qInputs = [0,1,2].map(i => document.getElementById('qInput'+i));
+  const qLabels = [0,1,2].map(i => document.getElementById('qLabel'+i));
+
+  function saveCurrentAnswers(){
+    players[currentIndex].answers = qInputs.map(inp => inp.value.trim());
+  }
+
+  function renderTabs(){
+    tabRow.innerHTML = '';
+    if(numPlayers <= 1) return;
+    for(let i=0; i<numPlayers; i++){
+      const tab = document.createElement('div');
+      tab.className = 'tab';
+      tab.textContent = 'Spiller ' + (i+1);
+      if(i === currentIndex){
+        tab.classList.add('current');
+        tab.style.background = PLAYER_COLORS[i];
+      } else if(i < currentIndex){
+        tab.classList.add('done');
+        tab.style.background = PLAYER_COLORS[i];
+        tab.style.opacity = '0.55';
+        tab.addEventListener('click', () => {
+          saveCurrentAnswers();
+          currentIndex = i;
+          renderPlayScreen();
+        });
+      }
+      tabRow.appendChild(tab);
+    }
+  }
+
+  function renderPlayScreen(){
+    renderTabs();
+    const color = PLAYER_COLORS[currentIndex];
+    document.documentElement.style.setProperty('--current-color', color);
+    playerHeading.innerHTML = '<span class="dot" style="background:'+color+'"></span>Spiller ' + (currentIndex+1);
+
+    QUESTIONS.forEach((item, i) => {
+      qLabels[i].textContent = item.q;
+      qInputs[i].value = players[currentIndex].answers[i] || '';
+    });
+
+    nextBtn.textContent = (currentIndex === numPlayers - 1)
+      ? 'Se resultater →'
+      : 'Videre til næste spiller →';
+
+    validationHint.textContent = '';
+  }
+
+  nextBtn.addEventListener('click', () => {
+    const allFilled = qInputs.every(inp => inp.value.trim().length > 0);
+    if(!allFilled){
+      validationHint.textContent = 'Udfyld alle tre svar, før I går videre.';
+      return;
+    }
+    saveCurrentAnswers();
+
+    if(currentIndex === numPlayers - 1){
+      showScreen('results');
+      renderResults();
+    } else {
+      currentIndex++;
+      renderPlayScreen();
+    }
+  });
+
+  // ---------- RESULTS SCREEN ----------
+  const resultsContainer = document.getElementById('resultsContainer');
+
+  function renderResults(){
+    resultsContainer.innerHTML = '';
+    QUESTIONS.forEach((item, qIndex) => {
+      const block = document.createElement('div');
+      block.className = 'statement-block';
+
+      const h3 = document.createElement('h3');
+      h3.textContent = item.statement;
+      block.appendChild(h3);
+
+      const grid = document.createElement('div');
+      grid.className = 'answers-grid';
+
+      players.forEach((player, pIndex) => {
+        const card = document.createElement('div');
+        card.className = 'answer-card';
+
+        const who = document.createElement('div');
+        who.className = 'who';
+        who.innerHTML = '<span class="dot" style="background:'+PLAYER_COLORS[pIndex]+'"></span>Spiller ' + (pIndex+1);
+        card.appendChild(who);
+
+        const ta = document.createElement('textarea');
+        ta.disabled = true;
+        ta.value = player.answers[qIndex];
+        ta.rows = 3;
+        card.appendChild(ta);
+
+        grid.appendChild(card);
+      });
+
+      block.appendChild(grid);
+      resultsContainer.appendChild(block);
+    });
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    numPlayers = 0;
+    currentIndex = 0;
+    players = [];
+    countRow.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+    startBtn.disabled = true;
+    showScreen('start');
+  });
+
+})();
+</script>
+</body>
+</html>
