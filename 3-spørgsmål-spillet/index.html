@@ -210,7 +210,7 @@
   }
   .short-row input[type="text"]{
     flex:1;
-    max-width:260px;
+    max-width:320px;
   }
   .char-count{
     font-size:0.78rem;
@@ -362,16 +362,19 @@
   const TOPICS = [
     {
       shortQ: "Hvad er din yndlingsfarve?",
+      shortPlaceholder: "F.eks. grøn, blå, pink, rød...",
       longQ: "Giv 3 grunde til, hvorfor det er din yndlingsfarve.",
       statement: "Dette er dit selvbillede af din personlighed:"
     },
     {
       shortQ: "Hvad er dit yndlingsdyr?",
+      shortPlaceholder: "F.eks. hund, kat, giraf, enhjørning...",
       longQ: "Giv 3 grunde til, hvorfor det er dit yndlingsdyr.",
       statement: "Dette er din ideelle drømmepartner:"
     },
     {
       shortQ: "Hvad er din yndlings form for vand?",
+      shortPlaceholder: "F.eks. regn, saftevand, pool, istapper...",
       longQ: "Uddyb hvorfor.",
       statement: "Dette er din forestilling om din seksualitet:"
     }
@@ -450,7 +453,7 @@
       shortInput.type = 'text';
       shortInput.id = 'shortInput'+i;
       shortInput.maxLength = SHORT_MAX;
-      shortInput.placeholder = 'Svar...';
+      shortInput.placeholder = topic.shortPlaceholder || 'Svar...';
       const charCount = document.createElement('span');
       charCount.className = 'char-count';
       charCount.textContent = '0/' + SHORT_MAX;
