@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signe's GitHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --card: #FFFFFF;
+    --ink: #33422E;
+    --muted: #8A9B80;
+    --matcha: #C9E28F;
+    --lime: #F0F7DA;
+    --leaf: #7FA53A;
+    --line: #E9F1D6;
+    --font: "Bricolage Grotesque", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    font-weight: 300;
+    background-color: var(--bg);
+    /* white base + very light green blobs + a fine dot pattern */
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(150, 195, 80, 0.20) 1px, transparent 1.5px),
+      radial-gradient(45% 35% at 6% 3%,   rgba(226, 242, 175, 0.55) 0%, transparent 70%),
+      radial-gradient(40% 30% at 96% 10%, rgba(214, 238, 190, 0.45) 0%, transparent 70%),
+      radial-gradient(45% 35% at 90% 58%, rgba(232, 245, 190, 0.50) 0%, transparent 70%),
+      radial-gradient(45% 35% at 4% 75%,  rgba(220, 240, 180, 0.40) 0%, transparent 70%),
+      radial-gradient(60% 30% at 50% 100%, rgba(228, 244, 185, 0.50) 0%, transparent 70%);
+    background-size: 30px 30px, auto, auto, auto, auto, auto;
+    background-attachment: fixed;
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.55;
+  }
+
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* Header */
+  header {
+    padding: 88px 0 56px;
+  }
+  h1 {
+    font-size: clamp(2.8rem, 9vw, 6rem);
+    font-weight: 200;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+  }
+  h1 span { color: var(--leaf); font-weight: 300; }
+  .sub {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--matcha);
+    width: fit-content;
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    letter-spacing: 0.005em;
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+    padding-bottom: 96px;
+  }
+
+  /* Card */
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    text-decoration: none;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px -30px rgba(127, 165, 58, 0.35);
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  }
+  .card:hover, .card:focus-visible {
+    transform: translateY(-4px);
+    border-color: var(--matcha);
+    box-shadow: 0 26px 46px -28px rgba(127, 165, 58, 0.5);
+  }
+  .card:focus-visible { outline: 2px solid var(--leaf); outline-offset: 3px; }
+
+  .thumb {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 16px;
+    background: var(--lime);
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* keeps the image from stretching */
+    object-position: center;
+    display: block;
+    transition: transform .6s ease;
+  }
+  .card:hover .thumb img { transform: scale(1.04); }
+
+  /* Overlay filter on the image */
+  .thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transition: opacity .35s ease;
+  }
+  .card:hover .thumb::after { opacity: 0.5; }
+
+  .info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 10px 10px 12px;
+  }
+  .text { min-width: 0; }
+  .label {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--leaf);
+    border: 1px solid var(--matcha);
+    padding: 1px 11px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+  }
+  .title {
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  .arrow {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--matcha);
+    color: var(--leaf);
+    background: transparent;
+    transition: background .3s ease, color .3s ease, transform .3s ease;
+  }
+  .arrow svg { width: 20px; height: 20px; }
+  .card:hover .arrow, .card:focus-visible .arrow {
+    background: var(--matcha);
+    color: var(--ink);
+    transform: rotate(-45deg);
+  }
+
+  footer {
+    padding: 0 0 48px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 300;
+  }
+  footer .wrap { border-top: 1px solid var(--line); padding-top: 22px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Signe's <span>GitHub</span></h1>
+    <p class="sub">All my little projects in one place. Pick a card to open it.</p>
+  </header>
+
+  <main class="grid" id="grid"></main>
+</div>
+
+<footer>
+  <div class="wrap">Made by Signe</div>
+</footer>
+
+<script>
+  /* ------------------------------------------------------------
+     YOUR PROJECTS
+     - url:   replace "#" with the link to the project
+     - image: replace "" with the path to your image,
+              e.g. "images/dansk-connection.jpg".
+              While it is empty, a placeholder image is shown.
+     ------------------------------------------------------------ */
+  const projects = [
+    { title: "Praktik ved TDC Erhverv",       label: "website", url: "#", image: "images/TDCE-image.png" },
+    { title: "Den super nemme kogebog",       label: "PDF",     url: "#", image: "" },
+    { title: "Signes læsehjørne",             label: "website", url: "#", image: "" },
+    { title: "Dansk Connection",              label: "game",    url: "#", image: "" },
+    { title: "Rating Regency & Romance",      label: "website", url: "#", image: "" },
+    { title: "Guess the Victorian Nicknames", label: "game",    url: "#", image: "" },
+    { title: "Signe's Travels",               label: "website", url: "#", image: "" },
+    { title: "Guess the Sanrio Character",    label: "game",    url: "#", image: "" },
+    { title: "Gæt en Signe-grøn",             label: "game",    url: "#", image: "" },
+    { title: "3-spørgsmål spillet",           label: "game",    url: "#", image: "" },
+    { title: "Guess the Bridgerton Quote",    label: "game",    url: "#", image: "" }
+  ];
+
+  /* Placeholder image: a soft green SVG (600x375, same shape as the card image) */
+  const tones = [
+    ["#E6F2C0", "#BEDB82"], ["#EEF7D2", "#B2D46F"], ["#E1EFB5", "#C6E08C"],
+    ["#EAF4C8", "#AACD66"], ["#E3F0BC", "#A0C75E"], ["#F2F9DB", "#BFDA7F"]
+  ];
+  function placeholder(i) {
+    const [a, b] = tones[i % tones.length];
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 375">` +
+      `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">` +
+      `<stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>` +
+      `<rect width="600" height="375" fill="url(#g)"/>` +
+      `<circle cx="${140 + (i % 4) * 90}" cy="120" r="90" fill="#fff" opacity=".28"/>` +
+      `<circle cx="470" cy="290" r="120" fill="#fff" opacity=".2"/>` +
+      `</svg>`;
+    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+  }
+
+  const arrowSvg =
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+
+  const grid = document.getElementById("grid");
+  projects.forEach((p, i) => {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = p.url;
+    a.setAttribute("aria-label", `${p.title} (${p.label})`);
+    a.innerHTML = `
+      <div class="thumb"><img src="${p.image || placeholder(i)}" alt="" loading="lazy"></div>
+      <div class="info">
+        <div class="text">
+          <span class="label"></span>
+          <h2 class="title"></h2>
+        </div>
+        <span class="arrow">${arrowSvg}</span>
+      </div>`;
+    a.querySelector(".label").textContent = p.label;
+    a.querySelector(".title").textContent = p.title;
+    grid.appendChild(a);
+  });
+</script>
+</body>
+</html>
