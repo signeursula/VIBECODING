@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fly</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  #fly {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    left: 0;
+    top: 0;
+    cursor: pointer; /* looks clickable, but it isn't */
+    transition: left 0.55s cubic-bezier(.3,.7,.3,1), top 0.55s cubic-bezier(.3,.7,.3,1);
+  }
+
+  /* Rotates the fly to face its flight direction */
+  #turn {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.25s ease-out;
+  }
+
+  /* Buzzing jitter while flying */
+  #buzz { width: 100%; height: 100%; }
+  #fly.flying #buzz { animation: buzz 0.07s infinite alternate; }
+  @keyframes buzz {
+    from { transform: translate(-1px, 0.5px) rotate(-3deg); }
+    to   { transform: translate(1px, -0.5px) rotate(3deg); }
+  }
+
+  /* The fly image (loaded from images/fly.svg) */
+  #flyImg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Wing-flutter effect while flying (the image is static, so the whole fly flutters) */
+  #fly.flying #flyImg { animation: flutter 0.05s infinite alternate; }
+  @keyframes flutter {
+    from { transform: scale(1.12, 0.94); }
+    to   { transform: scale(0.88, 1.06); }
+  }
+</style>
+</head>
+<body>
+
+<div id="fly">
+  <div id="turn">
+    <div id="buzz">
+      <img id="flyImg" src="images/fly.svg" alt="" draggable="false">
+    </div>
+  </div>
+</div>
+
+<script>
+  const fly = document.getElementById('fly');
+  const turn = document.getElementById('turn');
+  const SIZE = 36;
+  const MARGIN = 20;
+  let mouse = { x: -1000, y: -1000 };
+  let stopTimer = null;
+
+  // Track the cursor so the fly never lands right under it
+  window.addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+  function randomPosition() {
+    const maxX = window.innerWidth - SIZE - MARGIN;
+    const maxY = window.innerHeight - SIZE - MARGIN;
+    const rect = fly.getBoundingClientRect();
+    const cx = rect.left + SIZE / 2;
+    const cy = rect.top + SIZE / 2;
+    let x, y, tries = 0;
+    do {
+      x = MARGIN + Math.random() * Math.max(0, maxX - MARGIN);
+      y = MARGIN + Math.random() * Math.max(0, maxY - MARGIN);
+      tries++;
+      const farFromCursor = Math.hypot(x + SIZE / 2 - mouse.x, y + SIZE / 2 - mouse.y) > 120;
+      const farFromOld = Math.hypot(x + SIZE / 2 - cx, y + SIZE / 2 - cy) > 150;
+      if (farFromCursor && farFromOld) break;
+    } while (tries < 30);
+    return { x, y };
+  }
+
+  function moveFly() {
+    const rect = fly.getBoundingClientRect();
+    const target = randomPosition();
+
+    // Face the direction of travel (the image points "up")
+    const dx = target.x - rect.left;
+    const dy = target.y - rect.top;
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+    turn.style.transform = 'rotate(' + angle + 'deg)';
+
+    fly.classList.add('flying');
+    fly.style.left = target.x + 'px';
+    fly.style.top = target.y + 'px';
+
+    clearTimeout(stopTimer);
+    stopTimer = setTimeout(() => fly.classList.remove('flying'), 600);
+  }
+
+  // Start at a random spot
+  fly.style.transition = 'none';
+  fly.style.left = Math.random() * (window.innerWidth - SIZE) + 'px';
+  fly.style.top = Math.random() * (window.innerHeight - SIZE) + 'px';
+  fly.getBoundingClientRect(); // force reflow
+  fly.style.transition = '';
+
+  fly.addEventListener('pointerenter', moveFly);
+</script>
+</body>
+</html>
