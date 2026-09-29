@@ -14,3 +14,4 @@ Project 08: <a href="https://signeursula.github.io/VIBECODING/guess-sanrio/index
 Project 09: <a href="https://signeursula.github.io/VIBECODING/signe-green/index.html" target="_blank">Gæt en Signe-grøn</a> (supports pc and phone). <br>
 Project 10: <a href="https://signeursula.github.io/VIBECODING/3-spørgsmål-spillet/index.html" target="_blank">3-spørgsmål spillet</a> (supports pc and phone). <br>
 Project 11: <a href="https://signeursula.github.io/VIBECODING/bridgerton-quote/index.html" target="_blank">Guess the Bridgerton Quote</a> (supports pc and phone). <br>
+Project 12: <a href="https://signeursula.github.io/VIBECODING/color-days/index.html" target="_blank">Which colors are the days of the week?</a> (supports pc and phone). <br>
