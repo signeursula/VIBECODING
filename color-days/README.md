@@ -1,1 +1,1 @@
-## Which colors are the days of the week?
+## Which colors are the days?
