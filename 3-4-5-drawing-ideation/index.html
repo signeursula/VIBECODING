@@ -10,7 +10,7 @@
 <style>
 :root{
   --bg:#F5F6FB; --card:#FFFFFF; --ink:#1B1F3B; --muted:#6A6F8C; --line:#E2E4F0;
-  --c3:#2F7BFF; --c4:#FF4F86; --c5:#F5A300; --accent:var(--c3);
+  --c3:#1A9A57; --c4:#FF4F86; --c5:#F5A300; --accent:var(--c3);
   --shadow:0 10px 30px rgba(27,31,59,.08);
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
@@ -257,6 +257,7 @@ h1{margin:10px 0 6px;font-size:clamp(24px,5vw,32px);font-weight:800;letter-spaci
     });
     $('next').textContent = i === 2 ? 'See all prompts' : 'Next round';
     $('next').disabled = true;
+    resetSkip();
     $('skip').style.display = '';
     $('pause').disabled = false; $('pause').style.opacity = 1;
     state.total = state.remaining = r.minutes * 60 * 1000;
@@ -292,8 +293,18 @@ h1{margin:10px 0 6px;font-size:clamp(24px,5vw,32px);font-weight:800;letter-spaci
   $('start').addEventListener('click', function(){ state.assigned = []; startRound(0); });
   $('pause').addEventListener('click', function(){ state.running ? pauseTimer() : startTimer(); });
   $('next').addEventListener('click', advance);
+  // Skip: tap once to arm, tap again within 4 seconds to confirm (no pop-up needed)
+  var skipTimer = null;
+  function resetSkip(){
+    clearTimeout(skipTimer); skipTimer = null;
+    $('skip').textContent = 'Skip this round';
+  }
   $('skip').addEventListener('click', function(){
-    if (confirm('Skip this round? You will lose the rest of the timer.')) { clearInterval(state.timer); advance(); }
+    if (skipTimer){ resetSkip(); clearInterval(state.timer); advance(); }
+    else {
+      $('skip').textContent = 'Tap again to skip';
+      skipTimer = setTimeout(resetSkip, 4000);
+    }
   });
   $('again').addEventListener('click', function(){
     document.documentElement.style.setProperty('--accent', 'var(--c3)');
