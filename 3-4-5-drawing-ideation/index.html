@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>3-4-5 Drawing Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F6FB; --card:#FFFFFF; --ink:#1B1F3B; --muted:#6A6F8C; --line:#E2E4F0;
+  --c3:#2F7BFF; --c4:#FF4F86; --c5:#F5A300; --accent:var(--c3);
+  --shadow:0 10px 30px rgba(27,31,59,.08);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#12142A;--card:#1C1F3D;--ink:#F1F2FA;--muted:#9CA1C4;--line:#2C305A;--shadow:0 10px 30px rgba(0,0,0,.35)}
+}
+:root[data-theme="dark"]{--bg:#12142A;--card:#1C1F3D;--ink:#F1F2FA;--muted:#9CA1C4;--line:#2C305A;--shadow:0 10px 30px rgba(0,0,0,.35)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:760px;margin:0 auto;padding:28px 20px 48px}
+.screen{display:none}.screen.active{display:block}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* Home */
+.hero{text-align:center;padding:24px 0 8px}
+.digits{display:flex;justify-content:center;gap:clamp(10px,4vw,26px);font-weight:800;font-size:clamp(88px,26vw,170px);line-height:.95;letter-spacing:-.04em}
+.digits span:nth-child(1){color:var(--c3)}.digits span:nth-child(2){color:var(--c4)}.digits span:nth-child(3){color:var(--c5)}
+h1{margin:10px 0 6px;font-size:clamp(24px,5vw,32px);font-weight:800;letter-spacing:-.02em}
+.lead{margin:0 auto;max-width:480px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+.how{display:grid;gap:10px;margin:28px 0 20px;padding:0;list-style:none}
+.how li{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 16px}
+.how b{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:18px}
+.how li:nth-child(1) b{background:var(--c3)}.how li:nth-child(2) b{background:var(--c4)}.how li:nth-child(3) b{background:var(--c5)}
+.how span{color:var(--muted);font-size:15px}.how strong{display:block;color:var(--ink);font-size:16px}
+.label{display:block;font-weight:600;margin-bottom:12px}
+.players{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.players button{border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:14px;padding:14px 0;font-size:22px;font-weight:800;transition:.15s}
+.players button[aria-pressed="true"]{border-color:var(--c3);background:var(--c3);color:#fff}
+.tip{display:flex;gap:10px;align-items:flex-start;margin:20px 0;padding:12px 14px;border-radius:14px;background:rgba(245,163,0,.14);font-size:15px}
+.btn{width:100%;border:0;border-radius:16px;padding:16px 20px;font-size:18px;font-weight:800;background:var(--ink);color:var(--bg);transition:transform .1s,opacity .2s}
+.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.btn.round{background:var(--accent);color:#fff}
+
+/* Round */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.steps{display:flex;gap:8px;flex:1}
+.step{flex:1;height:8px;border-radius:99px;background:var(--line);transition:.3s}
+.step.done{background:var(--ink);opacity:.35}
+.step.now{background:var(--accent)}
+.badge{font-weight:800;font-size:15px;color:var(--accent);white-space:nowrap}
+.timewrap{display:flex;justify-content:center;margin:6px 0 4px}
+.ring{position:relative;width:min(230px,62vw);aspect-ratio:1}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .bg{stroke:var(--line)}
+.ring .fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .3s linear}
+.time{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(42px,12vw,58px);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.time.done{color:var(--accent)}
+.controls{display:flex;justify-content:center;margin:14px 0 22px}
+.ghost{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:10px 22px;font-weight:600}
+.prompts{display:grid;gap:12px;margin-bottom:22px}
+.prompt{background:var(--card);border:1px solid var(--line);border-left:8px solid var(--accent);border-radius:18px;padding:16px 20px;box-shadow:var(--shadow)}
+.prompt small{display:block;color:var(--muted);font-weight:600;margin-bottom:2px}
+.prompt p{margin:0;font-weight:800;font-size:clamp(22px,5.4vw,32px);line-height:1.15;letter-spacing:-.02em}
+.prompts.solo .prompt{padding:26px 24px}
+.prompts.solo .prompt p{font-size:clamp(28px,7.5vw,44px)}
+.skip{display:block;margin:16px auto 0;background:none;border:0;color:var(--muted);font-size:13px;text-decoration:underline;opacity:.65}
+.skip:hover{opacity:1}
+
+/* Finish */
+.finish h2{font-size:clamp(28px,6vw,38px);margin:8px 0 4px;letter-spacing:-.02em}
+.sum{display:grid;gap:12px;margin:22px 0}
+.sum .card{padding:18px 20px}
+.sum h3{margin:0 0 10px;font-size:17px}
+.sum ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.sum li{display:flex;gap:10px;align-items:baseline}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;transform:translateY(1px)}
+.theme{position:fixed;right:max(14px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+
+  <!-- HOME -->
+  <section class="screen active" id="home">
+    <div class="hero">
+      <div class="digits" aria-hidden="true"><span>3</span><span>4</span><span>5</span></div>
+      <h1>The 3-4-5 Drawing Challenge</h1>
+      <p class="lead">Three rounds, one drawing. Each round adds a new twist to the same piece.</p>
+    </div>
+    <ol class="how">
+      <li><b>3</b><div><strong>3 minutes: the idea</strong><span>Start your drawing from a random prompt.</span></div></li>
+      <li><b>4</b><div><strong>4 minutes: the add-on</strong><span>Change or extend the same drawing.</span></div></li>
+      <li><b>5</b><div><strong>5 minutes: the final twist</strong><span>Finish it with one last challenge.</span></div></li>
+    </ol>
+    <div class="card">
+      <span class="label" id="plabel">How many players?</span>
+      <div class="players" role="group" aria-labelledby="plabel" id="players"></div>
+      <div class="tip"><span aria-hidden="true">✏️</span><span>Get your pen and paper ready before you start. Each player draws on their own sheet.</span></div>
+      <button class="btn" id="start">Start drawing</button>
+    </div>
+  </section>
+
+  <!-- ROUND -->
+  <section class="screen" id="round">
+    <div class="top">
+      <div class="steps" aria-hidden="true"><div class="step"></div><div class="step"></div><div class="step"></div></div>
+      <div class="badge" id="badge"></div>
+    </div>
+    <div class="timewrap"><div class="ring">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="54"/><circle class="fg" id="fg" cx="60" cy="60" r="54"/></svg>
+      <div class="time" id="time" role="timer" aria-live="off">3:00</div>
+    </div></div>
+    <div class="controls"><button class="ghost" id="pause">Pause</button></div>
+    <div class="prompts" id="prompts"></div>
+    <button class="btn round" id="next" disabled>Next round</button>
+    <button class="skip" id="skip">Skip this round</button>
+  </section>
+
+  <!-- FINISH -->
+  <section class="screen finish" id="finish">
+    <div class="hero">
+      <h2>Time to put the pen down!</h2>
+      <p class="lead">Show your drawings to each other. Here is what everyone had to include.</p>
+    </div>
+    <div class="sum" id="sum"></div>
+    <button class="btn" id="again">Play again</button>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  var ROUNDS = [
+    { minutes:3, color:'var(--c3)', label:'Round 1 · 3 min', items:[
+      'Draw a bird','Draw a queen/princess','Draw a job','Draw a monster','Draw a hybrid between two things/creatures',
+      'Draw something in motion','Draw something chunky','Draw something cute','Draw a feeling in human form','Draw a robot with a purpose'] },
+    { minutes:4, color:'var(--c4)', label:'Round 2 · 4 min', items:[
+      'Make the drawing be office-related','Add something melted to your drawing','Add something that is trendy','Add a lot of jewelry',
+      'Add a lot of tattoos','Add natural-elements to the drawing','Make the drawing more hairy','Add a hat to your drawing'] },
+    { minutes:5, color:'var(--c5)', label:'Round 3 · 5 min', items:[
+      'Make the drawing more scary','Make the drawing include numbers','Add something totally opposite to the drawing',
+      'Use some triangles in the drawing','Use some ellipses in the drawing','Give your drawing a companion'] }
+  ];
+  var CIRC = 2 * Math.PI * 54;
+  var $ = function(id){ return document.getElementById(id); };
+  var state = { players:1, round:0, assigned:[], remaining:0, total:0, endAt:0, running:false, timer:null };
+
+  function show(id){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.toggle('active', s.id === id); });
+    window.scrollTo(0,0);
+  }
+  function shuffle(a){
+    a = a.slice();
+    for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function fmt(ms){
+    var s = Math.max(0, Math.ceil(ms/1000));
+    return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+  }
+
+  // Player selection
+  var pWrap = $('players');
+  for (var n=1;n<=4;n++){
+    (function(n){
+      var b = document.createElement('button');
+      b.textContent = n; b.setAttribute('aria-label', n + (n===1?' player':' players'));
+      b.setAttribute('aria-pressed', n===1 ? 'true':'false');
+      b.addEventListener('click', function(){
+        state.players = n;
+        pWrap.querySelectorAll('button').forEach(function(x,i){ x.setAttribute('aria-pressed', String(i+1===n)); });
+      });
+      pWrap.appendChild(b);
+    })(n);
+  }
+
+  // Beep when the timer ends
+  function beep(){
+    try {
+      var C = window.AudioContext || window.webkitAudioContext; if(!C) return;
+      var ctx = new C();
+      [0,.22,.44].forEach(function(d){
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.frequency.value = 880; o.connect(g); g.connect(ctx.destination);
+        g.gain.setValueAtTime(.15, ctx.currentTime + d);
+        g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + d + .18);
+        o.start(ctx.currentTime + d); o.stop(ctx.currentTime + d + .2);
+      });
+    } catch(e){}
+  }
+
+  function render(){
+    var left = state.running ? Math.max(0, state.endAt - Date.now()) : state.remaining;
+    var t = $('time');
+    t.textContent = fmt(left);
+    t.classList.toggle('done', left <= 0);
+    $('fg').style.strokeDashoffset = CIRC * (1 - left / state.total);
+    return left;
+  }
+  function tick(){
+    var left = render();
+    if (left <= 0 && state.running){
+      state.running = false; state.remaining = 0;
+      clearInterval(state.timer);
+      $('pause').disabled = true; $('pause').style.opacity = .4;
+      $('next').disabled = false;
+      $('skip').style.display = 'none';
+      beep();
+      if (navigator.vibrate) { try{ navigator.vibrate([200,100,200]); }catch(e){} }
+    }
+  }
+  function startTimer(){
+    state.endAt = Date.now() + state.remaining;
+    state.running = true;
+    clearInterval(state.timer);
+    state.timer = setInterval(tick, 250);
+    $('pause').textContent = 'Pause';
+    tick();
+  }
+  function pauseTimer(){
+    state.remaining = Math.max(0, state.endAt - Date.now());
+    state.running = false;
+    clearInterval(state.timer);
+    $('pause').textContent = 'Resume';
+    render();
+  }
+
+  function startRound(i){
+    state.round = i;
+    var r = ROUNDS[i];
+    document.documentElement.style.setProperty('--accent', r.color);
+    document.querySelectorAll('.step').forEach(function(s,k){
+      s.className = 'step' + (k<i ? ' done' : k===i ? ' now' : '');
+    });
+    $('badge').textContent = r.label;
+    // different prompt per player within a round
+    var picks = shuffle(r.items).slice(0, state.players);
+    state.assigned[i] = picks;
+    var box = $('prompts');
+    box.className = 'prompts' + (state.players===1 ? ' solo' : '');
+    box.innerHTML = '';
+    picks.forEach(function(text, p){
+      var d = document.createElement('div'); d.className = 'prompt';
+      if (state.players > 1){ var sm = document.createElement('small'); sm.textContent = 'Player ' + (p+1); d.appendChild(sm); }
+      var pp = document.createElement('p'); pp.textContent = text; d.appendChild(pp);
+      box.appendChild(d);
+    });
+    $('next').textContent = i === 2 ? 'See all prompts' : 'Next round';
+    $('next').disabled = true;
+    $('skip').style.display = '';
+    $('pause').disabled = false; $('pause').style.opacity = 1;
+    state.total = state.remaining = r.minutes * 60 * 1000;
+    $('fg').style.strokeDasharray = CIRC;
+    show('round');
+    startTimer();
+  }
+
+  function finish(){
+    clearInterval(state.timer);
+    document.documentElement.style.setProperty('--accent', 'var(--c3)');
+    var sum = $('sum'); sum.innerHTML = '';
+    for (var p=0;p<state.players;p++){
+      var c = document.createElement('div'); c.className = 'card';
+      var h = document.createElement('h3');
+      h.textContent = state.players === 1 ? 'Your challenges' : 'Player ' + (p+1);
+      var ul = document.createElement('ul');
+      ROUNDS.forEach(function(r,i){
+        var li = document.createElement('li');
+        var dot = document.createElement('span'); dot.className='dot'; dot.style.background = r.color;
+        var tx = document.createElement('span'); tx.textContent = state.assigned[i][p];
+        li.appendChild(dot); li.appendChild(tx); ul.appendChild(li);
+      });
+      c.appendChild(h); c.appendChild(ul); sum.appendChild(c);
+    }
+    show('finish');
+  }
+
+  function advance(){
+    if (state.round < 2) startRound(state.round + 1); else finish();
+  }
+
+  $('start').addEventListener('click', function(){ state.assigned = []; startRound(0); });
+  $('pause').addEventListener('click', function(){ state.running ? pauseTimer() : startTimer(); });
+  $('next').addEventListener('click', advance);
+  $('skip').addEventListener('click', function(){
+    if (confirm('Skip this round? You will lose the rest of the timer.')) { clearInterval(state.timer); advance(); }
+  });
+  $('again').addEventListener('click', function(){
+    document.documentElement.style.setProperty('--accent', 'var(--c3)');
+    show('home');
+  });
+  // Keep the time accurate when the tab returns to focus
+  document.addEventListener('visibilitychange', function(){ if (state.running) tick(); });
+})();
+</script>
+</body>
+</html>
