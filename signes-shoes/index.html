@@ -9,13 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --butter:#FFF4BF;
-  --cream:#FFFBE6;
-  --orange:#FF8B3D;
-  --matcha:#9CC26B;
-  --matcha-deep:#5E8C3A;
-  --ink:#3A2C1A;
-  --card:#FFFDF2;
+  --butter:#FFFBEA;
+  --cream:#FFFEF7;
+  --orange:#355231;
+  --matcha:#BBD39A;
+  --matcha-deep:#627f4a;
+  --matcha-tint:#EEF4E2;
+  --ink:#4A4332;
+  --line:#D9DEC6;
+  --card:#FFFEF8;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -28,8 +30,8 @@ body{
   position:relative;
 }
 body::before,body::after{content:"";position:fixed;z-index:0;border-radius:50%;pointer-events:none}
-body::before{width:520px;height:520px;background:var(--matcha);opacity:.28;top:-160px;right:-140px}
-body::after{width:420px;height:420px;background:var(--orange);opacity:.2;bottom:-140px;left:-120px}
+body::before{width:520px;height:520px;background:var(--matcha);opacity:.18;top:-180px;right:-150px}
+body::after{width:380px;height:380px;background:var(--orange);opacity:.07;bottom:-150px;left:-120px}
 
 header{position:relative;z-index:1;text-align:center;padding:72px 20px 36px}
 h1{
@@ -39,7 +41,7 @@ h1{
   line-height:.95;
   letter-spacing:-.03em;
 }
-h1 .s{display:inline-block;color:var(--orange);transform:rotate(-6deg);font-style:italic}
+h1 .s{display:inline-block;color:var(--matcha-deep);transform:rotate(-6deg);font-style:italic}
 h1 .shoes{
   display:inline-block;
   background:var(--matcha);
@@ -49,17 +51,17 @@ h1 .shoes{
   transform:rotate(2deg);
   margin-left:.08em;
 }
-.tagline{margin:26px auto 0;max-width:34ch;font-size:1.1rem;font-weight:500}
+.tagline{margin:26px auto 0;max-width:34ch;font-size:1.1rem;font-weight:500;opacity:.85}
 .sticker{
   position:absolute;top:36px;right:max(4vw,16px);
-  width:112px;height:112px;border-radius:50%;
+  width:104px;height:104px;border-radius:50%;
   background:var(--orange);color:var(--cream);
   display:grid;place-items:center;text-align:center;
   font-family:'Fraunces',Georgia,serif;font-weight:600;line-height:1.1;
   transform:rotate(12deg);
-  box-shadow:0 0 0 5px var(--butter),0 0 0 8px var(--orange);
+  box-shadow:0 0 0 4px var(--butter),0 0 0 6px var(--orange);
 }
-.sticker b{display:block;font-size:2.4rem;font-weight:900}
+.sticker b{display:block;font-size:2.2rem;font-weight:900}
 
 main{
   position:relative;z-index:1;
@@ -76,15 +78,15 @@ main{
   background:var(--card);
   border-radius:28px 28px 28px 8px;
   padding:14px 14px 20px;
-  border:3px solid var(--ink);
-  box-shadow:7px 7px 0 var(--accent);
+  border:2px solid var(--line);
+  box-shadow:6px 6px 0 var(--matcha);
   transition:transform .25s ease, box-shadow .25s ease;
 }
-.pair:nth-child(odd){transform:rotate(-.7deg)}
-.pair:nth-child(even){transform:rotate(.7deg)}
-.pair:hover{transform:rotate(0) translateY(-4px);box-shadow:11px 11px 0 var(--accent)}
+.pair:nth-child(odd){transform:rotate(-.6deg)}
+.pair:nth-child(even){transform:rotate(.6deg)}
+.pair:hover{transform:rotate(0) translateY(-4px);box-shadow:10px 10px 0 var(--matcha)}
 
-.stage{display:flex;align-items:center;gap:6px;background:var(--tint);border-radius:20px;padding:10px 6px}
+.stage{display:flex;align-items:center;gap:6px;background:var(--matcha-tint);border-radius:20px;padding:10px 6px}
 .view{flex:1;aspect-ratio:1/1;min-width:0;display:grid;place-items:center}
 .view img{
   display:block;
@@ -94,28 +96,24 @@ main{
   user-select:none;-webkit-user-drag:none;
 }
 .arrow{
-  flex:none;width:42px;height:42px;border-radius:50%;
-  border:2.5px solid var(--ink);
-  background:var(--cream);color:var(--ink);
-  font-size:1.2rem;font-weight:700;line-height:1;
+  flex:none;width:40px;height:40px;border-radius:50%;
+  border:2px solid var(--matcha-deep);
+  background:var(--cream);color:var(--matcha-deep);
+  font-size:1.15rem;font-weight:700;line-height:1;
   cursor:pointer;display:grid;place-items:center;
   transition:background .15s,color .15s,transform .15s;
   touch-action:manipulation;
 }
-.arrow:hover,.arrow:focus-visible{background:var(--accent);color:var(--cream);transform:scale(1.14);outline:none}
-.arrow:focus-visible{box-shadow:0 0 0 3px var(--ink)}
+.arrow:hover,.arrow:focus-visible{background:var(--matcha-deep);color:var(--cream);transform:scale(1.12);outline:none}
+.arrow:focus-visible{box-shadow:0 0 0 3px var(--matcha)}
 
 .name{margin-top:16px;padding:0 6px;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.45rem;line-height:1.1}
-.angle{
+.category{
   display:inline-block;margin:10px 6px 0;padding:3px 12px;border-radius:99px;
-  background:var(--accent);color:var(--cream);font-size:.85rem;font-weight:700;
+  background:var(--matcha-tint);color:var(--matcha-deep);font-size:.85rem;font-weight:700;
 }
 
-.c-orange{--accent:var(--orange);--tint:#FFE2C4}
-.c-matcha{--accent:var(--matcha-deep);--tint:#E3F0CE}
-.c-yellow{--accent:#E9B100;--tint:#FFF0A8}
-
-footer{position:relative;z-index:1;text-align:center;padding:0 20px 50px;font-weight:500}
+footer{position:relative;z-index:1;text-align:center;padding:0 20px 50px;font-weight:500;opacity:.8}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -132,41 +130,41 @@ footer{position:relative;z-index:1;text-align:center;padding:0 20px 50px;font-we
 <footer>Made with love and a lot of laces.</footer>
 
 <script>
-// Change the names here whenever you like.
+// Change the names and categories here whenever you like.
+// The order matches Shoe-1 to Shoe-8.
 const shoes = [
-  "Sunny Sneakers",
-  "Matcha Mocs",
-  "Marmalade Mules",
-  "Lemon Loafers",
-  "Cloud Walkers",
-  "Orange Zest Boots",
-  "Fern Flats",
-  "Butter Trainers"
+  { name: "Sunny Sneakers",    category: "Sandals with heel" },
+  { name: "Matcha Mocs",       category: "Slippers" },
+  { name: "Marmalade Mules",   category: "Sport-ballerinas" },
+  { name: "Lemon Loafers",     category: "Plateaupumps" },
+  { name: "Cloud Walkers",     category: "Heels" },
+  { name: "Orange Zest Boots", category: "Everyday boots" },
+  { name: "Fern Flats",        category: "Ballerinas" },
+  { name: "Butter Trainers",   category: "Boots with heel" }
 ];
 
-const colors = ["c-orange","c-matcha","c-yellow"];
 const gallery = document.getElementById("gallery");
 document.getElementById("count").textContent = shoes.length;
 
-shoes.forEach((name, i) => {
+shoes.forEach((shoe, i) => {
   const n = i + 1;
+  const name = shoe.name;
   const src = a => `images/Shoe-${n}-${a}.png`;
 
   const card = document.createElement("article");
-  card.className = "pair " + colors[i % colors.length];
+  card.className = "pair";
   card.innerHTML = `
     <div class="stage">
       <button class="arrow" data-angle="left" aria-label="Show left side of ${name}">&#8592;</button>
-      <div class="view"><img src="${src("center")}" alt="${name}"></div>
+      <div class="view"><img src="${src("center")}" alt="${name} (${shoe.category})"></div>
       <button class="arrow" data-angle="right" aria-label="Show right side of ${name}">&#8594;</button>
     </div>
     <h2 class="name">${name}</h2>
-    <span class="angle">Center view</span>`;
+    <span class="category">${shoe.category}</span>`;
   gallery.appendChild(card);
 
   const img = card.querySelector("img");
-  const label = card.querySelector(".angle");
-  const set = a => { img.src = src(a); label.textContent = a[0].toUpperCase() + a.slice(1) + " view"; };
+  const set = a => { img.src = src(a); };
 
   // preload so the swap is instant
   ["left","right"].forEach(a => { new Image().src = src(a); });
