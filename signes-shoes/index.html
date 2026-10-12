@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signe's Shoes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --butter:#FFF4BF;
+  --cream:#FFFBE6;
+  --orange:#FF8B3D;
+  --matcha:#9CC26B;
+  --matcha-deep:#5E8C3A;
+  --ink:#3A2C1A;
+  --card:#FFFDF2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--butter);
+  color:var(--ink);
+  font-family:'DM Sans',system-ui,sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+body::before,body::after{content:"";position:fixed;z-index:0;border-radius:50%;pointer-events:none}
+body::before{width:520px;height:520px;background:var(--matcha);opacity:.28;top:-160px;right:-140px}
+body::after{width:420px;height:420px;background:var(--orange);opacity:.2;bottom:-140px;left:-120px}
+
+header{position:relative;z-index:1;text-align:center;padding:72px 20px 36px}
+h1{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:900;
+  font-size:clamp(3rem,10vw,7.5rem);
+  line-height:.95;
+  letter-spacing:-.03em;
+}
+h1 .s{display:inline-block;color:var(--orange);transform:rotate(-6deg);font-style:italic}
+h1 .shoes{
+  display:inline-block;
+  background:var(--matcha);
+  color:var(--cream);
+  padding:0 .22em .06em;
+  border-radius:.25em;
+  transform:rotate(2deg);
+  margin-left:.08em;
+}
+.tagline{margin:26px auto 0;max-width:34ch;font-size:1.1rem;font-weight:500}
+.sticker{
+  position:absolute;top:36px;right:max(4vw,16px);
+  width:112px;height:112px;border-radius:50%;
+  background:var(--orange);color:var(--cream);
+  display:grid;place-items:center;text-align:center;
+  font-family:'Fraunces',Georgia,serif;font-weight:600;line-height:1.1;
+  transform:rotate(12deg);
+  box-shadow:0 0 0 5px var(--butter),0 0 0 8px var(--orange);
+}
+.sticker b{display:block;font-size:2.4rem;font-weight:900}
+
+main{
+  position:relative;z-index:1;
+  max-width:1400px;margin:0 auto;
+  padding:20px clamp(16px,4vw,48px) 90px;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:34px 28px;
+}
+@media (max-width:1100px){main{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:800px){main{grid-template-columns:repeat(2,1fr);gap:26px 16px}}
+@media (max-width:480px){main{grid-template-columns:1fr}.sticker{display:none}}
+
+.pair{
+  background:var(--card);
+  border-radius:28px 28px 28px 8px;
+  padding:14px 14px 20px;
+  border:3px solid var(--ink);
+  box-shadow:7px 7px 0 var(--accent);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.pair:nth-child(odd){transform:rotate(-.7deg)}
+.pair:nth-child(even){transform:rotate(.7deg)}
+.pair:hover{transform:rotate(0) translateY(-4px);box-shadow:11px 11px 0 var(--accent)}
+
+.stage{display:flex;align-items:center;gap:6px;background:var(--tint);border-radius:20px;padding:10px 6px}
+.view{flex:1;aspect-ratio:1/1;min-width:0;display:grid;place-items:center}
+.view img{
+  display:block;
+  max-width:100%;max-height:100%;
+  width:auto;height:auto;
+  object-fit:contain;
+  user-select:none;-webkit-user-drag:none;
+}
+.arrow{
+  flex:none;width:42px;height:42px;border-radius:50%;
+  border:2.5px solid var(--ink);
+  background:var(--cream);color:var(--ink);
+  font-size:1.2rem;font-weight:700;line-height:1;
+  cursor:pointer;display:grid;place-items:center;
+  transition:background .15s,color .15s,transform .15s;
+  touch-action:manipulation;
+}
+.arrow:hover,.arrow:focus-visible{background:var(--accent);color:var(--cream);transform:scale(1.14);outline:none}
+.arrow:focus-visible{box-shadow:0 0 0 3px var(--ink)}
+
+.name{margin-top:16px;padding:0 6px;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.45rem;line-height:1.1}
+.angle{
+  display:inline-block;margin:10px 6px 0;padding:3px 12px;border-radius:99px;
+  background:var(--accent);color:var(--cream);font-size:.85rem;font-weight:700;
+}
+
+.c-orange{--accent:var(--orange);--tint:#FFE2C4}
+.c-matcha{--accent:var(--matcha-deep);--tint:#E3F0CE}
+.c-yellow{--accent:#E9B100;--tint:#FFF0A8}
+
+footer{position:relative;z-index:1;text-align:center;padding:0 20px 50px;font-weight:500}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="sticker"><span><b id="count">8</b>pairs</span></div>
+  <h1><span class="s">Signe's</span> <span class="shoes">Shoes</span></h1>
+  <p class="tagline">My whole shoe collection, one pair at a time. Hover the arrows to walk around each pair.</p>
+</header>
+
+<main id="gallery"></main>
+
+<footer>Made with love and a lot of laces.</footer>
+
+<script>
+// Change the names here whenever you like.
+const shoes = [
+  "Sunny Sneakers",
+  "Matcha Mocs",
+  "Marmalade Mules",
+  "Lemon Loafers",
+  "Cloud Walkers",
+  "Orange Zest Boots",
+  "Fern Flats",
+  "Butter Trainers"
+];
+
+const colors = ["c-orange","c-matcha","c-yellow"];
+const gallery = document.getElementById("gallery");
+document.getElementById("count").textContent = shoes.length;
+
+shoes.forEach((name, i) => {
+  const n = i + 1;
+  const src = a => `images/Shoe-${n}-${a}.png`;
+
+  const card = document.createElement("article");
+  card.className = "pair " + colors[i % colors.length];
+  card.innerHTML = `
+    <div class="stage">
+      <button class="arrow" data-angle="left" aria-label="Show left side of ${name}">&#8592;</button>
+      <div class="view"><img src="${src("center")}" alt="${name}"></div>
+      <button class="arrow" data-angle="right" aria-label="Show right side of ${name}">&#8594;</button>
+    </div>
+    <h2 class="name">${name}</h2>
+    <span class="angle">Center view</span>`;
+  gallery.appendChild(card);
+
+  const img = card.querySelector("img");
+  const label = card.querySelector(".angle");
+  const set = a => { img.src = src(a); label.textContent = a[0].toUpperCase() + a.slice(1) + " view"; };
+
+  // preload so the swap is instant
+  ["left","right"].forEach(a => { new Image().src = src(a); });
+
+  card.querySelectorAll(".arrow").forEach(btn => {
+    const a = btn.dataset.angle;
+    btn.addEventListener("pointerenter", () => set(a));
+    btn.addEventListener("pointerleave", () => set("center"));
+    btn.addEventListener("focus", () => set(a));
+    btn.addEventListener("blur", () => set("center"));
+  });
+});
+</script>
+</body>
+</html>
