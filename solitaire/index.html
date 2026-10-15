@@ -18,31 +18,42 @@
         .card-transition {
             transition: transform 0.2s ease, box-shadow 0.2s ease, left 0.2s ease, top 0.2s ease;
         }
-        /* Light yellow cream background effect */
-        .cream-bg {
-            background: linear-gradient(135deg, #fef9e7 0%, #fef3c7 100%);
+        /* Purple, Orange, and Blue background effect */
+        .custom-theme-bg {
+            background: linear-gradient(135deg, #f3e8ff 0%, #ffedd5 50%, #e0f2fe 100%);
+        }
+        /* Fixed pile sizing matching card dimensions exactly */
+        .card-slot {
+            width: 5rem;
+            height: 8rem;
+        }
+        @media (min-width: 640px) {
+            .card-slot {
+                width: 6rem;
+                height: 9rem;
+            }
         }
     </style>
 </head>
-<body class="cream-bg h-full text-stone-800 flex flex-col justify-between overflow-x-hidden">
+<body class="custom-theme-bg h-full text-slate-800 flex flex-col justify-between overflow-x-hidden">
 
     <!-- Header / Control Panel -->
-    <header class="w-full max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4 bg-white/70 backdrop-blur-md rounded-2xl my-4 shadow-sm border border-amber-200/60">
+    <header class="w-full max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4 bg-white/70 backdrop-blur-md rounded-2xl my-4 shadow-sm border border-purple-200/60">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-xl shadow-inner border border-amber-200 text-amber-800">♠</div>
+            <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-xl shadow-inner border border-orange-200 text-orange-700">♠</div>
             <div>
-                <h1 class="text-xl font-bold tracking-wide text-stone-900">Solitaire</h1>
-                <p class="text-xs text-stone-500">Relaxing Klondike Experience</p>
+                <h1 class="text-xl font-bold tracking-wide text-slate-900">Solitaire</h1>
+                <p class="text-xs text-slate-500">Vibrant Purple, Orange & Blue Experience</p>
             </div>
         </div>
 
         <!-- Actions -->
         <div class="flex items-center gap-2">
-            <button id="btn-undo" onclick="undoMove()" title="Undo Move" class="px-3 py-2 bg-white hover:bg-amber-100/50 active:scale-95 transition rounded-xl text-sm font-medium flex items-center gap-1.5 border border-amber-200 text-stone-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
+            <button id="btn-undo" onclick="undoMove()" title="Undo Move" class="px-3 py-2 bg-white hover:bg-orange-50 active:scale-95 transition rounded-xl text-sm font-medium flex items-center gap-1.5 border border-orange-200 text-slate-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
                 <span>↩</span> Undo
             </button>
-            <button onclick="startNewGame()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 active:scale-95 transition rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm text-white border border-amber-500/50">
-                <span>✨</span> New Game
+            <button onclick="startNewGame()" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-500 hover:to-orange-400 active:scale-95 transition rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm text-white border border-purple-500/50">
+                <span></span> New Game
             </button>
         </div>
     </header>
@@ -51,62 +62,59 @@
     <main class="w-full max-w-6xl mx-auto px-4 flex-1 flex flex-col gap-8 pb-12">
         
         <!-- Top Row: Stock, Waste, and Foundations -->
-        <div class="grid grid-cols-7 gap-3 sm:gap-4 h-36">
+        <div class="grid grid-cols-7 gap-3 sm:gap-4 h-36 items-center">
             <!-- Stock / Draw Pile -->
-            <div id="stock-pile" onclick="handleStockClick()" class="relative rounded-xl border-2 border-dashed border-amber-300 bg-amber-50/30 flex items-center justify-center cursor-pointer hover:border-amber-400 transition group">
-                <span class="text-xs text-stone-400 group-hover:text-stone-600">Draw</span>
+            <div id="stock-pile" onclick="handleStockClick()" class="card-slot relative rounded-xl border-2 border-dashed border-purple-300 bg-purple-50/30 flex items-center justify-center cursor-pointer hover:border-purple-400 transition group">
+                <span class="text-xs text-slate-400 group-hover:text-slate-600">Draw</span>
             </div>
 
             <!-- Waste Pile -->
-            <div id="waste-pile" class="relative rounded-xl border-2 border-amber-200/60 bg-amber-50/10 flex items-center justify-center">
-                <span class="text-xs text-stone-300">Waste</span>
+            <div id="waste-pile" class="card-slot relative rounded-xl border-2 border-sky-200/60 bg-sky-50/10 flex items-center justify-center">
+                <span class="text-xs text-slate-300">Waste</span>
             </div>
 
             <!-- Spacer / Gap -->
-            <div></div>
+            <div class="card-slot"></div>
 
             <!-- Foundations (4 piles) -->
-            <div id="foundation-0" class="foundation-pile relative rounded-xl border-2 border-amber-200/70 bg-amber-50/20 flex items-center justify-center" data-index="0"></div>
-            <div id="foundation-1" class="foundation-pile relative rounded-xl border-2 border-amber-200/70 bg-amber-50/20 flex items-center justify-center" data-index="1"></div>
-            <div id="foundation-2" class="foundation-pile relative rounded-xl border-2 border-amber-200/70 bg-amber-50/20 flex items-center justify-center" data-index="2"></div>
-            <div id="foundation-3" class="foundation-pile relative rounded-xl border-2 border-amber-200/70 bg-amber-50/20 flex items-center justify-center" data-index="3"></div>
+            <div id="foundation-0" class="foundation-pile card-slot relative rounded-xl border-2 border-purple-200/70 bg-purple-50/20 flex items-center justify-center" data-index="0"></div>
+            <div id="foundation-1" class="foundation-pile card-slot relative rounded-xl border-2 border-orange-200/70 bg-orange-50/20 flex items-center justify-center" data-index="1"></div>
+            <div id="foundation-2" class="foundation-pile card-slot relative rounded-xl border-2 border-sky-200/70 bg-sky-50/20 flex items-center justify-center" data-index="2"></div>
+            <div id="foundation-3" class="foundation-pile card-slot relative rounded-xl border-2 border-purple-200/70 bg-purple-50/20 flex items-center justify-center" data-index="3"></div>
         </div>
 
         <!-- Bottom Row: Tableau Piles -->
-        <div class="grid grid-cols-7 gap-3 sm:gap-4 flex-1 min-h-[380px]">
-            <div id="tableau-0" class="tableau-pile relative" data-index="0"></div>
-            <div id="tableau-1" class="tableau-pile relative" data-index="1"></div>
-            <div id="tableau-2" class="tableau-pile relative" data-index="2"></div>
-            <div id="tableau-3" class="tableau-pile relative" data-index="3"></div>
-            <div id="tableau-4" class="tableau-pile relative" data-index="4"></div>
-            <div id="tableau-5" class="tableau-pile relative" data-index="5"></div>
-            <div id="tableau-6" class="tableau-pile relative" data-index="6"></div>
+        <div class="grid grid-cols-7 gap-3 sm:gap-4 flex-1 min-h-[420px]">
+            <div id="tableau-0" class="tableau-pile card-slot relative" data-index="0"></div>
+            <div id="tableau-1" class="tableau-pile card-slot relative" data-index="1"></div>
+            <div id="tableau-2" class="tableau-pile card-slot relative" data-index="2"></div>
+            <div id="tableau-3" class="tableau-pile card-slot relative" data-index="3"></div>
+            <div id="tableau-4" class="tableau-pile card-slot relative" data-index="4"></div>
+            <div id="tableau-5" class="tableau-pile card-slot relative" data-index="5"></div>
+            <div id="tableau-6" class="tableau-pile card-slot relative" data-index="6"></div>
         </div>
     </main>
 
     <!-- Stuck / No More Moves Notice Banner -->
-    <div id="stuck-notice" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-amber-100 border border-amber-300 text-amber-900 px-6 py-3 rounded-2xl shadow-lg hidden items-center gap-3 z-40 animate-bounce duration-1000">
+    <div id="stuck-notice" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-orange-100 border border-orange-300 text-orange-900 px-6 py-3 rounded-2xl shadow-lg hidden items-center gap-3 z-40 animate-bounce duration-1000">
         <span class="text-lg">💡</span>
         <div class="text-sm font-medium">No more available moves! Try using <span class="font-bold underline">Undo</span> or start a <span class="font-bold underline">New Game</span>.</div>
-        <button onclick="dismissStuckNotice()" class="ml-2 text-stone-400 hover:text-stone-700 font-bold text-base">&times;</button>
+        <button onclick="dismissStuckNotice()" class="ml-2 text-slate-400 hover:text-slate-700 font-bold text-base">&times;</button>
     </div>
 
     <!-- Win Modal Overlay -->
-    <div id="win-modal" class="fixed inset-0 bg-stone-900/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white border border-amber-200 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300">
-            <div class="w-16 h-16 bg-amber-100 border border-amber-200 rounded-full flex items-center justify-center text-3xl">🏆</div>
-            <h2 class="text-2xl font-bold text-amber-800">Wonderful Victory!</h2>
-            <p class="text-sm text-stone-600">You completed the game with calmness and focus. Ready for another round?</p>
-            <button onclick="startNewGame(); closeWinModal();" class="w-full py-3 bg-amber-600 hover:bg-amber-500 font-semibold text-white rounded-xl shadow-md transition mt-2">
+    <div id="win-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white border border-purple-200 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300">
+            <div class="w-16 h-16 bg-purple-100 border border-purple-200 rounded-full flex items-center justify-center text-3xl">🏆</div>
+            <h2 class="text-2xl font-bold text-purple-800">Wonderful Victory!</h2>
+            <p class="text-sm text-slate-600">You completed the game with style and color. Ready for another round?</p>
+            <button onclick="startNewGame(); closeWinModal();" class="w-full py-3 bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-500 hover:to-orange-400 font-semibold text-white rounded-xl shadow-md transition mt-2">
                 Play Again
             </button>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="w-full text-center py-4 text-xs text-stone-500">
-        Designed for calm focus in warm tones
-    </footer>
+    
 
     <!-- Game Logic -->
     <script>
@@ -115,6 +123,7 @@
         const SYMBOLS = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
         const COLORS = { hearts: 'red', diamonds: 'red', clubs: 'black', spades: 'black' };
         const RANK_NAMES = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K' };
+        const SUIT_PREFIX = { hearts: 'H', diamonds: 'D', clubs: 'C', spades: 'S' };
 
         // Game State Variables
         let deck = [];
@@ -249,9 +258,9 @@
             let stockEl = document.getElementById('stock-pile');
             stockEl.innerHTML = '';
             if (stock.length > 0) {
-                stockEl.innerHTML = `<div class="w-full h-full bg-amber-100 rounded-xl border border-amber-300 shadow-sm flex items-center justify-center text-amber-700 font-bold text-lg select-none">🂠</div>`;
+                stockEl.innerHTML = `<div class="w-full h-full bg-purple-100 rounded-xl border border-purple-300 shadow-sm flex items-center justify-center text-purple-700 font-bold text-lg select-none">🂠</div>`;
             } else {
-                stockEl.innerHTML = `<span class="text-xs text-stone-400">↺</span>`;
+                stockEl.innerHTML = `<span class="text-xs text-slate-400">↺</span>`;
             }
 
             // Render Waste Pile
@@ -266,7 +275,7 @@
             // Render Foundations
             for (let i = 0; i < 4; i++) {
                 let fEl = document.getElementById(`foundation-${i}`);
-                fEl.innerHTML = `<span class="absolute text-xs text-amber-700/30">${SYMBOLS[SUITS[i]]}</span>`;
+                fEl.innerHTML = `<span class="absolute text-xs text-purple-700/30">${SYMBOLS[SUITS[i]]}</span>`;
                 if (foundations[i].length > 0) {
                     let topCard = foundations[i][foundations[i].length - 1];
                     let cardDiv = createCardElement(topCard, 'foundation', i, foundations[i].length - 1);
@@ -281,7 +290,7 @@
                 let pile = tableau[i];
                 
                 if (pile.length === 0) {
-                    tEl.innerHTML = `<div class="absolute inset-0 rounded-xl border-2 border-dashed border-amber-300/40"></div>`;
+                    tEl.innerHTML = `<div class="absolute inset-0 rounded-xl border-2 border-dashed border-sky-300/40"></div>`;
                 } else {
                     pile.forEach((card, cardIndex) => {
                         let cardDiv = createCardElement(card, 'tableau', i, cardIndex);
@@ -293,32 +302,45 @@
             }
         }
 
-        // Card Element Builder with Placeholders & Illustrator styling
+        // Card Element Builder using Custom Images
         function createCardElement(card, source, pileIndex, cardIndex) {
             let el = document.createElement('div');
-            el.className = `absolute w-20 sm:w-24 h-32 sm:h-36 rounded-xl card-transition shadow-sm flex flex-col justify-between p-2 select-none ${card.faceUp ? 'bg-white text-stone-900 border border-amber-200 cursor-grab hover:shadow-md' : 'bg-gradient-to-br from-amber-100 to-amber-200 border border-amber-300 text-amber-800'}`;
+            el.className = `absolute card-slot rounded-xl card-transition shadow-sm flex flex-col justify-between select-none overflow-hidden ${card.faceUp ? 'bg-white border border-purple-200 cursor-grab hover:shadow-md' : 'bg-gradient-to-br from-purple-100 via-orange-50 to-sky-100 border border-purple-300'}`;
             el.style.zIndex = cardIndex + 1;
 
             if (card.faceUp) {
                 let rankStr = RANK_NAMES[card.value] || card.value;
-                let suitSymbol = SYMBOLS[card.suit];
-                let isRed = COLORS[card.suit] === 'red';
-                let textColor = isRed ? 'text-rose-600' : 'text-stone-800';
+                let prefix = SUIT_PREFIX[card.suit];
+                let imgPath = `images/${prefix}-${rankStr}.png`;
 
-                el.classList.add(textColor);
-                el.innerHTML = `
-                    <div class="flex justify-between items-start text-xs sm:text-sm font-bold leading-none">
-                        <span>${rankStr}</span>
-                        <span>${suitSymbol}</span>
-                    </div>
-                    <div class="self-center text-3xl sm:text-4xl my-auto opacity-90">
-                        ${suitSymbol}
-                    </div>
-                    <div class="flex justify-between items-end text-xs sm:text-sm font-bold leading-none rotate-180">
-                        <span>${rankStr}</span>
-                        <span>${suitSymbol}</span>
-                    </div>
-                `;
+                let img = document.createElement('img');
+                img.src = imgPath;
+                img.alt = `${rankStr} of ${card.suit}`;
+                img.className = 'w-full h-full object-cover rounded-xl pointer-events-none';
+                
+                // Fallback mechanism if image fails to load
+                img.onerror = function() {
+                    this.remove();
+                    let isRed = COLORS[card.suit] === 'red';
+                    let textColor = isRed ? 'text-orange-600' : 'text-slate-800';
+                    let suitSymbol = SYMBOLS[card.suit];
+                    el.className += ` p-2 ${textColor}`;
+                    el.innerHTML = `
+                        <div class="flex justify-between items-start text-xs sm:text-sm font-bold leading-none">
+                            <span>${rankStr}</span>
+                            <span>${suitSymbol}</span>
+                        </div>
+                        <div class="self-center text-3xl sm:text-4xl my-auto opacity-90">
+                            ${suitSymbol}
+                        </div>
+                        <div class="flex justify-between items-end text-xs sm:text-sm font-bold leading-none rotate-180">
+                            <span>${rankStr}</span>
+                            <span>${suitSymbol}</span>
+                        </div>
+                    `;
+                };
+
+                el.appendChild(img);
 
                 // Dragging & Click Event bindings
                 el.draggable = true;
@@ -342,7 +364,7 @@
 
             } else {
                 el.innerHTML = `
-                    <div class="w-full h-full flex items-center justify-center opacity-40 text-lg">
+                    <div class="w-full h-full flex items-center justify-center opacity-40 text-lg text-purple-800">
                         ✦
                     </div>
                 `;
@@ -512,8 +534,12 @@
             // Check all tableau face-up cards against foundations & other tableaus
             for (let srcT = 0; srcT < 7; srcT++) {
                 let pile = tableau[srcT];
-                for (let c = 0; c < pile.length; c++) {
-                    if (!pile[c].faceUp) continue;
+                let c = 0;
+                while (c < pile.length) {
+                    if (!pile[c].faceUp) {
+                        c++;
+                        continue;
+                    }
 
                     // Check foundation moves
                     for (let f = 0; f < 4; f++) {
@@ -525,6 +551,7 @@
                         if (srcT === tgtT) continue;
                         if (isValidMove('tableau', srcT, c, 'tableau', tgtT)) return;
                     }
+                    c++;
                 }
             }
 
