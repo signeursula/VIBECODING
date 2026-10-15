@@ -9,6 +9,10 @@
     <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        html {
+            /* Fallback color in case the gradient layer is not painted yet */
+            background-color: #ffedd5;
+        }
         body {
             font-family: 'Inter', sans-serif;
             user-select: none;
@@ -18,9 +22,20 @@
         .card-transition {
             transition: transform 0.2s ease, box-shadow 0.2s ease, left 0.2s ease, top 0.2s ease;
         }
-        /* Purple, Orange, and Blue background effect */
-        .custom-theme-bg {
+        /* Purple, Orange, and Blue background effect.
+            Fixed layer behind everything, so it always fills the screen, also when scrolling */
+        .custom-theme-bg::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: -1;
             background: linear-gradient(135deg, #f3e8ff 0%, #ffedd5 50%, #e0f2fe 100%);
+            background-repeat: no-repeat;
+            background-size: cover;
+            pointer-events: none;
         }
         /* Fixed pile sizing matching card dimensions exactly */
         .card-slot {
@@ -29,21 +44,32 @@
         }
         @media (min-width: 640px) {
             .card-slot {
-                width: 6rem;
-                height: 9rem;
+                width: 7rem;
+                height: 10.5rem;
+            }
+        }
+        /* Compact grid: fixed-width columns with a small gap */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(7, max-content);
+            gap: 0.375rem;
+            justify-content: center;
+        }
+        @media (min-width: 640px) {
+            .game-grid {
+                gap: 0.5rem;
             }
         }
     </style>
 </head>
-<body class="custom-theme-bg h-full text-slate-800 flex flex-col justify-between overflow-x-hidden">
+<body class="custom-theme-bg min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden">
 
     <!-- Header / Control Panel -->
-    <header class="w-full max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4 bg-white/70 backdrop-blur-md rounded-2xl my-4 shadow-sm border border-purple-200/60">
+    <header class="w-full max-w-[52rem] mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4 bg-white/70 backdrop-blur-md rounded-2xl my-4 shadow-sm border border-purple-200/60">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-xl shadow-inner border border-orange-200 text-orange-700">♠</div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide text-slate-900">Monster High Solitaire</h1>
-                <!-- <p class="text-xs text-slate-500">Vibrant Purple, Orange & Blue Experience</p> -->
             </div>
         </div>
 
@@ -52,17 +78,17 @@
             <button id="btn-undo" onclick="undoMove()" title="Undo Move" class="px-3 py-2 bg-white hover:bg-orange-50 active:scale-95 transition rounded-xl text-sm font-medium flex items-center gap-1.5 border border-orange-200 text-slate-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
                 <span>↩</span> Undo
             </button>
-            <button onclick="startNewGame()" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-500 hover:to-orange-400 active:scale-95 transition rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm text-white border border-purple-500/50">
+            <button onclick="startNewGame()" style="background-color: #32222C;" class="px-4 py-2 hover:opacity-90 active:scale-95 transition rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm text-white border border-[#32222C]/50">
                 <span></span> New Game
             </button>
         </div>
     </header>
 
     <!-- Main Game Board -->
-    <main class="w-full max-w-6xl mx-auto px-4 flex-1 flex flex-col gap-8 pb-12">
+    <main class="w-full max-w-[54rem] mx-auto px-4 flex-1 flex flex-col gap-8 pb-12">
         
         <!-- Top Row: Stock, Waste, and Foundations -->
-        <div class="grid grid-cols-7 gap-3 sm:gap-4 h-36 items-center">
+        <div class="game-grid h-44 items-center">
             <!-- Stock / Draw Pile -->
             <div id="stock-pile" onclick="handleStockClick()" class="card-slot relative rounded-xl border-2 border-dashed border-purple-300 bg-purple-50/30 flex items-center justify-center cursor-pointer hover:border-purple-400 transition group">
                 <span class="text-xs text-slate-400 group-hover:text-slate-600">Draw</span>
@@ -84,7 +110,7 @@
         </div>
 
         <!-- Bottom Row: Tableau Piles -->
-        <div class="grid grid-cols-7 gap-3 sm:gap-4 flex-1 min-h-[420px]">
+        <div class="game-grid flex-1 min-h-[460px] content-start">
             <div id="tableau-0" class="tableau-pile card-slot relative" data-index="0"></div>
             <div id="tableau-1" class="tableau-pile card-slot relative" data-index="1"></div>
             <div id="tableau-2" class="tableau-pile card-slot relative" data-index="2"></div>
@@ -108,13 +134,11 @@
             <div class="w-16 h-16 bg-purple-100 border border-purple-200 rounded-full flex items-center justify-center text-3xl">🏆</div>
             <h2 class="text-2xl font-bold text-purple-800">Wonderful Victory!</h2>
             <p class="text-sm text-slate-600">You completed the game with style and color. Ready for another round?</p>
-            <button onclick="startNewGame(); closeWinModal();" class="w-full py-3 bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-500 hover:to-orange-400 font-semibold text-white rounded-xl shadow-md transition mt-2">
+            <button onclick="startNewGame(); closeWinModal();" style="background-color: #32222C;" class="w-full py-3 hover:opacity-90 font-semibold text-white rounded-xl shadow-md transition mt-2">
                 Play Again
             </button>
         </div>
     </div>
-
-    
 
     <!-- Game Logic -->
     <script>
@@ -295,7 +319,7 @@
                     pile.forEach((card, cardIndex) => {
                         let cardDiv = createCardElement(card, 'tableau', i, cardIndex);
                         // Stagger cards vertically
-                        cardDiv.style.top = `${cardIndex * 28}px`;
+                        cardDiv.style.top = `${cardIndex * 32}px`;
                         tEl.appendChild(cardDiv);
                     });
                 }
