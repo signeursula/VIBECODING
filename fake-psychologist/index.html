@@ -12,12 +12,29 @@
     <!-- Header -->
     <header class="bg-slate-800 p-4 border-b border-slate-700 shadow-md">
         <div class="max-w-2xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold">🤖 My Custom AI Chatbot</h1>
-            <!-- API Key Input so users can use their own free Gemini key -->
-            <input type="password" id="apiKey" placeholder="Enter Gemini API Key" 
-                class="bg-slate-900 border border-slate-700 px-3 py-1 rounded text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+            <h1 class="text-xl font-bold">🤖 Fake Psychologist</h1>
+            <!-- Button to reset/change stored key if needed -->
+            <button id="resetKeyBtn" onclick="resetApiKey()" class="text-xs bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-slate-300 transition hidden">
+                Change API Key
+            </button>
         </div>
     </header>
+
+    <!-- API Key Setup Modal / Box (Shows only if no key is saved yet) -->
+    <div id="keyModal" class="fixed inset-0 bg-slate-950/80 flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl max-w-md w-full shadow-2xl space-y-4">
+            <h2 class="text-lg font-bold">🔑 Enter your Gemini API Key</h2>
+            <p class="text-sm text-slate-400">
+                This is saved only in your browser's local storage so it never gets exposed on GitHub.
+            </p>
+            <input type="password" id="modalApiKeyInput" placeholder="AIzaSy..." 
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 focus:outline-none focus:border-indigo-500">
+            <button onclick="saveApiKey()" 
+                class="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg font-medium transition">
+                Save & Start Chatting
+            </button>
+        </div>
+    </div>
 
     <!-- Chat Container -->
     <main id="chatWindow" class="flex-1 max-w-2xl w-full mx-auto p-4 overflow-y-auto space-y-4">
@@ -46,20 +63,47 @@
         import { GoogleGenAI } from "https://esm.run/@google/genai";
 
         // 💡 CHANGE YOUR PREPROMPT HERE:
-        const MY_PREPROMPT = "You are a helpful, witty, and concise AI assistant built by a junior frontend developer.";
+        const MY_PREPROMPT = "You are a slightly sarcastic fake psychologist built by a junior frontend developer. Keep answers short and witty.";
 
         const chatWindow = document.getElementById('chatWindow');
         const chatForm = document.getElementById('chatForm');
         const userInput = document.getElementById('userInput');
-        const apiKeyInput = document.getElementById('apiKey');
+        const keyModal = document.getElementById('keyModal');
+        const resetKeyBtn = document.getElementById('resetKeyBtn');
+
+        // Check if API key already exists in browser storage on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if (savedKey) {
+                keyModal.classList.add('hidden');
+                resetKeyBtn.classList.remove('hidden');
+            }
+        });
+
+        // Global functions for modal buttons
+        window.saveApiKey = () => {
+            const inputVal = document.getElementById('modalApiKeyInput').value.trim();
+            if (!inputVal) {
+                alert("Please enter a valid API key.");
+                return;
+            }
+            localStorage.setItem('gemini_api_key', inputVal);
+            keyModal.classList.add('hidden');
+            resetKeyBtn.classList.remove('hidden');
+        };
+
+        window.resetApiKey = () => {
+            localStorage.removeItem('gemini_api_key');
+            location.reload();
+        };
 
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = userInput.value.trim();
-            const apiKey = apiKeyInput.value.trim();
+            const apiKey = localStorage.getItem('gemini_api_key');
 
             if (!apiKey) {
-                alert("Please enter your Gemini API key in the top right box first!");
+                keyModal.classList.remove('hidden');
                 return;
             }
 
@@ -73,10 +117,10 @@
             const loadingId = appendMessage("Thinking...", 'ai', true);
 
             try {
-                // Initialize the Google Gen AI SDK
+                // Initialize the Google Gen AI SDK using the stored key
                 const ai = new GoogleGenAI({ apiKey: apiKey });
 
-                // Call Gemini model (using gemini-2.5-flash as the standard fast chat model)
+                // Call Gemini model
                 const response = await ai.models.generateContent({
                     model: 'gemini-2.5-flash',
                     contents: text,
@@ -96,7 +140,7 @@
         });
 
         function appendMessage(text, sender, isLoading = false) {
-            const messageId = 'msg-' + Math.random().toString(36.substring(2, 9));
+            const messageId = 'msg-' + Math.random().toString(36).substring(2, 9);
             const isUser = sender === 'user';
 
             const wrapper = document.createElement('div');
