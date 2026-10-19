@@ -19,3 +19,4 @@ Project 13: <a href="https://signeursula.github.io/VIBECODING/3-4-5-drawing-idea
 Project 14: <a href="https://signeursula.github.io/VIBECODING/signes-portefølje/index.html" target="_blank">Signes portefølje</a> (supports pc and phone). <br>
 Project 15: <a href="https://signeursula.github.io/VIBECODING/signes-shoes/index.html" target="_blank">Signe's shoes</a> (supports pc and phone). <br>
 Project 16: <a href="https://signeursula.github.io/VIBECODING/monsterhigh-solitaire/index.html" target="_blank">Monster High Solitaire</a> (supports pc). <br>
+Project 17: <a href="https://signeursula.github.io/VIBECODING/sanrio-news/index.html" target="_blank">Sanrio News</a> (supports pc). <br>
