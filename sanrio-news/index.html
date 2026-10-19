@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanrio World Live News</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-pink-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-white border-b-2 border-pink-200 p-6 shadow-sm text-center">
+        <div class="max-w-4xl mx-auto flex flex-col items-center">
+            <span class="text-4xl mb-1">🎀</span>
+            <h1 class="text-3xl font-black tracking-tight text-pink-600">Sanrio & Hello Kitty Live News</h1>
+            <p class="text-sm text-pink-400 mt-1 font-medium">Automatic news updates for Sanrio, Hello Kitty, & Hello Kitty Island Adventure</p>
+        </div>
+    </header>
+
+    <!-- Filter Buttons -->
+    <section class="max-w-4xl w-full mx-auto px-6 pt-6 flex flex-wrap gap-2 justify-center">
+        <button onclick="filterTopic('all')" id="btn-all" class="topic-btn bg-pink-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow hover:bg-pink-600 transition">All Sanrio News</button>
+        <button onclick="filterTopic('hkia')" id="btn-hkia" class="topic-btn bg-white border border-pink-200 text-pink-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm hover:bg-pink-100 transition">Island Adventure</button>
+        <button onclick="filterTopic('hellokitty')" id="btn-hellokitty" class="topic-btn bg-white border border-pink-200 text-pink-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm hover:bg-pink-100 transition">Hello Kitty</button>
+    </section>
+
+    <!-- News Grid Container -->
+    <main class="max-w-4xl w-full mx-auto p-6 flex-1">
+        <div id="loading" class="text-center py-20 text-pink-400 font-medium animate-pulse flex flex-col items-center">
+            <span class="text-3xl mb-2">🐾</span>
+            Checking the Sanrio universe for new updates...
+        </div>
+        <div id="newsGrid" class="grid gap-6 md:grid-cols-2">
+            <!-- Dynamic news cards injected here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-pink-200 p-4 text-center text-xs text-pink-400">
+        Hosted on GitHub Pages • Self-Updating via Google News Feed
+    </footer>
+
+    <!-- Fetching & Rendering Logic -->
+    <script>
+        let allArticles = [];
+
+        async function fetchSanrioNews() {
+            const newsGrid = document.getElementById('newsGrid');
+            const loading = document.getElementById('loading');
+
+            // Search query combining Sanrio, Hello Kitty, and Hello Kitty Island Adventure
+            const searchQuery = encodeURIComponent('"Sanrio" OR "Hello Kitty" OR "Hello Kitty Island Adventure"');
+            const rssUrl = `https://news.google.com/rss/search?q=${searchQuery}&hl=en-US&gl=US&ceid=US:en`;
+            
+            // Converting RSS feed XML into accessible JSON using rss2json API
+            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.status === 'ok') {
+                    loading.style.display = 'none';
+                    allArticles = data.items;
+                    renderArticles(allArticles);
+                } else {
+                    loading.textContent = 'Failed to fetch Sanrio news updates.';
+                }
+            } catch (error) {
+                loading.textContent = 'Error connecting to news server.';
+                console.error(error);
+            }
+        }
+
+        function renderArticles(articles) {
+            const newsGrid = document.getElementById('newsGrid');
+            newsGrid.innerHTML = '';
+
+            if (articles.length === 0) {
+                newsGrid.innerHTML = `<div class="col-span-2 text-center text-slate-400 py-10">No recent articles found for this topic.</div>`;
+                return;
+            }
+
+            articles.forEach(item => {
+                const card = document.createElement('article');
+                card.className = 'bg-white border border-pink-100 rounded-2xl p-5 flex flex-col justify-between hover:border-pink-300 transition shadow-sm hover:shadow-md';
+
+                const pubDate = new Date(item.pubDate).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric'
+                });
+
+                // Strip away HTML tags from RSS description
+                const cleanDesc = item.description ? item.description.replace(/<[^>]*>?/gm, '') : 'Click to read full coverage...';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-pink-500 bg-pink-50 px-2 py-0.5 rounded border border-pink-100">${item.author || 'News Update'}</span>
+                            <span class="text-xs text-slate-400">📅 ${pubDate}</span>
+                        </div>
+                        <h2 class="text-base font-bold text-slate-800 hover:text-pink-600 transition leading-snug">
+                            <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed">
+                            ${cleanDesc}
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-pink-50 flex justify-end">
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-pink-500 hover:text-pink-600 flex items-center gap-1">
+                            Read Story <span>→</span>
+                        </a>
+                    </div>
+                `;
+                newsGrid.appendChild(card);
+            });
+        }
+
+        function filterTopic(topic) {
+            // Update button UI states
+            document.querySelectorAll('.topic-btn').forEach(btn => {
+                btn.className = "topic-btn bg-white border border-pink-200 text-pink-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm hover:bg-pink-100 transition";
+            });
+
+            const activeBtn = document.getElementById(`btn-${topic}`);
+            if (activeBtn) {
+                activeBtn.className = "topic-btn bg-pink-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow hover:bg-pink-600 transition";
+            }
+
+            // Filter news list
+            if (topic === 'all') {
+                renderArticles(allArticles);
+            } else if (topic === 'hkia') {
+                const filtered = allArticles.filter(item => 
+                    item.title.toLowerCase().includes('island adventure') || 
+                    item.description.toLowerCase().includes('island adventure')
+                );
+                renderArticles(filtered);
+            } else if (topic === 'hellokitty') {
+                const filtered = allArticles.filter(item => 
+                    item.title.toLowerCase().includes('hello kitty') || 
+                    item.description.toLowerCase().includes('hello kitty')
+                );
+                renderArticles(filtered);
+            }
+        }
+
+        // Initialize feed
+        fetchSanrioNews();
+    </script>
+</body>
+</html>
