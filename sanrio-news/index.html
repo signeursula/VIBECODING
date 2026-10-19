@@ -38,10 +38,10 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t border-pink-200 p-4 text-center text-xs text-pink-400">
-        Hosted on GitHub Pages • Self-Updating via Google News Feed
+        Hosted on GitHub Pages • Self-Updating via RSS Feed
     </footer>
 
-    <!-- Fetching & Rendering Logic -->
+    <!-- Fetching & Rendering Logic with Fallback Proxies -->
     <script>
         let allArticles = [];
 
@@ -49,27 +49,59 @@
             const newsGrid = document.getElementById('newsGrid');
             const loading = document.getElementById('loading');
 
-            // Search query combining Sanrio, Hello Kitty, and Hello Kitty Island Adventure
             const searchQuery = encodeURIComponent('"Sanrio" OR "Hello Kitty" OR "Hello Kitty Island Adventure"');
             const rssUrl = `https://news.google.com/rss/search?q=${searchQuery}&hl=en-US&gl=US&ceid=US:en`;
             
-            // Converting RSS feed XML into accessible JSON using rss2json API
-            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+            // List of free proxy endpoints to try in sequence if one is blocked by ad-blockers
+            const proxyEndpoints = [
+                `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`,
+                `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`
+            ];
 
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+            let dataLoaded = false;
 
-                if (data.status === 'ok') {
-                    loading.style.display = 'none';
-                    allArticles = data.items;
-                    renderArticles(allArticles);
-                } else {
-                    loading.textContent = 'Failed to fetch Sanrio news updates.';
+            for (const apiUrl of proxyEndpoints) {
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) continue;
+
+                    const json = await response.json();
+
+                    // Handle rss2json response format
+                    if (apiUrl.includes('rss2json.com') && json.status === 'ok') {
+                        allArticles = json.items;
+                        dataLoaded = true;
+                        break;
+                    } 
+                    // Handle allorigins XML response format
+                    else if (apiUrl.includes('allorigins.win') && json.contents) {
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(json.contents, "text/xml");
+                        const items = xmlDoc.querySelectorAll("item");
+                        
+                        allArticles = Array.from(items).map(item => ({
+                            title: item.querySelector("title")?.textContent || "No Title",
+                            link: item.querySelector("link")?.textContent || "#",
+                            pubDate: item.querySelector("pubDate")?.textContent || new Date(),
+                            description: item.querySelector("description")?.textContent || "",
+                            author: item.querySelector("source")?.textContent || "Google News"
+                        }));
+                        dataLoaded = true;
+                        break;
+                    }
+                } catch (e) {
+                    console.warn("Proxy attempt failed, trying next...", e);
                 }
-            } catch (error) {
-                loading.textContent = 'Error connecting to news server.';
-                console.error(error);
+            }
+
+            if (dataLoaded && allArticles.length > 0) {
+                loading.style.display = 'none';
+                renderArticles(allArticles);
+            } else {
+                loading.innerHTML = `
+                    <span class="text-red-400">Unable to load feed.</span><br>
+                    <span class="text-xs text-slate-400 mt-1 block">Please check if an ad-blocker is blocking script requests or try disabling shields for this page.</span>
+                `;
             }
         }
 
@@ -90,7 +122,6 @@
                     month: 'short', day: 'numeric', year: 'numeric'
                 });
 
-                // Strip away HTML tags from RSS description
                 const cleanDesc = item.description ? item.description.replace(/<[^>]*>?/gm, '') : 'Click to read full coverage...';
 
                 card.innerHTML = `
@@ -117,7 +148,6 @@
         }
 
         function filterTopic(topic) {
-            // Update button UI states
             document.querySelectorAll('.topic-btn').forEach(btn => {
                 btn.className = "topic-btn bg-white border border-pink-200 text-pink-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm hover:bg-pink-100 transition";
             });
@@ -127,7 +157,6 @@
                 activeBtn.className = "topic-btn bg-pink-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow hover:bg-pink-600 transition";
             }
 
-            // Filter news list
             if (topic === 'all') {
                 renderArticles(allArticles);
             } else if (topic === 'hkia') {
