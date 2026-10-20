@@ -3,4 +3,4 @@ This is a little webbrowser game, where you have to guess which first name the n
 
 Open <b>Guess the Victorian Nickname</b> <a href="https://signeursula.github.io/VIBECODING/victorian-nicknames/index.html" target="_blank">HERE</a>. <br>
 
-![](cover-image.png)
+<br> ![](cover-image.png)
