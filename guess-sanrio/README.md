@@ -3,3 +3,4 @@ Hello Kitty Island Adventure is my ultimate favorite game, and after discovering
 
 Open <b>Guess the Sanrio Character</b> <a href="https://signeursula.github.io/VIBECODING/guess-sanrio/index.html" target="_blank">HERE</a>. <br>
 
+<br> ![](cover-image.png)
