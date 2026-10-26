@@ -64,11 +64,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 #overlay.show{display:flex}
 #overlay h2{font-family:'Pinyon Script',cursive;font-weight:400;font-size:2.8rem;color:var(--wine)}
 #overlay p{font-style:italic;font-size:1.2rem;padding:0 20px}
-.chain{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:18px}
-.chain figure{width:calc((100% - 36px)/10);min-width:34px;text-align:center}
-.chain img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid var(--gold);display:block}
-.chain figcaption{font-size:.72rem;font-style:italic;color:var(--wine);margin-top:2px}
-.hint{text-align:center;font-style:italic;color:var(--wine);margin-top:12px;font-size:1.05rem}
+.hint{text-align:center;font-style:italic;color:var(--wine);margin-top:16px;font-size:1.05rem}
 @media (prefers-reduced-motion:reduce){.tile,.tile.new,.tile.merged{animation:none;transition:none}}
 </style>
 </head>
@@ -89,7 +85,6 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
     <div id="overlay" role="status"><h2 id="ovTitle"></h2><p id="ovText"></p><button id="ovBtn" type="button"></button></div>
   </div>
   <p class="hint">Use the arrow keys, or swipe on the board.</p>
-  <div class="chain" id="chain" aria-label="Merge order"></div>
 </main>
 
 <script>
@@ -104,9 +99,6 @@ document.getElementById('best').textContent=best;
 
 // background cells
 for(let i=0;i<N*N;i++){const c=document.createElement('div');c.className='cell';place(c,Math.floor(i/N),i%N);gridEl.appendChild(c)}
-// merge-order guide
-const chain=document.getElementById('chain');
-NAMES.forEach((n,i)=>{const f=document.createElement('figure');f.innerHTML=`<img src="images/${n}.png" alt="${LABELS[i]}"><figcaption>${LABELS[i]}</figcaption>`;chain.appendChild(f)});
 
 function place(el,r,c){
   const g=2.6, size=(100-3*g)/4;
