@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bridgerton 2048</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#fbf4ee; --blush:#f3dde0; --rose:#d9a3b0; --wine:#8a4258;
+  --gold:#c9a45c; --ink:#4a2a36; --board:#e8cdd2; --cell:#f6e6e8;
+  --gap:2.4%;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  color:var(--ink);
+  background:radial-gradient(ellipse at top,#fffaf5 0%,var(--blush) 70%,#e9c9d0 100%) fixed;
+  display:flex;flex-direction:column;align-items:center;
+  padding:max(18px,env(safe-area-inset-top)) 14px max(24px,env(safe-area-inset-bottom));
+  touch-action:manipulation;
+}
+header{text-align:center;margin-bottom:10px}
+h1{font-family:'Pinyon Script',cursive;font-weight:400;font-size:clamp(2.6rem,10vw,4rem);color:var(--wine);line-height:1.1}
+.sub{font-style:italic;font-size:1.1rem;color:var(--rose);margin-top:2px}
+.wrap{width:min(92vw,460px)}
+.bar{display:flex;gap:10px;align-items:stretch;justify-content:space-between;margin:14px 0}
+.score{flex:1;text-align:center;background:#fffaf5;border:1px solid var(--gold);border-radius:14px;padding:6px 8px}
+.score span{display:block;font-size:.95rem;font-style:italic;color:var(--wine)}
+.score b{font-size:1.6rem;font-weight:700}
+button{
+  font-family:inherit;font-size:1.15rem;font-weight:700;color:#fffaf5;
+  background:linear-gradient(180deg,#a65870,var(--wine));
+  border:1px solid var(--gold);border-radius:14px;padding:8px 18px;cursor:pointer;
+}
+button:hover{filter:brightness(1.08)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#board{
+  position:relative;width:100%;aspect-ratio:1;background:var(--board);
+  border:2px solid var(--gold);border-radius:22px;padding:var(--gap);
+  box-shadow:0 10px 30px rgba(138,66,88,.25),inset 0 0 0 4px #fffaf5;
+  touch-action:none;
+}
+.grid{position:relative;width:100%;height:100%;--g:2.6%}
+.cell,.tile{position:absolute;width:calc((100% - 3*var(--g))/4);height:calc((100% - 3*var(--g))/4);border-radius:14px}
+.cell{background:var(--cell)}
+.tile{
+  background:#fffaf5;border:2px solid var(--gold);overflow:hidden;
+  box-shadow:0 3px 8px rgba(138,66,88,.3);
+  transition:left .12s ease,top .12s ease;
+}
+.tile img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;user-select:none}
+.tile.new{animation:pop .2s ease}
+.tile.merged{animation:bump .22s ease}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes bump{50%{transform:scale(1.14)}}
+.tile[data-l="9"]{border-color:#e8c15a;box-shadow:0 0 18px 4px rgba(232,193,90,.8)}
+#overlay{
+  position:absolute;inset:0;border-radius:20px;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;text-align:center;
+  background:rgba(251,244,238,.88);z-index:5;
+}
+#overlay.show{display:flex}
+#overlay h2{font-family:'Pinyon Script',cursive;font-weight:400;font-size:2.8rem;color:var(--wine)}
+#overlay p{font-style:italic;font-size:1.2rem;padding:0 20px}
+.chain{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:18px}
+.chain figure{width:calc((100% - 36px)/10);min-width:34px;text-align:center}
+.chain img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid var(--gold);display:block}
+.chain figcaption{font-size:.72rem;font-style:italic;color:var(--wine);margin-top:2px}
+.hint{text-align:center;font-style:italic;color:var(--wine);margin-top:12px;font-size:1.05rem}
+@media (prefers-reduced-motion:reduce){.tile,.tile.new,.tile.merged{animation:none;transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Bridgerton 2048</h1>
+  <p class="sub">Unite the family, and crown Queen Charlotte</p>
+</header>
+
+<main class="wrap">
+  <div class="bar">
+    <div class="score"><span>Score</span><b id="score">0</b></div>
+    <div class="score"><span>Best</span><b id="best">0</b></div>
+    <button id="new" type="button">New game</button>
+  </div>
+  <div id="board">
+    <div class="grid" id="grid"></div>
+    <div id="overlay" role="status"><h2 id="ovTitle"></h2><p id="ovText"></p><button id="ovBtn" type="button"></button></div>
+  </div>
+  <p class="hint">Use the arrow keys, or swipe on the board.</p>
+  <div class="chain" id="chain" aria-label="Merge order"></div>
+</main>
+
+<script>
+const NAMES=["daphne","anthony","penelope","benedict","eloise","colin","francesca","violet","danbury","charlotte"];
+const LABELS=["Daphne","Anthony","Penelope","Benedict","Eloise","Colin","Francesca","Violet","Danbury","Charlotte"];
+const N=4, WIN=9;
+const gridEl=document.getElementById('grid'), overlay=document.getElementById('overlay');
+let board, score, best=0, won=false, keepGoing=false, tiles=[], nextId=1, busy=false;
+
+try{best=+localStorage.getItem('bridgerton2048best')||0}catch(e){}
+document.getElementById('best').textContent=best;
+
+// background cells
+for(let i=0;i<N*N;i++){const c=document.createElement('div');c.className='cell';place(c,Math.floor(i/N),i%N);gridEl.appendChild(c)}
+// merge-order guide
+const chain=document.getElementById('chain');
+NAMES.forEach((n,i)=>{const f=document.createElement('figure');f.innerHTML=`<img src="images/${n}.png" alt="${LABELS[i]}"><figcaption>${LABELS[i]}</figcaption>`;chain.appendChild(f)});
+
+function place(el,r,c){
+  const g=2.6, size=(100-3*g)/4;
+  el.style.left=(c*(size+g))+'%';
+  el.style.top=(r*(size+g))+'%';
+}
+
+function newGame(){
+  tiles.forEach(t=>t.el.remove());
+  tiles=[];board=Array.from({length:N},()=>Array(N).fill(null));
+  score=0;won=false;keepGoing=false;busy=false;
+  overlay.classList.remove('show');
+  updateScore();addRandom();addRandom();
+}
+
+function makeTile(level,r,c,cls){
+  const el=document.createElement('div');
+  el.className='tile '+(cls||'');el.dataset.l=level;
+  el.innerHTML=`<img src="images/${NAMES[level]}.png" alt="${LABELS[level]}" draggable="false">`;
+  place(el,r,c);gridEl.appendChild(el);
+  const t={id:nextId++,level,r,c,el};tiles.push(t);return t;
+}
+
+function addRandom(){
+  const empty=[];
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(!board[r][c])empty.push([r,c]);
+  if(!empty.length)return;
+  const [r,c]=empty[Math.floor(Math.random()*empty.length)];
+  board[r][c]=makeTile(Math.random()<0.9?0:1,r,c,'new');
+}
+
+function move(dir){ // 0 left,1 up,2 right,3 down
+  if(busy)return;
+  let moved=false,gained=0,reached=false;
+  const vec=[[0,-1],[-1,0],[0,1],[1,0]][dir];
+  const rows=[...Array(N).keys()],cols=[...Array(N).keys()];
+  if(vec[0]===1)rows.reverse();
+  if(vec[1]===1)cols.reverse();
+  const merged=new Set(),remove=[];
+  rows.forEach(r=>cols.forEach(c=>{
+    const t=board[r][c];if(!t)return;
+    let nr=r,nc=c;
+    while(true){
+      const tr=nr+vec[0],tc=nc+vec[1];
+      if(tr<0||tr>=N||tc<0||tc>=N)break;
+      const o=board[tr][tc];
+      if(!o){nr=tr;nc=tc;continue}
+      if(o.level===t.level&&!merged.has(o.id)&&t.level<NAMES.length-1){
+        nr=tr;nc=tc;
+      }
+      break;
+    }
+    if(nr===r&&nc===c)return;
+    moved=true;
+    const target=board[nr][nc];
+    board[r][c]=null;
+    if(target){
+      merged.add(target.id);
+      remove.push(t);t.r=nr;t.c=nc;place(t.el,nr,nc);
+      target.level++;target.merged=true;
+      gained+=Math.pow(2,target.level+1);
+      if(target.level===WIN)reached=true;
+    }else{
+      board[nr][nc]=t;t.r=nr;t.c=nc;place(t.el,nr,nc);
+    }
+  }));
+  if(!moved)return;
+  busy=true;
+  setTimeout(()=>{
+    remove.forEach(t=>{t.el.remove();tiles=tiles.filter(x=>x!==t)});
+    tiles.forEach(t=>{
+      if(t.merged){
+        t.merged=false;t.el.dataset.l=t.level;
+        t.el.querySelector('img').src='images/'+NAMES[t.level]+'.png';
+        t.el.querySelector('img').alt=LABELS[t.level];
+        t.el.classList.remove('merged');void t.el.offsetWidth;t.el.classList.add('merged');
+      }
+    });
+    score+=gained;updateScore();addRandom();busy=false;
+    if(reached&&!won&&!keepGoing){won=true;showOverlay('Long live the Queen','Queen Charlotte has arrived. A truly splendid match!','Keep playing',()=>{keepGoing=true;overlay.classList.remove('show')})}
+    else if(!canMove())showOverlay('Alas, the season ends','No more moves are left on the board.','Try again',newGame);
+  },120);
+}
+
+function canMove(){
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const t=board[r][c];if(!t)return true;
+    if(c<N-1&&board[r][c+1]&&board[r][c+1].level===t.level&&t.level<9)return true;
+    if(r<N-1&&board[r+1][c]&&board[r+1][c].level===t.level&&t.level<9)return true;
+  }
+  return false;
+}
+
+function showOverlay(title,text,btn,fn){
+  document.getElementById('ovTitle').textContent=title;
+  document.getElementById('ovText').textContent=text;
+  const b=document.getElementById('ovBtn');b.textContent=btn;b.onclick=fn;
+  overlay.classList.add('show');
+}
+
+function updateScore(){
+  document.getElementById('score').textContent=score;
+  if(score>best){best=score;document.getElementById('best').textContent=best;try{localStorage.setItem('bridgerton2048best',best)}catch(e){}}
+}
+
+document.addEventListener('keydown',e=>{
+  const d={ArrowLeft:0,ArrowUp:1,ArrowRight:2,ArrowDown:3,a:0,w:1,d:2,s:3}[e.key];
+  if(d===undefined)return;e.preventDefault();move(d);
+});
+let sx,sy;
+const boardEl=document.getElementById('board');
+boardEl.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+boardEl.addEventListener('touchend',e=>{
+  if(sx==null)return;
+  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  sx=null;
+  if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;
+  if(Math.abs(dx)>Math.abs(dy))move(dx>0?2:0);else move(dy>0?3:1);
+});
+document.getElementById('new').onclick=newGame;
+newGame();
+</script>
+</body>
+</html>
