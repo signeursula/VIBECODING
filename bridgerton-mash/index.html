@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bridgerton 2048</title>
+<title>Bridgerton Mash</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Pinyon+Script&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -74,7 +74,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 </head>
 <body>
 <header>
-  <h1>Bridgerton 2048</h1>
+  <h1>Bridgerton Mash</h1>
   <p class="sub">Unite the family, and crown Queen Charlotte</p>
 </header>
 
@@ -99,7 +99,7 @@ const N=4, WIN=9;
 const gridEl=document.getElementById('grid'), overlay=document.getElementById('overlay');
 let board, score, best=0, won=false, keepGoing=false, tiles=[], nextId=1, busy=false;
 
-try{best=+localStorage.getItem('bridgerton2048best')||0}catch(e){}
+try{best=+localStorage.getItem('bridgertonmashbest')||0}catch(e){}
 document.getElementById('best').textContent=best;
 
 // background cells
@@ -209,7 +209,7 @@ function showOverlay(title,text,btn,fn){
 
 function updateScore(){
   document.getElementById('score').textContent=score;
-  if(score>best){best=score;document.getElementById('best').textContent=best;try{localStorage.setItem('bridgerton2048best',best)}catch(e){}}
+  if(score>best){best=score;document.getElementById('best').textContent=best;try{localStorage.setItem('bridgertonmashbest',best)}catch(e){}}
 }
 
 document.addEventListener('keydown',e=>{
