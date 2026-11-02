@@ -21,3 +21,4 @@ Project 15: <a href="https://signeursula.github.io/VIBECODING/signes-shoes/" tar
 Project 16: <a href="https://signeursula.github.io/VIBECODING/monsterhigh-solitaire/" target="_blank">Monster High Solitaire</a> (supports pc). <br>
 Project 17: <a href="https://signeursula.github.io/VIBECODING/bridgerton-mash/" target="_blank">Bridgerton Mash</a> (supports pc). <br>
 Project 18: <a href="https://signeursula.github.io/VIBECODING/omarranger-PDF/" target="_blank">Omarrangér PDF'er</a> (supports pc). <br>
+Project 19: <a href="https://signeursula.github.io/VIBECODING/mermaid-or-fairy/" target="_blank">Mermaid or fairy</a> (supports pc). <br>
