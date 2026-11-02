@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PDF Sideeditor</title>
+<title>Omarrangér PDF'er</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
@@ -62,12 +62,12 @@ main{max-width:1200px;margin:0 auto;padding:20px 24px 120px}
 </head>
 <body>
 <header>
-  <h1>PDF Sideeditor</h1>
-  <p>Tilføj PDF'er, træk siderne i den rækkefølge du vil have, og flet dem derefter til én fil. Alt bliver i din browser.</p>
+  <h1>Omarrangér PDF'er</h1>
+  <p>Tilføj PDF'er og omarrangér dem præcis som du vil have dem! Easy peacy.</p>
 </header>
 <main>
   <div id="drop" tabindex="0" role="button" aria-label="Tilføj PDF-filer">
-    <strong>Slip PDF-filer her</strong>
+    <strong>Indsæt PDF-filer her</strong>
     <span>eller klik for at vælge filer. Du kan tilføje lige så mange, du vil.</span>
   </div>
   <input type="file" id="picker" accept="application/pdf,.pdf" multiple hidden>
@@ -77,7 +77,7 @@ main{max-width:1200px;margin:0 auto;padding:20px 24px 120px}
     <div id="count"></div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn" id="clear">Ryd alt</button>
-      <button class="btn primary" id="merge">Flet PDF</button>
+      <button class="btn primary" id="merge">Sammensæt PDF</button>
     </div>
   </div>
   <div id="grid"></div>
@@ -167,7 +167,7 @@ function refresh(){
   const n=grid.children.length;
   $('#empty').classList.toggle('hidden',n>0);
   $('#bar').classList.toggle('hidden',n===0);
-  $('#count').innerHTML=n+(n===1?' side':' sider')+'<small>Træk for at ændre rækkefølgen. Piletasterne virker også på en valgt side.</small>';
+  $('#count').innerHTML=n+(n===1?' side':' sider')+'<small>Træk for at ændre rækkefølgen.</small>';
 }
 function renderChips(){
   const used={};[...grid.children].forEach(c=>used[c.dataset.fid]=(used[c.dataset.fid]||0)+1);
@@ -205,9 +205,9 @@ $('#merge').onclick=async()=>{
     a.href=URL.createObjectURL(blob);a.download='flettet.pdf';
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-    toast('Den flettede PDF er downloadet');
-  }catch(err){console.error(err);toast('Fletning mislykkedes: '+err.message,true)}
-  btn.disabled=false;btn.textContent='Flet PDF';
+    toast('Den samlede PDF er downloadet');
+  }catch(err){console.error(err);toast('Sammensætning mislykkedes: '+err.message,true)}
+  btn.disabled=false;btn.textContent='Sammensæt PDF';
 };
 </script>
 </body>
