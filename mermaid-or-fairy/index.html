@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vote!</title>
+<style>
+  :root {
+    --bg: #1f4d36;
+    --bg-deep: #163a28;
+    --card: #2a6346;
+    --card-border: #3f8560;
+    --text: #eaf5ee;
+    --muted: #b5d3c1;
+    --yes: #7fd49c;
+    --no: #e7b56f;
+    --btn: #3a8a5f;
+    --btn-hover: #46a171;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: radial-gradient(circle at top, var(--bg) 0%, var(--bg-deep) 100%);
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    min-height: 100vh;
+  }
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .3);
+  }
+  h1 { font-size: 1.5rem; line-height: 1.3; margin: 0 0 20px; text-align: center; }
+  .buttons { display: flex; gap: 12px; }
+  button {
+    flex: 1;
+    font: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--btn);
+    border: 2px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+  }
+  button:hover:not(:disabled) { background: var(--btn-hover); }
+  button:active:not(:disabled) { transform: scale(.97); }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  button.chosen { border-color: var(--text); opacity: 1; }
+  .message { text-align: center; min-height: 1.4em; margin: 14px 0 6px; color: var(--muted); font-size: .95rem; }
+  .poll { margin-top: 10px; }
+  .row { margin-bottom: 14px; }
+  .row-head { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: 600; }
+  .row-head span:last-child { color: var(--muted); font-weight: 400; }
+  .track { height: 18px; background: var(--bg-deep); border-radius: 999px; overflow: hidden; }
+  .bar { height: 100%; width: 0; border-radius: 999px; transition: width .6s ease; }
+  .bar.mermaid { background: var(--yes); }
+  .bar.fairy { background: var(--no); }
+  .total { text-align: center; color: var(--muted); font-size: .9rem; margin-top: 4px; }
+</style>
+</head>
+<body>
+  <main class="card">
+    <h1 id="question"></h1>
+
+    <div class="buttons">
+      <button id="btn-mermaid" type="button">Mermaid</button>
+      <button id="btn-fairy" type="button">Fairy</button>
+    </div>
+
+    <p class="message" id="message" aria-live="polite"></p>
+
+    <section class="poll" aria-label="Poll results">
+      <div class="row">
+        <div class="row-head"><span>Mermaid</span><span id="mermaid-text">0% (0)</span></div>
+        <div class="track"><div class="bar mermaid" id="mermaid-bar"></div></div>
+      </div>
+      <div class="row">
+        <div class="row-head"><span>Fairy</span><span id="fairy-text">0% (0)</span></div>
+        <div class="track"><div class="bar fairy" id="fairy-bar"></div></div>
+      </div>
+      <p class="total" id="total"></p>
+    </section>
+  </main>
+
+<script>
+  // ============ SETTINGS: EDIT THESE ============
+  // 1) Your Firebase Realtime Database URL (no trailing slash)
+  const DB_URL = "https://github-question-test-default-rtdb.europe-west1.firebasedatabase.app/";
+
+  // 2) The question. Change QUESTION_ID whenever you change the question,
+  //    so the new question starts with a fresh poll (0 votes).
+  const QUESTION_ID = "mermaid-vs-fairy";
+  const QUESTION = "Would you rather be a mermaid or a fairy?";
+  // ==============================================
+
+  const $ = (id) => document.getElementById(id);
+  const pollUrl = `${DB_URL}/polls/${QUESTION_ID}.json`;
+  const storageKey = `voted-${QUESTION_ID}`;
+
+  $("question").textContent = QUESTION;
+  document.title = QUESTION;
+
+  function getMyVote() {
+    try { return localStorage.getItem(storageKey); } catch (e) { return null; }
+  }
+  function saveMyVote(choice) {
+    try { localStorage.setItem(storageKey, choice); } catch (e) {}
+  }
+
+  function render(data) {
+    const mermaid = (data && data.mermaid) || 0;
+    const fairy = (data && data.fairy) || 0;
+    const total = mermaid + fairy;
+    const mermaidPct = total ? Math.round((mermaid / total) * 100) : 0;
+    const fairyPct = total ? 100 - mermaidPct : 0;
+
+    $("mermaid-bar").style.width = mermaidPct + "%";
+    $("fairy-bar").style.width = fairyPct + "%";
+    $("mermaid-text").textContent = `${mermaidPct}% (${mermaid})`;
+    $("fairy-text").textContent = `${fairyPct}% (${fairy})`;
+    $("total").textContent = total === 1 ? "1 vote in total" : `${total} votes in total`;
+  }
+
+  async function loadPoll() {
+    try {
+      const res = await fetch(pollUrl, { cache: "no-store" });
+      if (!res.ok) throw new Error(res.status);
+      render(await res.json());
+    } catch (err) {
+      $("message").textContent = "Could not load the poll right now.";
+    }
+  }
+
+  function lockButtons(choice) {
+    $("btn-mermaid").disabled = true;
+    $("btn-fairy").disabled = true;
+    if (choice) $("btn-" + choice).classList.add("chosen");
+  }
+
+  async function vote(choice) {
+    lockButtons(choice);
+    $("message").textContent = "Saving your vote…";
+    try {
+      // Atomic server-side +1, so simultaneous voters never overwrite each other
+      const res = await fetch(pollUrl, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [choice]: { ".sv": { increment: 1 } } })
+      });
+      if (!res.ok) throw new Error(res.status);
+      saveMyVote(choice);
+      $("message").textContent = "Thanks for voting!";
+      await loadPoll();
+    } catch (err) {
+      $("message").textContent = "Something went wrong. Please try again.";
+      $("btn-mermaid").disabled = false;
+      $("btn-fairy").disabled = false;
+      $("btn-" + choice).classList.remove("chosen");
+    }
+  }
+
+  $("btn-mermaid").addEventListener("click", () => vote("mermaid"));
+  $("btn-fairy").addEventListener("click", () => vote("fairy"));
+
+  // Already voted on this device? Keep the buttons locked.
+  const previous = getMyVote();
+  if (previous === "mermaid" || previous === "fairy") {
+    lockButtons(previous);
+    $("message").textContent = "You have already voted. Thanks!";
+  }
+
+  loadPoll();
+  setInterval(loadPoll, 10000); // refresh the poll every 10 seconds
+</script>
+</body>
+</html>
