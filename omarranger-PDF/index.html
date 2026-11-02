@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Sideeditor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4faea;--ink:#1c2236;--muted:#6b7389;--line:#dce6c8;--card:#fff;--accent:#2b7a4b;--accent-d:#1f5b37;--danger:#d6455d}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Bricolage Grotesque',system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+header{padding:40px 24px 8px;max-width:1200px;margin:0 auto}
+h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.03em;margin:0 0 6px}
+header p{margin:0;color:var(--muted);font-size:1.05rem}
+main{max-width:1200px;margin:0 auto;padding:20px 24px 120px}
+#drop{border:2px dashed #b7c99a;border-radius:18px;background:#fff;padding:34px 20px;text-align:center;cursor:pointer;transition:.18s}
+#drop:hover,#drop.over{border-color:var(--accent);background:#f0f8de}
+#drop strong{font-size:1.25rem;display:block;margin-bottom:4px}
+#drop span{color:var(--muted)}
+#drop:focus-visible,button:focus-visible,.pg:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#files{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.chip{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 12px;font-size:.9rem}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip small{color:var(--muted)}
+.chip button{border:0;background:#eef3e2;border-radius:50%;width:22px;height:22px;cursor:pointer;color:var(--muted);font-size:14px;line-height:1}
+.chip button:hover{background:var(--danger);color:#fff}
+#bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:26px 0 14px}
+#count{font-weight:600}
+#count small{color:var(--muted);font-weight:400;margin-left:8px}
+.btn{font:inherit;font-weight:600;border-radius:12px;padding:11px 18px;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);transition:.15s}
+.btn:hover{border-color:#a9bd85}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-size:1.02rem;padding:13px 26px;box-shadow:0 6px 18px rgba(43,122,75,.28)}
+.btn.primary:hover{background:var(--accent-d)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:18px}
+.pg{position:relative;background:var(--card);border-radius:12px;border:1px solid var(--line);padding:10px 10px 8px;cursor:grab;user-select:none;-webkit-user-select:none;transition:box-shadow .15s,transform .15s}
+.pg:hover{box-shadow:0 10px 26px rgba(28,34,54,.12)}
+.pg::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:12px 12px 0 0;background:var(--c)}
+.thumb{height:210px;display:flex;align-items:center;justify-content:center;background:#e9f1d9;border-radius:6px;margin-top:4px;overflow:hidden}
+.thumb img{max-width:100%;max-height:100%;transition:transform .25s;box-shadow:0 1px 6px rgba(0,0,0,.18);pointer-events:none;background:#fff}
+.meta{display:flex;justify-content:space-between;gap:6px;font-size:.78rem;color:var(--muted);margin-top:8px}
+.meta b{color:var(--ink);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%}
+.tools{position:absolute;top:16px;right:16px;display:flex;gap:6px;opacity:0;transition:.15s}
+.pg:hover .tools,.pg:focus-within .tools{opacity:1}
+@media(hover:none){.tools{opacity:1}}
+.tools button{width:30px;height:30px;border-radius:8px;border:0;background:rgba(255,255,255,.95);box-shadow:0 1px 5px rgba(0,0,0,.25);cursor:pointer;font-size:15px}
+.tools button:hover{background:var(--accent);color:#fff}
+.tools button.del:hover{background:var(--danger)}
+.ghost{opacity:.35}
+.chosen{box-shadow:0 14px 34px rgba(43,122,75,.3);border-color:var(--accent)}
+#empty{text-align:center;color:var(--muted);padding:60px 0;border:1px solid var(--line);border-radius:14px;background:#fff}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+#toast.show{opacity:1}
+#toast.err{background:var(--danger)}
+.hidden{display:none!important}
+@media(max-width:560px){#grid{grid-template-columns:repeat(2,1fr);gap:12px}.thumb{height:150px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1>PDF Sideeditor</h1>
+  <p>Tilføj PDF'er, træk siderne i den rækkefølge du vil have, og flet dem derefter til én fil. Alt bliver i din browser.</p>
+</header>
+<main>
+  <div id="drop" tabindex="0" role="button" aria-label="Tilføj PDF-filer">
+    <strong>Slip PDF-filer her</strong>
+    <span>eller klik for at vælge filer. Du kan tilføje lige så mange, du vil.</span>
+  </div>
+  <input type="file" id="picker" accept="application/pdf,.pdf" multiple hidden>
+  <div id="files"></div>
+
+  <div id="bar" class="hidden">
+    <div id="count"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="clear">Ryd alt</button>
+      <button class="btn primary" id="merge">Flet PDF</button>
+    </div>
+  </div>
+  <div id="grid"></div>
+  <div id="empty">Ingen sider endnu. Tilføj en PDF for at komme i gang.</div>
+</main>
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const $=s=>document.querySelector(s);
+const grid=$('#grid'),drop=$('#drop'),picker=$('#picker');
+const files=new Map();           // id -> {name, bytes, color, pages}
+let nextId=1;
+const COLORS=['#2b7a4b','#e0457b','#16a085','#f08a24','#d96b43','#3b9a82','#c0a000','#e0533f'];
+
+function toast(msg,err){const t=$('#toast');t.textContent=msg;t.className='show'+(err?' err':'');clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',err?4500:2600)}
+
+/* ---------- Adding files ---------- */
+drop.onclick=()=>picker.click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();picker.click()}};
+picker.onchange=()=>{addFiles(picker.files);picker.value=''};
+['dragenter','dragover'].forEach(ev=>window.addEventListener(ev,e=>{if(e.dataTransfer&&[...e.dataTransfer.types].includes('Files')){e.preventDefault();drop.classList.add('over')}}));
+['dragleave','drop'].forEach(ev=>window.addEventListener(ev,e=>{if(ev==='drop'||e.target===document.documentElement||!e.relatedTarget)drop.classList.remove('over')}));
+window.addEventListener('drop',e=>{if(e.dataTransfer&&e.dataTransfer.files.length){e.preventDefault();addFiles(e.dataTransfer.files)}});
+
+async function addFiles(list){
+  const pdfs=[...list].filter(f=>f.type==='application/pdf'||/\.pdf$/i.test(f.name));
+  if(!pdfs.length){toast('Vælg venligst PDF-filer.',true);return}
+  for(const f of pdfs){
+    try{
+      const bytes=new Uint8Array(await f.arrayBuffer());
+      const doc=await pdfjsLib.getDocument({data:bytes.slice()}).promise;
+      const id=nextId++, color=COLORS[(id-1)%COLORS.length];
+      files.set(id,{name:f.name,bytes,color,pages:doc.numPages});
+      toast('Indlæser '+f.name+'…');
+      for(let p=1;p<=doc.numPages;p++){
+        const page=await doc.getPage(p);
+        const vp=page.getViewport({scale:.45});
+        const cv=document.createElement('canvas');
+        cv.width=vp.width;cv.height=vp.height;
+        await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+        grid.appendChild(makeCard(id,p,cv.toDataURL('image/jpeg',.8),color,f.name));
+        refresh();
+      }
+      renderChips();
+      toast(f.name+' er tilføjet');
+    }catch(err){console.error(err);toast('Kunne ikke læse '+f.name+'. Filen kan være beskadiget eller adgangskodebeskyttet.',true)}
+  }
+}
+
+/* ---------- Page cards ---------- */
+function makeCard(fid,pnum,src,color,name){
+  const d=document.createElement('div');
+  d.className='pg';d.tabIndex=0;
+  d.dataset.fid=fid;d.dataset.page=pnum;d.dataset.rot=0;
+  d.style.setProperty('--c',color);
+  d.innerHTML=`<div class="tools">
+      <button class="rot" title="Roter 90°" aria-label="Roter side">↻</button>
+      <button class="del" title="Fjern side" aria-label="Fjern side">✕</button></div>
+    <div class="thumb"><img alt="Side ${pnum} af ${name.replace(/"/g,'')}" src="${src}"></div>
+    <div class="meta"><b title="${name.replace(/"/g,'')}">${name}</b><span>s. ${pnum}</span></div>`;
+  d.querySelector('.rot').onclick=e=>{e.stopPropagation();rotate(d)};
+  d.querySelector('.del').onclick=e=>{e.stopPropagation();d.remove();refresh();renderChips()};
+  d.onkeydown=e=>{
+    if(e.key==='Delete'||e.key==='Backspace'){d.remove();refresh();renderChips()}
+    else if(e.key==='ArrowLeft'&&d.previousElementSibling){grid.insertBefore(d,d.previousElementSibling);d.focus()}
+    else if(e.key==='ArrowRight'&&d.nextElementSibling){grid.insertBefore(d.nextElementSibling,d);d.focus()}
+  };
+  return d;
+}
+function rotate(card){
+  const r=(+card.dataset.rot+90)%360;card.dataset.rot=r;
+  const img=card.querySelector('img');
+  img.style.transform=`rotate(${r}deg)`;
+  const sideways=r===90||r===270;
+  img.style.maxWidth=sideways?'72%':'100%';img.style.maxHeight=sideways?'72%':'100%';
+}
+
+new Sortable(grid,{animation:180,ghostClass:'ghost',chosenClass:'chosen',filter:'.tools',preventOnFilter:false,forceFallback:false,delay:120,delayOnTouchOnly:true});
+
+/* ---------- UI state ---------- */
+function refresh(){
+  const n=grid.children.length;
+  $('#empty').classList.toggle('hidden',n>0);
+  $('#bar').classList.toggle('hidden',n===0);
+  $('#count').innerHTML=n+(n===1?' side':' sider')+'<small>Træk for at ændre rækkefølgen. Piletasterne virker også på en valgt side.</small>';
+}
+function renderChips(){
+  const used={};[...grid.children].forEach(c=>used[c.dataset.fid]=(used[c.dataset.fid]||0)+1);
+  const box=$('#files');box.innerHTML='';
+  files.forEach((f,id)=>{
+    if(!used[id]){files.delete(id);return}
+    const c=document.createElement('div');c.className='chip';
+    c.innerHTML=`<i style="background:${f.color}"></i><span>${f.name}</span><small>${used[id]}/${f.pages} sider</small><button title="Fjern denne PDF" aria-label="Fjern ${f.name}">✕</button>`;
+    c.querySelector('button').onclick=()=>{[...grid.children].filter(x=>x.dataset.fid==id).forEach(x=>x.remove());refresh();renderChips()};
+    box.appendChild(c);
+  });
+}
+$('#clear').onclick=()=>{if(confirm('Fjern alle sider?')){grid.innerHTML='';files.clear();refresh();renderChips()}};
+refresh();
+
+/* ---------- Merge & download ---------- */
+$('#merge').onclick=async()=>{
+  const cards=[...grid.children];
+  if(!cards.length)return;
+  const btn=$('#merge');btn.disabled=true;btn.textContent='Fletter…';
+  try{
+    const {PDFDocument,degrees}=PDFLib;
+    const out=await PDFDocument.create();
+    const src=new Map();
+    for(const c of cards){
+      const fid=+c.dataset.fid;
+      if(!src.has(fid))src.set(fid,await PDFDocument.load(files.get(fid).bytes,{ignoreEncryption:true}));
+      const [pg]=await out.copyPages(src.get(fid),[+c.dataset.page-1]);
+      const extra=+c.dataset.rot;
+      if(extra)pg.setRotation(degrees((pg.getRotation().angle+extra)%360));
+      out.addPage(pg);
+    }
+    const blob=new Blob([await out.save()],{type:'application/pdf'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='flettet.pdf';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    toast('Den flettede PDF er downloadet');
+  }catch(err){console.error(err);toast('Fletning mislykkedes: '+err.message,true)}
+  btn.disabled=false;btn.textContent='Flet PDF';
+};
+</script>
+</body>
+</html>
