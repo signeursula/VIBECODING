@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POL I HØJRE HALVPLAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@300;400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000000;
+    --charcoal: #2b2b2b;
+    --moss: #4a4f48;
+    --plum: #5c3d51;
+    --wine: #260b0e;
+    --white: #ffffff;
+    /* Størrelse på baggrundsmønsteret – skalerer med skærmbredden.
+       Hæv 11.5vw for at zoome mere ind, sænk for at zoome ud. */
+    --tile: clamp(110px, 100vh, 600px);
+    --pattern: url("images/background.png");
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.4;
+  }
+  .patterned {
+    background-image: var(--pattern);
+    background-size: var(--tile) auto;
+    background-repeat: repeat;
+  }
+  h2 {
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: clamp(2rem, 3.2vw, 2.9rem);
+    line-height: 1.2;
+    letter-spacing: .01em;
+  }
+
+  /* HERO */
+  .hero {
+    background-color: var(--charcoal);
+    padding: clamp(60px, 8vw, 105px) clamp(20px, 7.6vw, 85px);
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+  }
+  .hero h1 {
+    font-family: "Archivo Black", Impact, sans-serif;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 8.3vw, 6.4rem);
+    line-height: 1;
+    letter-spacing: -.02em;
+    text-transform: uppercase;
+    text-shadow: 4px 4px 0 var(--black);
+    white-space: nowrap;
+  }
+
+  /* MEMBERS */
+  .members {
+    background-color: var(--moss);
+    padding: 68px clamp(20px, 11.6vw, 130px) 85px;
+  }
+  .pill {
+    display: inline-block;
+    background: #1f1f1f;
+    color: var(--white);
+    font-weight: 500;
+    font-size: .95rem;
+    text-transform: uppercase;
+    padding: 9px 15px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  .member-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 4px;
+  }
+  .member {
+    width: 124px;
+    text-align: center;
+  }
+  .member .icon {
+    width: 92px; height: 92px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+    background: var(--wine);
+    display: grid;
+    place-items: center;
+  }
+  .member svg {
+    width: 52px; height: 52px;
+    fill: none; stroke: var(--white);
+    stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .member strong {
+    display: block;
+    font-weight: 600;
+    font-size: .95rem;
+    text-transform: uppercase;
+  }
+  .member span {
+    font-size: .95rem;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  /* TRACKING */
+  .tracking {
+    background-color: var(--plum);
+    padding: 110px clamp(20px, 9.6vw, 108px);
+    display: grid;
+    grid-template-columns: 1fr minmax(300px, 456px);
+    gap: 48px;
+    align-items: center;
+  }
+  .tracking-text h2 { margin-bottom: 14px; }
+  .tracking-text p { font-size: .95rem; line-height: 1.35; }
+
+  .calendar {
+    background: #1b1b1b;
+    border-radius: 10px;
+    padding: 24px 24px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  }
+  .cal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .cal-head h3 { font-size: 1.1rem; font-weight: 600; }
+  .cal-nav { display: flex; gap: 14px; }
+  .cal-nav button {
+    background: none; border: 0; color: var(--white);
+    cursor: pointer; width: 24px; height: 24px; border-radius: 6px;
+    display: grid; place-items: center;
+  }
+  .cal-nav button:hover { background: rgba(255,255,255,.12); }
+  .cal-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 12px;
+    text-align: center;
+    font-size: .85rem;
+  }
+  .cal-grid .dow { font-weight: 600; color: #e9e9e9; margin-bottom: 8px; }
+  .cal-grid .day {
+    width: 30px; height: 30px; margin: 0 auto;
+    display: grid; place-items: center;
+    border-radius: 50%;
+  }
+  .cal-grid .day.today { background: #b08aa3; color: var(--black); font-weight: 600; }
+
+  /* REPERTOIRE */
+  .repertoire {
+    background: var(--charcoal);
+    padding: 95px 20px 70px;
+    text-align: center;
+  }
+  .repertoire h2 { margin-bottom: 38px; }
+  .chips {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px 14px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .chips li {
+    background: #3a3a3a;
+    font-size: .8rem;
+    padding: 6px 12px;
+    border-radius: 3px;
+  }
+  .suggestions { padding-top: 110px; padding-bottom: 20px; }
+  .suggestions h2 { margin-bottom: 26px; }
+  .suggestions .chips { gap: 14px 14px; }
+  .suggestions .chips li { background: #3a3a3a; }
+
+  /* FOOTER / FAQ */
+  .footer {
+    background: var(--black);
+    padding: 76px clamp(20px, 7.6vw, 85px) 200px;
+    display: grid;
+    gap: 32px;
+  }
+  .row { background: var(--charcoal); }
+  .row button {
+    width: 100%;
+    background: none; border: 0; color: var(--white);
+    font: inherit; font-size: 1.15rem;
+    text-align: left;
+    padding: 17px 18px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    cursor: pointer;
+  }
+  .row button:hover { background: #333; }
+  .row button:focus-visible, .cal-nav button:focus-visible { outline: 2px solid #b08aa3; outline-offset: 2px; }
+  .row svg { width: 24px; height: 24px; flex: none; fill: none; stroke: var(--white); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s; }
+  .row.open svg { transform: rotate(90deg); }
+  .row .panel { display: none; padding: 4px 18px 22px; max-width: 70ch; color: #dcdcdc; }
+  .row.open .panel { display: block; }
+  .row .panel p + p { margin-top: 10px; }
+  .row .panel a { color: #d8b9cc; }
+
+  @media (max-width: 860px) {
+    .tracking { grid-template-columns: 1fr; padding-top: 70px; padding-bottom: 70px; }
+    .hero h1 { white-space: normal; }
+    .members { padding-top: 48px; }
+    .member-list { justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<header class="hero patterned">
+  <h1>Pol i højre halvplan</h1>
+</header>
+
+<section class="members patterned" aria-labelledby="members-title">
+  <span class="pill" id="members-title">Bandmedlemmer</span>
+  <ul class="member-list">
+    <li class="member">
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M4 21h22l16-8v22L26 27H4z"/><path d="M4 27h22M13 21v-4h5v4M13 27v4h5v-4M30 17v14"/></svg></div>
+      <strong>Trompet</strong><span>Esben</span>
+    </li>
+    <li class="member">
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 6l6 3-2 8c-1 5 1 8 4 10l6 3c3 2 5 6 3 10-2 3-8 3-11 0-3-2-5-5-5-9"/><path d="M20 9l4-3M24 20l4-2M26 26l4-2"/><circle cx="21" cy="41" r="2"/></svg></div>
+      <strong>Saxofon</strong><span>Godte (Tobias)</span>
+    </li>
+    <li class="member">
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M44 4l-5 5M38 6l4 4M36 11L22 25"/><path d="M22 25c-3-3-8-1-9 3l-1 3-5 3c-3 2-2 7 2 10 3 3 8 3 10 0l3-6 3-2c4-1 5-6 2-9z"/><circle cx="18" cy="33" r="2.5"/></svg></div>
+      <strong>Bas</strong><span>H.C. (Hans)</span>
+    </li>
+    <li class="member">
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M44 4l-5 5M38 6l4 4M36 11L24 23"/><path d="M24 23c-4-3-9-1-10 3-1 3-4 4-6 6-3 3-2 8 2 11 3 3 8 3 10 1 2-2 3-5 6-6 4-1 5-6 2-9z"/><circle cx="19" cy="33" r="3"/></svg></div>
+      <strong>Guitar</strong><span>Lasse</span>
+    </li>
+    <li class="member">
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="22" rx="16" ry="5"/><path d="M8 22v14c0 3 7 5 16 5s16-2 16-5V22"/><path d="M8 26l8 9M16 27l8 10M24 27v11M32 27l-8 10M40 26l-8 9"/><path d="M12 4l9 12M36 4l-9 12"/></svg></div>
+      <strong>Trommer</strong><span>Jakob</span>
+    </li>
+    <li class="member">
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="12" width="38" height="24" rx="1"/><path d="M5 22h38M11 12v10M17 12v10M23 12v10M29 12v10M35 12v10M14 22v14M20 22v14M26 22v14M32 22v14M38 22v14"/></svg></div>
+      <strong>Keyboard</strong><span>???</span>
+    </li>
+    <li class="member">
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M34 5c4-2 9 3 7 7l-12 14-8-8z"/><path d="M21 18l-5 7c-1 2 0 3 1 4l-9 11c-1 1-1 2 0 3 1 1 2 1 3 0l11-9c1 1 2 1 4 0l7-5"/><path d="M26 15l8 8M28 25l-6-6"/></svg></div>
+      <strong>Sang</strong><span>Signe</span>
+    </li>
+  </ul>
+</section>
+
+<section class="tracking patterned" aria-labelledby="tracking-title">
+  <div class="tracking-text">
+    <h2 id="tracking-title">Bandøver<br>tracking</h2>
+    <p>Typisk øvetidspunkt:<br>Mandag, kl. 19–21</p>
+  </div>
+  <div class="calendar" aria-label="Kalender">
+    <div class="cal-head">
+      <h3 id="cal-title"></h3>
+      <div class="cal-nav">
+        <button type="button" id="prev" aria-label="Forrige måned"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
+        <button type="button" id="next" aria-label="Næste måned"><svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg></button>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+</section>
+
+<section class="repertoire" aria-labelledby="rep-title">
+  <h2 id="rep-title">Repteroire</h2>
+  <ul class="chips">
+    <li>Dirty Work – Steely Dan</li>
+    <li>Take Me To The River – Al Green</li>
+    <li>Disco Yes – Tom Misch</li>
+    <li>When It Was Wrong – The California Honeydrops</li>
+    <li>It’s Not Unusual – Tom Jones</li>
+    <li>So Easy (To Fall In Love) – Olivia Dean</li>
+    <li>You Make My Dreams – Hall &amp; Oates</li>
+    <li>Come and Get Your Love – Redbone</li>
+    <li>What You Won’t Do for Love – Bobby Caldwell</li>
+    <li>Movin’ Out (Anthony’s Song) – Billy Joel</li>
+    <li>Diggin’ on James Brown – Tower of Power</li>
+    <li>California Wine – Quinn Devlin (5 halvtoner ned)</li>
+    <li>All Dressed Up With Nowhere to Go – Michael Franks (X halvtoner ned)</li>
+    <li>Son of a Preacher Man – Dusty Springfield (3 halvtoner ned)</li>
+  </ul>
+
+  <div class="suggestions">
+    <h2>Sange der kunne<br>være nice at spille</h2>
+    <ul class="chips">
+      <li>From the Start – Laufey</li>
+      <li>Magic – Pilot</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="row">
+    <button type="button" aria-expanded="false">
+      Hvad kan vi spille, hvis vi mangler en person?
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h17M14 6l6 6-6 6"/></svg>
+    </button>
+    <div class="panel">
+      <p>Skriv her, hvilke sange I kan spille, hvis der er afbud fra et bandmedlem.</p>
+    </div>
+  </div>
+  <div class="row">
+    <button type="button" aria-expanded="false">
+      Kom med et sangforslag
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h17M14 6l6 6-6 6"/></svg>
+    </button>
+    <div class="panel">
+      <p>Skriv her, hvordan man sender et forslag – fx via en <a href="mailto:din@mail.dk">mail</a>.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Åbn/luk de to rækker i bunden
+  document.querySelectorAll('.row button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var row = btn.parentElement;
+      var open = row.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+    });
+  });
+
+  // Kalender
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var now = new Date();
+  var year = now.getFullYear(), month = now.getMonth();
+  var grid = document.getElementById('cal-grid');
+  var title = document.getElementById('cal-title');
+
+  function render() {
+    title.textContent = months[month] + ' ' + year;
+    var html = ['S','M','T','W','T','F','S'].map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
+    var first = new Date(year, month, 1).getDay();
+    var days = new Date(year, month + 1, 0).getDate();
+    for (var i = 0; i < first; i++) html += '<div></div>';
+    for (var d = 1; d <= days; d++) {
+      var isToday = d === now.getDate() && month === now.getMonth() && year === now.getFullYear();
+      html += '<div><div class="day' + (isToday ? ' today' : '') + '">' + d + '</div></div>';
+    }
+    grid.innerHTML = html;
+  }
+  document.getElementById('prev').addEventListener('click', function () { month--; if (month < 0) { month = 11; year--; } render(); });
+  document.getElementById('next').addEventListener('click', function () { month++; if (month > 11) { month = 0; year++; } render(); });
+  render();
+</script>
+</body>
+</html>
