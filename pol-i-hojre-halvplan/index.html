@@ -17,9 +17,11 @@
     --green-tint: rgba(183, 213, 177, 0.20);   /* #B7D5B1 ved 20 % */
     --plum-tint:  rgba(135, 11, 90, 0.30);     /* #870B5A ved 30 % */
 
-    /* Størrelse på baggrundsmønsteret.
-       Hæv for at zoome ind, sænk for at zoome ud. */
-    --tile: clamp(110px, 100vh, 600px);
+    /* Farve til øvedage i kalenderen */
+    --practice: #b7d5b1;
+
+    /* Størrelse på baggrundsmønsteret (gjort mindre/mere zoomede ind her) */
+    --tile: clamp(1000px, 120vh, 1000px);
     --pattern: url("images/background.png");
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -86,6 +88,7 @@
     list-style: none;
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-start;
     gap: 6px 4px;
   }
   .member {
@@ -147,14 +150,32 @@
     margin-bottom: 18px;
   }
   .cal-head h3 { font-size: 1.1rem; font-weight: 600; }
-  .cal-nav { display: flex; gap: 14px; }
-  .cal-nav button {
+  .cal-nav { display: flex; align-items: center; gap: 10px; }
+  .cal-nav button.nav-btn {
     background: none; border: 0; color: var(--white);
     cursor: pointer; width: 24px; height: 24px; border-radius: 6px;
     display: grid; place-items: center;
   }
-  .cal-nav button:hover { background: rgba(255,255,255,.12); }
+  .cal-nav button.nav-btn:hover { background: rgba(255,255,255,.12); }
   .cal-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  
+  /* "I dag" knap styling */
+  .today-btn {
+    background: #333;
+    border: 0;
+    color: var(--white);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .today-btn:hover {
+    background: #444;
+  }
+
   .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -164,11 +185,85 @@
   }
   .cal-grid .dow { font-weight: 600; color: #e9e9e9; margin-bottom: 8px; }
   .cal-grid .day {
+    position: relative;
     width: 30px; height: 30px; margin: 0 auto;
     display: grid; place-items: center;
     border-radius: 50%;
   }
   .cal-grid .day.today { background: #b08aa3; color: var(--black); font-weight: 600; }
+
+  /* Øvedage i kalenderen */
+  .cal-grid .day.practice {
+    background: var(--practice);
+    color: var(--black);
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  /* Er dagen både i dag og en øvedag: grøn med lyserød ring */
+  .cal-grid .day.practice.today { box-shadow: 0 0 0 2px #1b1b1b, 0 0 0 4px #b08aa3; }
+  .cal-grid .day.practice:hover,
+  .cal-grid .day.practice:focus-visible {
+    transform: scale(1.12);
+    z-index: 10;
+  }
+  .cal-grid .day.practice:not(.today):hover,
+  .cal-grid .day.practice:not(.today):focus-visible {
+    box-shadow: 0 0 0 3px rgba(183, 213, 177, .28);
+  }
+
+  /* Hover-boks med tidspunkt */
+  .tip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translate(-50%, 6px);
+    background: #f4f4f4;
+    color: #141414;
+    padding: 9px 13px;
+    border-radius: 8px;
+    font-size: .78rem;
+    font-weight: 500;
+    line-height: 1.45;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 6px 18px rgba(0,0,0,.45);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+  }
+  .tip b { display: block; font-weight: 600; letter-spacing: .01em; }
+  .tip em { font-style: normal; color: #5c3d51; font-weight: 600; }
+  .tip::after {              /* lille pil ned mod datoen */
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 10px; height: 10px;
+    background: #f4f4f4;
+    transform: translate(-50%, -5px) rotate(45deg);
+    border-radius: 0 0 2px 0;
+  }
+  .day.practice:hover .tip,
+  .day.practice:focus-visible .tip,
+  .day.practice:focus .tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+  }
+  /* Kant-justering, så boksen ikke stikker ud af kalenderen */
+  .tip.edge-l { left: -6px; transform: translate(0, 6px); }
+  .tip.edge-l::after { left: 21px; }
+  .tip.edge-r { left: auto; right: -6px; transform: translate(0, 6px); }
+  .tip.edge-r::after { left: auto; right: 21px; transform: translate(50%, -5px) rotate(45deg); }
+  .day.practice:hover .tip.edge-l,
+  .day.practice:focus .tip.edge-l,
+  .day.practice:focus-visible .tip.edge-l,
+  .day.practice:hover .tip.edge-r,
+  .day.practice:focus .tip.edge-r,
+  .day.practice:focus-visible .tip.edge-r { transform: translate(0, 0); }
 
   /* REPERTOIRE – ensfarvet #2C2C2C */
   .repertoire {
@@ -227,7 +322,7 @@
     .tracking { grid-template-columns: 1fr; padding-top: 70px; padding-bottom: 70px; }
     .hero h1 { white-space: normal; }
     .members { padding-top: 48px; }
-    .member-list { justify-content: center; }
+    .member-list { justify-content: flex-start; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
@@ -275,14 +370,15 @@
 <section class="tracking" aria-labelledby="tracking-title">
   <div class="tracking-text">
     <h2 id="tracking-title">Bandøver<br>tracking</h2>
-    <p>Typisk øvetidspunkt:<br>Mandag, kl. 18–21</p>
+    <p>Typisk øvetidspunkt: Mandag, kl. 19–21</p>
   </div>
   <div class="calendar" aria-label="Kalender">
     <div class="cal-head">
       <h3 id="cal-title"></h3>
       <div class="cal-nav">
-        <button type="button" id="prev" aria-label="Forrige måned"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
-        <button type="button" id="next" aria-label="Næste måned"><svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg></button>
+        <button type="button" id="prev" class="nav-btn" aria-label="Forrige måned"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
+        <button type="button" id="today-btn" class="today-btn">I dag</button>
+        <button type="button" id="next" class="nav-btn" aria-label="Næste måned"><svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg></button>
       </div>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
@@ -348,6 +444,31 @@
     });
   });
 
+  // ---------------------------------------------------------------
+  // BANDØVER – tilføj nye øvedage her (month: 1 = januar … 12 = december)
+  // ---------------------------------------------------------------
+  var practices = [
+    { year: 2026, month: 11, day: 9,  time: '18-21' },
+    { year: 2026, month: 11, day: 2,  time: '18-21' },
+    { year: 2026, month: 10, day: 6,  time: '20-23' },
+    { year: 2026, month: 10, day: 1,  time: '18-20' },
+    { year: 2026, month: 9,  day: 23, time: '20-23' },
+    { year: 2026, month: 9,  day: 10, time: '20-23' },
+    { year: 2026, month: 9,  day: 2,  time: '20-23' },
+    { year: 2026, month: 8,  day: 24, time: '20-23' }
+  ];
+
+  var weekdays = ['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
+  var shortMonths = ['JAN','FEB','MAR','APR','MAJ','JUN','JUL','AUG','SEP','OKT','NOV','DEC'];
+
+  // Slå øvedage op via nøglen "år-måned-dag" (måned 0–11)
+  var practiceMap = {};
+  practices.forEach(function (p) {
+    practiceMap[p.year + '-' + (p.month - 1) + '-' + p.day] = p;
+  });
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
   // Kalender
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var now = new Date();
@@ -363,12 +484,33 @@
     for (var i = 0; i < first; i++) html += '<div></div>';
     for (var d = 1; d <= days; d++) {
       var isToday = d === now.getDate() && month === now.getMonth() && year === now.getFullYear();
-      html += '<div><div class="day' + (isToday ? ' today' : '') + '">' + d + '</div></div>';
+      var p = practiceMap[year + '-' + month + '-' + d];
+      var cls = 'day' + (isToday ? ' today' : '');
+      if (p) {
+        var wd = weekdays[new Date(year, month, d).getDay()];
+        var label = wd + ', ' + pad(d) + '. ' + shortMonths[month] + ' ' + year;
+        var col = (first + d - 1) % 7;
+        var edge = col <= 1 ? ' edge-l' : (col >= 5 ? ' edge-r' : '');
+        html += '<div><div class="' + cls + ' practice" tabindex="0" aria-label="Bandøve: ' + label + ', kl. ' + p.time + '">' +
+                d +
+                '<span class="tip' + edge + '" role="tooltip"><b>' + label + '</b>Kl. <em>' + p.time + '</em></span>' +
+                '</div></div>';
+      } else {
+        html += '<div><div class="' + cls + '">' + d + '</div></div>';
+      }
     }
     grid.innerHTML = html;
   }
   document.getElementById('prev').addEventListener('click', function () { month--; if (month < 0) { month = 11; year--; } render(); });
   document.getElementById('next').addEventListener('click', function () { month++; if (month > 11) { month = 0; year++; } render(); });
+  
+  // "I dag" knap funktionalitet
+  document.getElementById('today-btn').addEventListener('click', function () {
+    year = now.getFullYear();
+    month = now.getMonth();
+    render();
+  });
+
   render();
 </script>
 </body>
