@@ -10,13 +10,15 @@
 <style>
   :root {
     --black: #000000;
-    --charcoal: #2b2b2b;
-    --moss: #4a4f48;
-    --plum: #5c3d51;
-    --wine: #260b0e;
+    --charcoal: #2c2c2c;
     --white: #ffffff;
-    /* Størrelse på baggrundsmønsteret – skalerer med skærmbredden.
-       Hæv 11.5vw for at zoome mere ind, sænk for at zoome ud. */
+
+    /* Farve-lag oven på background.png */
+    --green-tint: rgba(183, 213, 177, 0.20);   /* #B7D5B1 ved 20 % */
+    --plum-tint:  rgba(135, 11, 90, 0.30);     /* #870B5A ved 30 % */
+
+    /* Størrelse på baggrundsmønsteret.
+       Hæv for at zoome ind, sænk for at zoome ud. */
     --tile: clamp(110px, 100vh, 600px);
     --pattern: url("images/background.png");
   }
@@ -28,11 +30,6 @@
     font-family: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
     line-height: 1.4;
   }
-  .patterned {
-    background-image: var(--pattern);
-    background-size: var(--tile) auto;
-    background-repeat: repeat;
-  }
   h2 {
     font-family: "Oswald", "Arial Narrow", sans-serif;
     font-weight: 300;
@@ -42,9 +39,12 @@
     letter-spacing: .01em;
   }
 
-  /* HERO */
+  /* HERO – kun background.png */
   .hero {
     background-color: var(--charcoal);
+    background-image: var(--pattern);
+    background-size: var(--tile) auto;
+    background-repeat: repeat;
     padding: clamp(60px, 8vw, 105px) clamp(20px, 7.6vw, 85px);
     min-height: 320px;
     display: flex;
@@ -61,9 +61,14 @@
     white-space: nowrap;
   }
 
-  /* MEMBERS */
+  /* MEMBERS – background.png + #B7D5B1 ved 20 % */
   .members {
-    background-color: var(--moss);
+    background-color: var(--charcoal);
+    background-image:
+      linear-gradient(var(--green-tint), var(--green-tint)),
+      var(--pattern);
+    background-size: auto, var(--tile) auto;
+    background-repeat: no-repeat, repeat;
     padding: 68px clamp(20px, 11.6vw, 130px) 85px;
   }
   .pill {
@@ -91,7 +96,7 @@
     width: 92px; height: 92px;
     margin: 0 auto 8px;
     border-radius: 50%;
-    background: var(--wine);
+    background: #260b0e;
     display: grid;
     place-items: center;
   }
@@ -112,9 +117,14 @@
     font-weight: 400;
   }
 
-  /* TRACKING */
+  /* TRACKING – background.png + #870B5A ved 30 % */
   .tracking {
-    background-color: var(--plum);
+    background-color: var(--charcoal);
+    background-image:
+      linear-gradient(var(--plum-tint), var(--plum-tint)),
+      var(--pattern);
+    background-size: auto, var(--tile) auto;
+    background-repeat: no-repeat, repeat;
     padding: 110px clamp(20px, 9.6vw, 108px);
     display: grid;
     grid-template-columns: 1fr minmax(300px, 456px);
@@ -160,9 +170,9 @@
   }
   .cal-grid .day.today { background: #b08aa3; color: var(--black); font-weight: 600; }
 
-  /* REPERTOIRE */
+  /* REPERTOIRE – ensfarvet #2C2C2C */
   .repertoire {
-    background: var(--charcoal);
+    background: #2c2c2c;
     padding: 95px 20px 70px;
     text-align: center;
   }
@@ -187,14 +197,14 @@
   .suggestions .chips { gap: 14px 14px; }
   .suggestions .chips li { background: #3a3a3a; }
 
-  /* FOOTER / FAQ */
+  /* FOOTER / FAQ – ensfarvet #000000 */
   .footer {
-    background: var(--black);
+    background: #000000;
     padding: 76px clamp(20px, 7.6vw, 85px) 200px;
     display: grid;
     gap: 32px;
   }
-  .row { background: var(--charcoal); }
+  .row { background: #2c2c2c; }
   .row button {
     width: 100%;
     background: none; border: 0; color: var(--white);
@@ -224,11 +234,11 @@
 </head>
 <body>
 
-<header class="hero patterned">
+<header class="hero">
   <h1>Pol i højre halvplan</h1>
 </header>
 
-<section class="members patterned" aria-labelledby="members-title">
+<section class="members" aria-labelledby="members-title">
   <span class="pill" id="members-title">Bandmedlemmer</span>
   <ul class="member-list">
     <li class="member">
@@ -262,7 +272,7 @@
   </ul>
 </section>
 
-<section class="tracking patterned" aria-labelledby="tracking-title">
+<section class="tracking" aria-labelledby="tracking-title">
   <div class="tracking-text">
     <h2 id="tracking-title">Bandøver<br>tracking</h2>
     <p>Typisk øvetidspunkt:<br>Mandag, kl. 19–21</p>
