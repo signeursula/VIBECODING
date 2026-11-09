@@ -47,7 +47,7 @@
     background-image: var(--pattern);
     background-size: var(--tile) auto;
     background-repeat: repeat;
-    padding: clamp(60px, 8vw, 105px) clamp(20px, 7.6vw, 85px);
+    padding: clamp(60px, 8vw, 105px) clamp(20px, 14vw, 220px);
     min-height: 320px;
     display: flex;
     align-items: center;
@@ -71,7 +71,7 @@
       var(--pattern);
     background-size: auto, var(--tile) auto;
     background-repeat: no-repeat, repeat;
-    padding: 68px clamp(20px, 7.6vw, 85px) 85px;
+    padding: 68px clamp(20px, 14vw, 220px) 85px;
   }
   .pill {
     display: inline-block;
@@ -128,11 +128,12 @@
       var(--pattern);
     background-size: auto, var(--tile) auto;
     background-repeat: no-repeat, repeat;
-    padding: 110px clamp(20px, 7.6vw, 85px);
+    padding: 110px clamp(20px, 14vw, 220px);
     display: grid;
-    grid-template-columns: 1fr minmax(300px, 456px);
+    grid-template-columns: auto minmax(300px, 456px);
     gap: 48px;
     align-items: center;
+    justify-content: start;
   }
   .tracking-text h2 { margin-bottom: 14px; }
   .tracking-text p { font-size: .95rem; line-height: 1.35; }
@@ -142,6 +143,8 @@
     border-radius: 10px;
     padding: 24px 24px 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,.35);
+    width: 100%;
+    max-width: 456px;
   }
   .cal-head {
     display: flex;
@@ -268,7 +271,7 @@
   /* REPERTOIRE – ensfarvet #2C2C2C */
   .repertoire {
     background: #2c2c2c;
-    padding: 95px 20px 70px;
+    padding: 95px clamp(20px, 14vw, 220px) 70px;
     text-align: center;
   }
   .repertoire h2 { margin-bottom: 38px; }
@@ -295,7 +298,7 @@
   /* FOOTER / FAQ – ensfarvet #000000 */
   .footer {
     background: #000000;
-    padding: 76px clamp(20px, 7.6vw, 85px) 200px;
+    padding: 76px clamp(20px, 14vw, 220px) 200px;
     display: grid;
     gap: 32px;
   }
@@ -319,10 +322,14 @@
   .row .panel a { color: #d8b9cc; }
 
   @media (max-width: 860px) {
+    .hero, .members, .tracking, .repertoire, .footer {
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
     .tracking { grid-template-columns: 1fr; padding-top: 70px; padding-bottom: 70px; }
     .hero h1 { white-space: normal; }
-    .members { padding-top: 48px; }
-    .member-list { justify-content: flex-start; }
+    .members { padding-top: 48px; text-align: center; }
+    .member-list { justify-content: center; gap: 16px 12px; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
