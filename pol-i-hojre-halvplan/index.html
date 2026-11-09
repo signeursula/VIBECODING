@@ -71,7 +71,7 @@
       var(--pattern);
     background-size: auto, var(--tile) auto;
     background-repeat: no-repeat, repeat;
-    padding: 68px clamp(20px, 11.6vw, 130px) 85px;
+    padding: 68px clamp(20px, 7.6vw, 85px) 85px;
   }
   .pill {
     display: inline-block;
@@ -128,7 +128,7 @@
       var(--pattern);
     background-size: auto, var(--tile) auto;
     background-repeat: no-repeat, repeat;
-    padding: 110px clamp(20px, 9.6vw, 108px);
+    padding: 110px clamp(20px, 7.6vw, 85px);
     display: grid;
     grid-template-columns: 1fr minmax(300px, 456px);
     gap: 48px;
@@ -284,8 +284,8 @@
   .chips li {
     background: #3a3a3a;
     font-size: .8rem;
-    padding: 6px 12px;
-    border-radius: 3px;
+    padding: 7px 16px;
+    border-radius: 999px;
   }
   .suggestions { padding-top: 110px; padding-bottom: 20px; }
   .suggestions h2 { margin-bottom: 26px; }
@@ -448,6 +448,9 @@
   // BANDØVER – tilføj nye øvedage her (month: 1 = januar … 12 = december)
   // ---------------------------------------------------------------
   var practices = [
+    { year: 2026, month: 11, day: 30, time: '18-21' },
+    { year: 2026, month: 11, day: 23, time: '18-21' },
+    { year: 2026, month: 11, day: 16, time: '18-21' },
     { year: 2026, month: 11, day: 9,  time: '18-21' },
     { year: 2026, month: 11, day: 2,  time: '18-21' },
     { year: 2026, month: 10, day: 6,  time: '20-23' },
