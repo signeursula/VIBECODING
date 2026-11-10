@@ -410,6 +410,7 @@
     <li>California Wine – Quinn Devlin (5 halvtoner ned)</li>
     <li>All Dressed Up With Nowhere to Go – Michael Franks (X halvtoner ned)</li>
     <li>Son of a Preacher Man – Dusty Springfield (3 halvtoner ned)</li>
+    <li>I Will Survive – Gloria Gaynor</li>
   </ul>
 
   <div class="suggestions">
@@ -417,6 +418,10 @@
     <ul class="chips">
       <li>From the Start – Laufey</li>
       <li>Magic – Pilot</li>
+      <li>Simple Step – Vulfpeck</li>
+      <li>Get it Got it – Adi Oasis</li>
+      <li>Nothing From Nothing – Billy Preston</li>
+      <li>Better Not Tell You – Lake Street Dive</li>
     </ul>
   </div>
 </section>
@@ -490,12 +495,11 @@
   function render() {
     title.textContent = months[month] + ' ' + year;
     
-    // Ændret ugedagene til at starte med Mandag (M, T, O, T, F, L, S)
+    // Ugedagene starter med Mandag (M, T, O, T, F, L, S)
     var html = ['M','T','O','T','F','L','S'].map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
     
     var firstDayOfWeek = new Date(year, month, 1).getDay();
-    // JavaScript's getDay() returnerer 0 for søndag, 1 for mandag osv.
-    // Vi konverterer det så mandag bliver 0, tirsdag 1, ..., søndag 6.
+    // Konverterer så mandag bliver 0, tirsdag 1, ..., søndag 6.
     var first = (firstDayOfWeek === 0) ? 6 : firstDayOfWeek - 1;
     
     var days = new Date(year, month + 1, 0).getDate();
