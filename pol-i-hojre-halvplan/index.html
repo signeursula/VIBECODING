@@ -241,7 +241,7 @@
   }
   .tip b { display: block; font-weight: 600; letter-spacing: .01em; }
   .tip em { font-style: normal; color: #5c3d51; font-weight: 600; }
-  .tip::after {              /* lille pil ned mod datoen */
+  .tip::after {            /* lille pil ned mod datoen */
     content: "";
     position: absolute;
     top: 100%;
@@ -489,10 +489,18 @@
 
   function render() {
     title.textContent = months[month] + ' ' + year;
-    var html = ['S','M','T','W','T','F','S'].map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
-    var first = new Date(year, month, 1).getDay();
+    
+    // Ændret ugedagene til at starte med Mandag (M, T, O, T, F, L, S)
+    var html = ['M','T','O','T','F','L','S'].map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
+    
+    var firstDayOfWeek = new Date(year, month, 1).getDay();
+    // JavaScript's getDay() returnerer 0 for søndag, 1 for mandag osv.
+    // Vi konverterer det så mandag bliver 0, tirsdag 1, ..., søndag 6.
+    var first = (firstDayOfWeek === 0) ? 6 : firstDayOfWeek - 1;
+    
     var days = new Date(year, month + 1, 0).getDate();
     for (var i = 0; i < first; i++) html += '<div></div>';
+    
     for (var d = 1; d <= days; d++) {
       var isToday = d === now.getDate() && month === now.getMonth() && year === now.getFullYear();
       var p = practiceMap[year + '-' + month + '-' + d];
