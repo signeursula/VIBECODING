@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a09">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Hvad kan vi spille, hvis vi mangler en person?</title>
+<link rel="icon" href="../images/logo.png">
+<link rel="apple-touch-icon" href="../images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Samme farver som forsiden – sort, bambusgrøn og mørkerød */
+    --bg-deep: #050505;
+    --bg-dark: #0a0a09;
+    --ink: #111210;
+    --bamboo-light: #d4e8b0;
+    --bamboo: #a9c47f;
+    --bamboo-mid: #8aa462;
+    --bamboo-deep: #5b6f3e;
+    --bamboo-night: #1b2214;
+    --red: #8e1b26;
+    --red-deep: #4f0d15;
+    --red-glow: #c23a4b;
+    --white: #f7f8f3;
+    --text-soft: #c9cfbf;
+    --glass-border: rgba(255, 255, 255, .09);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, .06);
+    --grad-bamboo: linear-gradient(145deg, #d6eab2 0%, #a9c47f 48%, #6c8247 100%);
+    --grad-red: linear-gradient(145deg, #b02a39 0%, #6e121c 55%, #3d0a10 100%);
+    --side: clamp(16px, 7vw, 36px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bg-deep); }
+  body {
+    background: var(--bg-deep);
+    color: var(--white);
+    font-family: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.4;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--red); color: var(--white); }
+
+  .app {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    max-width: 480px;
+    min-height: 100vh;
+    margin: 0 auto;
+    background: linear-gradient(180deg, var(--bg-dark) 0%, #0f130c 40%, var(--bg-dark) 75%, #170609 100%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .04), 0 0 80px rgba(0, 0, 0, .8);
+    padding: calc(20px + env(safe-area-inset-top, 0px)) var(--side) calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+  /* Bløde lys-kugler i baggrunden */
+  .app::before, .app::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+  }
+  .app::before { width: 220px; height: 220px; right: -90px; top: -60px; background: var(--red); opacity: .6; }
+  .app::after { width: 240px; height: 240px; left: -110px; top: 320px; background: var(--bamboo-deep); opacity: .35; }
+
+  /* Tilbage-knap */
+  .back {
+    width: 42px; height: 42px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .045);
+    border: 1px solid var(--glass-border);
+    color: var(--bamboo-light);
+    box-shadow: var(--glass-highlight);
+    transition: background .2s, border-color .2s, color .2s;
+  }
+  .back:hover { background: rgba(142, 27, 38, .35); border-color: rgba(194, 58, 75, .6); color: var(--white); }
+  .back:focus-visible { outline: 2px solid var(--bamboo); outline-offset: 2px; }
+  .back svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  h1 {
+    margin-top: 28px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: clamp(1.9rem, 9vw, 2.4rem);
+    line-height: 1.15;
+    letter-spacing: .02em;
+    background: linear-gradient(100deg, var(--white) 0%, var(--bamboo-light) 55%, var(--bamboo) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  h1::after {
+    content: "";
+    display: block;
+    width: 44px; height: 3px;
+    margin-top: 16px;
+    border-radius: 3px;
+    background: var(--grad-red);
+    box-shadow: 0 0 14px rgba(194, 58, 75, .45);
+  }
+
+  .label {
+    margin: 30px 0 12px;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--bamboo);
+  }
+
+  /* Filter – instrumenter */
+  .filters {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 6px;
+    border-radius: 999px;
+    background: rgba(169, 196, 127, .06);
+    border: 1px solid rgba(169, 196, 127, .22);
+    color: var(--white);
+    font: inherit;
+    font-size: .88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, border-color .2s, color .2s;
+  }
+  .filter .ico {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--grad-bamboo);
+    transition: background .2s;
+  }
+  .filter svg {
+    width: 62%; height: 62%;
+    fill: none; stroke: #18200f;
+    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .filter:hover { background: rgba(169, 196, 127, .14); border-color: rgba(169, 196, 127, .45); }
+  .filter:focus-visible { outline: 2px solid var(--bamboo); outline-offset: 2px; }
+  /* Valgt = personen mangler */
+  .filter[aria-pressed="true"] {
+    background: rgba(142, 27, 38, .35);
+    border-color: var(--red-glow);
+    color: #f3dfe1;
+    text-decoration: line-through;
+    text-decoration-color: rgba(243, 223, 225, .7);
+  }
+  .filter[aria-pressed="true"] .ico { background: var(--grad-red); }
+  .filter[aria-pressed="true"] svg { stroke: var(--white); }
+
+  .clear {
+    margin-top: 12px;
+    background: none; border: 0;
+    color: var(--text-soft);
+    font: inherit; font-size: .82rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .clear[hidden] { display: none; }
+  .clear:hover { color: var(--white); }
+
+  /* Sangliste */
+  .summary {
+    margin: 34px 0 14px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+  }
+  .summary h2 {
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .count { font-size: .85rem; color: var(--text-soft); white-space: nowrap; }
+  .count b { color: var(--bamboo-light); font-weight: 700; }
+
+  .songs { list-style: none; display: grid; gap: 8px; }
+  .song {
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(10, 10, 9, .5);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-highlight);
+  }
+  .song .name { display: block; font-weight: 600; font-size: 1rem; line-height: 1.3; }
+  .song .artist { display: block; margin-top: 2px; font-size: .85rem; color: var(--text-soft); }
+  .song .needs {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 500;
+    color: var(--bamboo-light);
+    background: rgba(169, 196, 127, .1);
+    border: 1px solid rgba(169, 196, 127, .22);
+  }
+
+  /* Sange der ikke kan spilles */
+  .unplayable-wrap { margin-top: 34px; }
+  .unplayable-wrap[hidden] { display: none; }
+  .unplayable-wrap .summary h2 { color: #e9c6ca; }
+  .unplayable .song { opacity: .55; }
+  .unplayable .song .name { text-decoration: line-through; text-decoration-color: rgba(194, 58, 75, .8); }
+  .unplayable .song .needs {
+    color: #f3dfe1;
+    background: rgba(142, 27, 38, .25);
+    border-color: rgba(194, 58, 75, .45);
+  }
+
+  .empty {
+    padding: 22px 16px;
+    border-radius: 16px;
+    border: 1px dashed rgba(194, 58, 75, .5);
+    color: var(--text-soft);
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <a class="back" href="../index.html" aria-label="Tilbage til forsiden">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12H4M10 6l-6 6 6 6"/></svg>
+  </a>
+
+  <h1>Hvad kan vi spille, hvis vi mangler en person?</h1>
+
+  <p class="label" id="filter-label">Hvem mangler?</p>
+  <ul class="filters" id="filters" aria-labelledby="filter-label"></ul>
+  <button type="button" class="clear" id="clear" hidden>Nulstil – alle er med</button>
+
+  <div class="summary">
+    <h2>Det kan vi spille</h2>
+    <span class="count" id="count"></span>
+  </div>
+  <ul class="songs" id="songs"></ul>
+
+  <div class="unplayable-wrap" id="unplayable-wrap" hidden>
+    <div class="summary">
+      <h2>Kan ikke spilles</h2>
+    </div>
+    <ul class="songs unplayable" id="unplayable"></ul>
+  </div>
+
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // INSTRUMENTER (samme ikoner som på forsiden)
+  // ---------------------------------------------------------------
+  var instruments = [
+    { id: 'keyboard', name: 'Keyboard', icon: '<rect x="5" y="12" width="38" height="24" rx="1"/><path d="M5 22h38M11 12v10M17 12v10M23 12v10M29 12v10M35 12v10M14 22v14M20 22v14M26 22v14M32 22v14M38 22v14"/>' },
+    { id: 'guitar',   name: 'Guitar',   icon: '<path d="M44 4l-5 5M38 6l4 4M36 11L24 23"/><path d="M24 23c-4-3-9-1-10 3-1 3-4 4-6 6-3 3-2 8 2 11 3 3 8 3 10 1 2-2 3-5 6-6 4-1 5-6 2-9z"/><circle cx="19" cy="33" r="3"/>' },
+    { id: 'saxofon',  name: 'Saxofon',  icon: '<path d="M14 6l6 3-2 8c-1 5 1 8 4 10l6 3c3 2 5 6 3 10-2 3-8 3-11 0-3-2-5-5-5-9"/><path d="M20 9l4-3M24 20l4-2M26 26l4-2"/><circle cx="21" cy="41" r="2"/>' },
+    { id: 'trompet',  name: 'Trompet',  icon: '<path d="M4 21h22l16-8v22L26 27H4z"/><path d="M4 27h22M13 21v-4h5v4M13 27v4h5v-4M30 17v14"/>' },
+    { id: 'bas',      name: 'Bas',      icon: '<path d="M44 4l-5 5M38 6l4 4M36 11L22 25"/><path d="M22 25c-3-3-8-1-9 3l-1 3-5 3c-3 2-2 7 2 10 3 3 8 3 10 0l3-6 3-2c4-1 5-6 2-9z"/><circle cx="18" cy="33" r="2.5"/>' },
+    { id: 'trommer',  name: 'Trommer',  icon: '<ellipse cx="24" cy="22" rx="16" ry="5"/><path d="M8 22v14c0 3 7 5 16 5s16-2 16-5V22"/><path d="M8 26l8 9M16 27l8 10M24 27v11M32 27l-8 10M40 26l-8 9"/><path d="M12 4l9 12M36 4l-9 12"/>' },
+    { id: 'sang',     name: 'Sang',     icon: '<path d="M34 5c4-2 9 3 7 7l-12 14-8-8z"/><path d="M21 18l-5 7c-1 2 0 3 1 4l-9 11c-1 1-1 2 0 3 1 1 2 1 3 0l11-9c1 1 2 1 4 0l7-5"/><path d="M26 15l8 8M28 25l-6-6"/>' }
+  ];
+  var allIds = instruments.map(function (i) { return i.id; });
+  var nameOf = {};
+  instruments.forEach(function (i) { nameOf[i.id] = i.name; });
+
+  var missing = {};   // instrumenter der er valgt som "mangler"
+  var songs = [];
+
+  // ---------------------------------------------------------------
+  // SANGE – hentes fra ../repertoire.json
+  //   "requires": hvilke instrumenter sangen IKKE kan spilles uden.
+  //   Uden "requires" kræver sangen hele bandet.
+  // ---------------------------------------------------------------
+  function requiresOf(song) {
+    return Array.isArray(song.requires) ? song.requires : allIds;
+  }
+
+  function listNames(ids) {
+    var names = ids.map(function (id) { return (nameOf[id] || id).toLowerCase(); });
+    if (names.length <= 1) return names.join('');
+    return names.slice(0, -1).join(', ') + ' og ' + names[names.length - 1];
+  }
+
+  function songItem(song, needsText) {
+    var li = document.createElement('li');
+    li.className = 'song';
+    var parts = song.title.split(' – ');
+    var name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = parts[0];
+    li.appendChild(name);
+    if (parts.length > 1) {
+      var artist = document.createElement('span');
+      artist.className = 'artist';
+      artist.textContent = parts.slice(1).join(' – ');
+      li.appendChild(artist);
+    }
+    var needs = document.createElement('span');
+    needs.className = 'needs';
+    needs.textContent = needsText;
+    li.appendChild(needs);
+    return li;
+  }
+
+  function render() {
+    var missingIds = allIds.filter(function (id) { return missing[id]; });
+    var playList = document.getElementById('songs');
+    var noList = document.getElementById('unplayable');
+    playList.innerHTML = '';
+    noList.innerHTML = '';
+    var playable = 0;
+
+    songs.forEach(function (song) {
+      var req = requiresOf(song);
+      var blockers = req.filter(function (id) { return missing[id]; });
+      var needsAll = req.length >= allIds.length;
+      if (blockers.length === 0) {
+        playable++;
+        playList.appendChild(songItem(song, needsAll ? 'Kræver hele bandet' : 'Kræver ' + listNames(req)));
+      } else {
+        noList.appendChild(songItem(song, 'Mangler ' + listNames(blockers)));
+      }
+    });
+
+    if (playable === 0 && songs.length) {
+      var empty = document.createElement('li');
+      empty.className = 'empty';
+      empty.textContent = 'Ingen sange kan spilles uden ' + listNames(missingIds) + '.';
+      playList.appendChild(empty);
+    }
+
+    document.getElementById('count').innerHTML = '<b>' + playable + '</b> af ' + songs.length + ' sange';
+    document.getElementById('unplayable-wrap').hidden = noList.children.length === 0;
+    document.getElementById('clear').hidden = missingIds.length === 0;
+  }
+
+  // Filterknapper
+  var filterList = document.getElementById('filters');
+  instruments.forEach(function (inst) {
+    var li = document.createElement('li');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'filter';
+    btn.setAttribute('aria-pressed', 'false');
+    btn.innerHTML = '<span class="ico"><svg viewBox="0 0 48 48" aria-hidden="true">' + inst.icon + '</svg></span>' + inst.name;
+    btn.addEventListener('click', function () {
+      missing[inst.id] = !missing[inst.id];
+      btn.setAttribute('aria-pressed', missing[inst.id] ? 'true' : 'false');
+      render();
+    });
+    li.appendChild(btn);
+    filterList.appendChild(li);
+  });
+
+  document.getElementById('clear').addEventListener('click', function () {
+    missing = {};
+    filterList.querySelectorAll('.filter').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+    render();
+  });
+
+  fetch('../repertoire.json')
+    .then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function (data) {
+      songs = data.map(function (s) { return typeof s === 'string' ? { title: s } : s; });
+      render();
+    })
+    .catch(function (err) {
+      console.error('Kunne ikke indlæse ../repertoire.json:', err);
+      var li = document.createElement('li');
+      li.className = 'empty';
+      li.textContent = 'Kunne ikke indlæse sangene';
+      document.getElementById('songs').appendChild(li);
+    });
+</script>
+</body>
+</html>
