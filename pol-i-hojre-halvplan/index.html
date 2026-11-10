@@ -2,223 +2,205 @@
 <html lang="da">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1c1c1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>POL I HØJRE HALVPLAN</title>
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@300;400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@300;400&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --black: #000000;
-    --charcoal: #2c2c2c;
+    --bg-dark: #1c1c1c;
+    --grey: #454545;
+    --maroon: #3f1519;
+    --icon-bg: #4a1317;
+    --chip: #3a3a3a;
+    --mauve: #ab88a0;
     --white: #ffffff;
+    --olive: #4b5a2f;
 
-    /* Farve-lag oven på background.png */
-    --green-tint: rgba(183, 213, 177, 0.20);   /* #B7D5B1 ved 20 % */
-    --plum-tint:  rgba(135, 11, 90, 0.30);     /* #870B5A ved 30 % */
-
-    /* Farve til øvedage i kalenderen */
+    /* Farve til øvedage i kalenderen (sæt til "transparent" for at skjule dem) */
     --practice: #b7d5b1;
 
-    /* Størrelse på baggrundsmønsteret (gjort mindre/mere zoomede ind her) */
-    --tile: clamp(1000px, 120vh, 1000px);
-    --pattern: url("images/background.png");
+    --side: clamp(20px, 11vw, 48px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; background: #111; }
   body {
-    background: var(--black);
+    background: var(--bg-dark);
     color: var(--white);
     font-family: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
     line-height: 1.4;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
+
+  /* Appens ramme – telefonformat, centreret på større skærme */
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--bg-dark);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
   h2 {
     font-family: "Oswald", "Arial Narrow", sans-serif;
     font-weight: 300;
     text-transform: uppercase;
-    font-size: clamp(2rem, 3.2vw, 2.9rem);
+    font-size: 2.3rem;
     line-height: 1.2;
-    letter-spacing: .01em;
+    letter-spacing: .02em;
   }
 
-  /* HERO – kun background.png */
+  /* HEADER */
   .hero {
-    background-color: var(--charcoal);
-    background-image: var(--pattern);
-    background-size: var(--tile) auto;
-    background-repeat: repeat;
-    padding: clamp(60px, 8vw, 105px) clamp(20px, 14vw, 220px);
-    min-height: 320px;
+    background: var(--bg-dark);
+    padding: calc(40px + env(safe-area-inset-top, 0px)) var(--side) 40px;
     display: flex;
     align-items: center;
+    gap: 22px;
+  }
+  .hero img {
+    width: 100px; height: 100px;
+    flex: none;
+    display: block;
   }
   .hero h1 {
     font-family: "Archivo Black", Impact, sans-serif;
     font-weight: 400;
-    font-size: clamp(2rem, 6.5vw, 5.5rem);
-    line-height: 1.05;
+    font-size: clamp(1.6rem, 8vw, 2rem);
+    line-height: 1.08;
     letter-spacing: -.02em;
     text-transform: uppercase;
-    text-shadow: 4px 4px 0 var(--black);
-    max-width: 100%;
-    word-break: normal;
-    overflow-wrap: break-word;
+    text-shadow: 3px 3px 0 var(--bg-dark);
   }
 
-  /* MEMBERS – background.png + #B7D5B1 ved 20 % */
+  /* BANDMEDLEMMER */
   .members {
-    background-color: var(--charcoal);
-    background-image:
-      linear-gradient(var(--green-tint), var(--green-tint)),
-      var(--pattern);
-    background-size: auto, var(--tile) auto;
-    background-repeat: no-repeat, repeat;
-    padding: 68px clamp(20px, 14vw, 220px) 85px;
+    background: var(--grey);
+    padding: 36px clamp(16px, 8vw, 36px) 50px;
   }
   .pill {
     display: inline-block;
-    background: #1f1f1f;
+    background: var(--bg-dark);
     color: var(--white);
     font-weight: 500;
-    font-size: .95rem;
+    font-size: 1.35rem;
     text-transform: uppercase;
-    padding: 9px 15px;
+    padding: 14px 22px;
     border-radius: 999px;
     margin-bottom: 14px;
   }
   .member-list {
     list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 6px 4px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    row-gap: 12px;
   }
-  .member {
-    width: 124px;
-    text-align: center;
-  }
+  .member { grid-column: span 2; text-align: center; }
+  .member:nth-child(1), .member:nth-child(6) { grid-column: 2 / 4; }
+  .member:nth-child(2), .member:nth-child(7) { grid-column: 4 / 6; }
   .member .icon {
-    width: 92px; height: 92px;
-    margin: 0 auto 8px;
+    width: min(100px, 86%);
+    aspect-ratio: 1;
+    margin: 0 auto 10px;
     border-radius: 50%;
-    background: #260b0e;
+    background: var(--icon-bg);
     display: grid;
     place-items: center;
   }
   .member svg {
-    width: 52px; height: 52px;
+    width: 52%; height: 52%;
     fill: none; stroke: var(--white);
     stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
   }
   .member strong {
     display: block;
     font-weight: 600;
-    font-size: .95rem;
+    font-size: .98rem;
     text-transform: uppercase;
   }
   .member span {
-    font-size: .95rem;
+    display: block;
+    font-size: .98rem;
     text-transform: uppercase;
     font-weight: 400;
+    color: #e4e4e4;
   }
 
-  /* TRACKING – background.png + #870B5A ved 30 % */
+  /* BANDØVER TRACKING */
   .tracking {
-    background-color: var(--charcoal);
-    background-image:
-      linear-gradient(var(--plum-tint), var(--plum-tint)),
-      var(--pattern);
-    background-size: auto, var(--tile) auto;
-    background-repeat: no-repeat, repeat;
-    padding: 110px clamp(20px, 14vw, 220px);
-    display: grid;
-    grid-template-columns: auto minmax(300px, 456px);
-    gap: 48px;
-    align-items: center;
-    justify-content: start;
+    background: linear-gradient(to bottom, #1d1d1d 0%, #2b3320 30%, var(--olive) 100%);
+    padding: 90px var(--side) 70px;
   }
-  .tracking-text h2 { margin-bottom: 14px; }
-  .tracking-text p { font-size: .95rem; line-height: 1.35; }
+  .tracking-text h2 {
+    font-size: 3rem;
+    line-height: 1.25;
+    margin-bottom: 18px;
+  }
+  .tracking-text p { font-size: 1.15rem; line-height: 1.4; }
 
   .calendar {
-    background: #1b1b1b;
-    border-radius: 10px;
-    padding: 24px 24px 20px;
+    background: var(--bg-dark);
+    border-radius: 14px;
+    padding: 36px 24px 26px;
+    margin-top: 46px;
     box-shadow: 0 2px 8px rgba(0,0,0,.35);
-    width: 100%;
-    max-width: 456px;
   }
   .cal-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 26px;
+    padding: 0 8px;
   }
-  .cal-head h3 { font-size: 1.1rem; font-weight: 600; }
+  .cal-head h3 { font-size: 1.4rem; font-weight: 600; }
   .cal-nav { display: flex; align-items: center; gap: 10px; }
   .cal-nav button.nav-btn {
     background: none; border: 0; color: var(--white);
-    cursor: pointer; width: 24px; height: 24px; border-radius: 6px;
+    cursor: pointer; width: 28px; height: 28px; border-radius: 6px;
     display: grid; place-items: center;
   }
   .cal-nav button.nav-btn:hover { background: rgba(255,255,255,.12); }
-  .cal-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-  
-  /* "I dag" knap styling */
-  .today-btn {
-    background: #333;
-    border: 0;
-    color: var(--white);
-    font-family: inherit;
-    font-size: 0.78rem;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .today-btn:hover {
-    background: #444;
-  }
+  .cal-nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
   .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    row-gap: 12px;
+    row-gap: 18px;
     text-align: center;
-    font-size: .85rem;
+    font-size: 1.05rem;
   }
-  .cal-grid .dow { font-weight: 600; color: #e9e9e9; margin-bottom: 8px; }
+  .cal-grid .dow { font-weight: 600; color: #f0f0f0; margin-bottom: 8px; }
   .cal-grid .day {
     position: relative;
-    width: 30px; height: 30px; margin: 0 auto;
+    width: 40px; height: 40px; margin: 0 auto;
     display: grid; place-items: center;
     border-radius: 50%;
   }
-  .cal-grid .day.today { background: #b08aa3; color: var(--black); font-weight: 600; }
+  .cal-grid .day.today { background: var(--mauve); color: var(--bg-dark); font-weight: 600; }
 
   /* Øvedage i kalenderen */
   .cal-grid .day.practice {
     background: var(--practice);
-    color: var(--black);
+    color: #000;
     font-weight: 600;
     cursor: pointer;
     outline: none;
     transition: transform .18s ease, box-shadow .18s ease;
   }
-  /* Er dagen både i dag og en øvedag: grøn med lyserød ring */
-  .cal-grid .day.practice.today { box-shadow: 0 0 0 2px #1b1b1b, 0 0 0 4px #b08aa3; }
+  .cal-grid .day.practice.today { box-shadow: 0 0 0 2px var(--bg-dark), 0 0 0 4px var(--mauve); }
   .cal-grid .day.practice:hover,
-  .cal-grid .day.practice:focus-visible {
-    transform: scale(1.12);
-    z-index: 10;
-  }
+  .cal-grid .day.practice:focus-visible { transform: scale(1.12); z-index: 10; }
   .cal-grid .day.practice:not(.today):hover,
-  .cal-grid .day.practice:not(.today):focus-visible {
-    box-shadow: 0 0 0 3px rgba(183, 213, 177, .28);
-  }
+  .cal-grid .day.practice:not(.today):focus-visible { box-shadow: 0 0 0 3px rgba(183, 213, 177, .28); }
 
-  /* Hover-boks med tidspunkt */
+  /* Boks med tidspunkt (hover / tryk) */
   .tip {
     position: absolute;
     bottom: calc(100% + 12px);
@@ -241,7 +223,7 @@
   }
   .tip b { display: block; font-weight: 600; letter-spacing: .01em; }
   .tip em { font-style: normal; color: #5c3d51; font-weight: 600; }
-  .tip::after {            /* lille pil ned mod datoen */
+  .tip::after {
     content: "";
     position: absolute;
     top: 100%;
@@ -253,16 +235,11 @@
   }
   .day.practice:hover .tip,
   .day.practice:focus-visible .tip,
-  .day.practice:focus .tip {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, 0);
-  }
-  /* Kant-justering, så boksen ikke stikker ud af kalenderen */
+  .day.practice:focus .tip { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
   .tip.edge-l { left: -6px; transform: translate(0, 6px); }
-  .tip.edge-l::after { left: 21px; }
+  .tip.edge-l::after { left: 26px; }
   .tip.edge-r { left: auto; right: -6px; transform: translate(0, 6px); }
-  .tip.edge-r::after { left: auto; right: 21px; transform: translate(50%, -5px) rotate(45deg); }
+  .tip.edge-r::after { left: auto; right: 26px; transform: translate(50%, -5px) rotate(45deg); }
   .day.practice:hover .tip.edge-l,
   .day.practice:focus .tip.edge-l,
   .day.practice:focus-visible .tip.edge-l,
@@ -270,75 +247,65 @@
   .day.practice:focus .tip.edge-r,
   .day.practice:focus-visible .tip.edge-r { transform: translate(0, 0); }
 
-  /* REPERTOIRE – ensfarvet #2C2C2C */
+  /* REPERTOIRE */
   .repertoire {
-    background: #2c2c2c;
-    padding: 95px clamp(20px, 14vw, 220px) 70px;
-    text-align: center;
+    background: var(--bg-dark);
+    padding: 80px var(--side) 10px;
   }
-  .repertoire h2 { margin-bottom: 38px; }
+  .repertoire h2 { margin-bottom: 26px; }
   .chips {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 14px 14px;
-    max-width: 900px;
-    margin: 0 auto;
+    justify-content: flex-start;
+    gap: 10px 8px;
   }
   .chips li {
-    background: #3a3a3a;
+    background: var(--chip);
+    color: #ececec;
     font-size: .8rem;
-    padding: 7px 16px;
-    border-radius: 999px;
+    line-height: 1.35;
+    padding: 6px 11px;
+    border-radius: 4px;
   }
-  .suggestions { padding-top: 110px; padding-bottom: 20px; }
+  .suggestions { padding-top: 70px; padding-bottom: 70px; }
   .suggestions h2 { margin-bottom: 26px; }
-  .suggestions .chips { gap: 14px 14px; }
-  .suggestions .chips li { background: #3a3a3a; }
 
-  /* FOOTER / FAQ – ensfarvet #000000 */
+  /* FOOTER / FAQ */
   .footer {
-    background: #000000;
-    padding: 76px clamp(20px, 14vw, 220px) 200px;
+    background: var(--maroon);
+    padding: 64px clamp(16px, 8vw, 36px) calc(70px + env(safe-area-inset-bottom, 0px));
     display: grid;
-    gap: 32px;
+    gap: 24px;
   }
-  .row { background: #2c2c2c; }
+  .row { background: var(--mauve); color: #1b1b1b; border-radius: 3px; }
   .row button {
     width: 100%;
-    background: none; border: 0; color: var(--white);
-    font: inherit; font-size: 1.15rem;
+    background: none; border: 0; color: inherit;
+    font: inherit; font-size: 1.15rem; line-height: 1.35;
     text-align: left;
-    padding: 17px 18px;
+    padding: 24px 20px;
     display: flex; justify-content: space-between; align-items: center; gap: 16px;
     cursor: pointer;
   }
-  .row button:hover { background: #333; }
-  .row button:focus-visible, .cal-nav button:focus-visible { outline: 2px solid #b08aa3; outline-offset: 2px; }
-  .row svg { width: 24px; height: 24px; flex: none; fill: none; stroke: var(--white); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s; }
+  .row button:active { background: rgba(0,0,0,.06); }
+  .row button:focus-visible { outline: 2px solid var(--white); outline-offset: 2px; }
+  .row svg { width: 26px; height: 26px; flex: none; fill: none; stroke: #1b1b1b; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s; }
   .row.open svg { transform: rotate(90deg); }
-  .row .panel { display: none; padding: 4px 18px 22px; max-width: 70ch; color: #dcdcdc; }
+  .row .panel { display: none; padding: 0 20px 24px; color: #2a1a24; }
   .row.open .panel { display: block; }
   .row .panel p + p { margin-top: 10px; }
-  .row .panel a { color: #d8b9cc; }
+  .row .panel a { color: #3f1519; }
 
-  @media (max-width: 860px) {
-    .hero, .members, .tracking, .repertoire, .footer {
-      padding-left: 20px !important;
-      padding-right: 20px !important;
-    }
-    .tracking { grid-template-columns: 1fr; padding-top: 70px; padding-bottom: 70px; }
-    .members { padding-top: 48px; text-align: center; }
-    .member-list { justify-content: center; gap: 16px 12px; }
-  }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
 <body>
+<div class="app">
 
 <header class="hero">
-  <h1>Pol i højre halvplan</h1>
+  <img src="logo.png" width="100" height="100" alt="Pol i højre halvplan logo">
+  <h1>Pol i højre<br>halvplan</h1>
 </header>
 
 <section class="members" aria-labelledby="members-title">
@@ -357,20 +324,20 @@
       <strong>Bas</strong><span>H.C. (Hans)</span>
     </li>
     <li class="member">
-      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M44 4l-5 5M38 6l4 4M36 11L24 23"/><path d="M24 23c-4-3-9-1-10 3-1 3-4 4-6 6-3 3-2 8 2 11 3 3 8 3 10 1 2-2 3-5 6-6 4-1 5-6 2-9z"/><circle cx="19" cy="33" r="3"/></svg></div>
-      <strong>Guitar</strong><span>Lasse</span>
-    </li>
-    <li class="member">
       <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="22" rx="16" ry="5"/><path d="M8 22v14c0 3 7 5 16 5s16-2 16-5V22"/><path d="M8 26l8 9M16 27l8 10M24 27v11M32 27l-8 10M40 26l-8 9"/><path d="M12 4l9 12M36 4l-9 12"/></svg></div>
       <strong>Trommer</strong><span>Jakob</span>
     </li>
     <li class="member">
-      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="12" width="38" height="24" rx="1"/><path d="M5 22h38M11 12v10M17 12v10M23 12v10M29 12v10M35 12v10M14 22v14M20 22v14M26 22v14M32 22v14M38 22v14"/></svg></div>
-      <strong>Keyboard</strong><span>???</span>
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M44 4l-5 5M38 6l4 4M36 11L24 23"/><path d="M24 23c-4-3-9-1-10 3-1 3-4 4-6 6-3 3-2 8 2 11 3 3 8 3 10 1 2-2 3-5 6-6 4-1 5-6 2-9z"/><circle cx="19" cy="33" r="3"/></svg></div>
+      <strong>Guitar</strong><span>Lasse</span>
     </li>
     <li class="member">
       <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M34 5c4-2 9 3 7 7l-12 14-8-8z"/><path d="M21 18l-5 7c-1 2 0 3 1 4l-9 11c-1 1-1 2 0 3 1 1 2 1 3 0l11-9c1 1 2 1 4 0l7-5"/><path d="M26 15l8 8M28 25l-6-6"/></svg></div>
       <strong>Sang</strong><span>Signe</span>
+    </li>
+    <li class="member">
+      <div class="icon"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="12" width="38" height="24" rx="1"/><path d="M5 22h38M11 12v10M17 12v10M23 12v10M29 12v10M35 12v10M14 22v14M20 22v14M26 22v14M32 22v14M38 22v14"/></svg></div>
+      <strong>Keyboard</strong><span>???</span>
     </li>
   </ul>
 </section>
@@ -378,14 +345,13 @@
 <section class="tracking" aria-labelledby="tracking-title">
   <div class="tracking-text">
     <h2 id="tracking-title">Bandøver<br>tracking</h2>
-    <p>Typisk øvetidspunkt: Mandag, kl. 19–21</p>
+    <p>Typisk øvetidspunkt:<br>Mandag, kl. 19–21</p>
   </div>
   <div class="calendar" aria-label="Kalender">
     <div class="cal-head">
       <h3 id="cal-title"></h3>
       <div class="cal-nav">
         <button type="button" id="prev" class="nav-btn" aria-label="Forrige måned"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
-        <button type="button" id="today-btn" class="today-btn">I dag</button>
         <button type="button" id="next" class="nav-btn" aria-label="Næste måned"><svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg></button>
       </div>
     </div>
@@ -417,7 +383,7 @@
   </div>
   <div class="row">
     <button type="button" aria-expanded="false">
-      Kom med et sangforslag
+      Kom med sangforslag
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h17M14 6l6 6-6 6"/></svg>
     </button>
     <div class="panel">
@@ -425,6 +391,8 @@
     </div>
   </div>
 </footer>
+
+</div>
 
 <script>
   // Åbn/luk de to rækker i bunden
@@ -493,7 +461,7 @@
 
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-  // Kalender
+  // Kalender (søndag først, som i designet)
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var now = new Date();
   var year = now.getFullYear(), month = now.getMonth();
@@ -502,25 +470,22 @@
 
   function render() {
     title.textContent = months[month] + ' ' + year;
-    
-    // Ugedagene starter med Mandag (M, T, O, T, F, L, S)
-    var html = ['M','T','O','T','F','L','S'].map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
-    
-    var firstDayOfWeek = new Date(year, month, 1).getDay();
-    // Konverterer så mandag bliver 0, tirsdag 1, ..., søndag 6.
-    var first = (firstDayOfWeek === 0) ? 6 : firstDayOfWeek - 1;
-    
-    var days = new Date(year, month + 1, 0).getDate();
-    for (var i = 0; i < first; i++) html += '<div></div>';
-    
-    for (var d = 1; d <= days; d++) {
-      var isToday = d === now.getDate() && month === now.getMonth() && year === now.getFullYear();
-      var p = practiceMap[year + '-' + month + '-' + d];
+
+    var html = ['S','M','T','W','T','F','S'].map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
+
+    var first = new Date(year, month, 1).getDay();            // 0 = søndag
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var cells = Math.ceil((first + daysInMonth) / 7) * 7;
+
+    for (var i = 0; i < cells; i++) {
+      var date = new Date(year, month, 1 - first + i);        // viser også dage fra nabomåneder
+      var y = date.getFullYear(), m = date.getMonth(), d = date.getDate();
+      var isToday = d === now.getDate() && m === now.getMonth() && y === now.getFullYear();
+      var p = practiceMap[y + '-' + m + '-' + d];
       var cls = 'day' + (isToday ? ' today' : '');
       if (p) {
-        var wd = weekdays[new Date(year, month, d).getDay()];
-        var label = wd + ', ' + pad(d) + '. ' + shortMonths[month] + ' ' + year;
-        var col = (first + d - 1) % 7;
+        var label = weekdays[date.getDay()] + ', ' + pad(d) + '. ' + shortMonths[m] + ' ' + y;
+        var col = i % 7;
         var edge = col <= 1 ? ' edge-l' : (col >= 5 ? ' edge-r' : '');
         html += '<div><div class="' + cls + ' practice" tabindex="0" aria-label="Bandøve: ' + label + ', kl. ' + p.time + '">' +
                 d +
@@ -534,13 +499,6 @@
   }
   document.getElementById('prev').addEventListener('click', function () { month--; if (month < 0) { month = 11; year--; } render(); });
   document.getElementById('next').addEventListener('click', function () { month++; if (month > 11) { month = 0; year++; } render(); });
-  
-  // "I dag" knap funktionalitet
-  document.getElementById('today-btn').addEventListener('click', function () {
-    year = now.getFullYear();
-    month = now.getMonth();
-    render();
-  });
 
   render();
 </script>
