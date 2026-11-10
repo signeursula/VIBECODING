@@ -395,34 +395,13 @@
 
 <section class="repertoire" aria-labelledby="rep-title">
   <h2 id="rep-title">Repertoire</h2>
-  <ul class="chips">
-    <li>Dirty Work – Steely Dan</li>
-    <li>Take Me To The River – Al Green</li>
-    <li>Disco Yes – Tom Misch</li>
-    <li>When It Was Wrong – The California Honeydrops</li>
-    <li>It’s Not Unusual – Tom Jones</li>
-    <li>So Easy (To Fall In Love) – Olivia Dean</li>
-    <li>You Make My Dreams – Hall &amp; Oates</li>
-    <li>Come and Get Your Love – Redbone</li>
-    <li>What You Won’t Do for Love – Bobby Caldwell</li>
-    <li>Movin’ Out (Anthony’s Song) – Billy Joel</li>
-    <li>Diggin’ on James Brown – Tower of Power</li>
-    <li>California Wine – Quinn Devlin (5 halvtoner ned)</li>
-    <li>All Dressed Up With Nowhere to Go – Michael Franks (X halvtoner ned)</li>
-    <li>Son of a Preacher Man – Dusty Springfield (3 halvtoner ned)</li>
-    <li>I Will Survive – Gloria Gaynor</li>
-  </ul>
+  <!-- Sangene hentes fra repertoire.json -->
+  <ul class="chips" id="repertoire-list"></ul>
 
   <div class="suggestions">
     <h2>Sange der kunne<br>være nice at spille</h2>
-    <ul class="chips">
-      <li>From the Start – Laufey</li>
-      <li>Magic – Pilot</li>
-      <li>Simple Step – Vulfpeck</li>
-      <li>Get it Got it – Adi Oasis</li>
-      <li>Nothing From Nothing – Billy Preston</li>
-      <li>Better Not Tell You – Lake Street Dive</li>
-    </ul>
+    <!-- Sangene hentes fra suggestions.json -->
+    <ul class="chips" id="suggestions-list"></ul>
   </div>
 </section>
 
@@ -456,6 +435,35 @@
       btn.setAttribute('aria-expanded', open);
     });
   });
+
+  // ---------------------------------------------------------------
+  // SANGE – hentes fra to JSON-filer (rediger dem i stedet for HTML'en)
+  //   repertoire.json  → "Repertoire"
+  //   suggestions.json → "Sange der kunne være nice at spille"
+  // ---------------------------------------------------------------
+  function loadSongs(url, listId) {
+    var list = document.getElementById(listId);
+    fetch(url)
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (songs) {
+        songs.forEach(function (song) {
+          var li = document.createElement('li');
+          li.textContent = song;
+          list.appendChild(li);
+        });
+      })
+      .catch(function (err) {
+        console.error('Kunne ikke indlæse ' + url + ':', err);
+        var li = document.createElement('li');
+        li.textContent = 'Kunne ikke indlæse sangene';
+        list.appendChild(li);
+      });
+  }
+  loadSongs('repertoire.json', 'repertoire-list');
+  loadSongs('suggestions.json', 'suggestions-list');
 
   // ---------------------------------------------------------------
   // BANDØVER – tilføj nye øvedage her (month: 1 = januar … 12 = december)
