@@ -292,10 +292,10 @@
   // ---------------------------------------------------------------
   // SANGE – hentes fra ../repertoire.json
   //   "requires": hvilke instrumenter sangen IKKE kan spilles uden.
-  //   Uden "requires" kræver sangen hele bandet.
+  //   Uden "requires" kan sangen spilles, selvom nogen mangler.
   // ---------------------------------------------------------------
   function requiresOf(song) {
-    return Array.isArray(song.requires) ? song.requires : allIds;
+    return Array.isArray(song.requires) ? song.requires : [];
   }
 
   function listNames(ids) {
@@ -318,10 +318,12 @@
       artist.textContent = parts.slice(1).join(' – ');
       li.appendChild(artist);
     }
-    var needs = document.createElement('span');
-    needs.className = 'needs';
-    needs.textContent = needsText;
-    li.appendChild(needs);
+    if (needsText) {
+      var needs = document.createElement('span');
+      needs.className = 'needs';
+      needs.textContent = needsText;
+      li.appendChild(needs);
+    }
     return li;
   }
 
@@ -336,10 +338,9 @@
     songs.forEach(function (song) {
       var req = requiresOf(song);
       var blockers = req.filter(function (id) { return missing[id]; });
-      var needsAll = req.length >= allIds.length;
       if (blockers.length === 0) {
         playable++;
-        playList.appendChild(songItem(song, needsAll ? 'Kræver hele bandet' : 'Kræver ' + listNames(req)));
+        playList.appendChild(songItem(song));
       } else {
         noList.appendChild(songItem(song, 'Mangler ' + listNames(blockers)));
       }
