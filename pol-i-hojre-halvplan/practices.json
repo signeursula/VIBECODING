@@ -1,0 +1,13 @@
+[
+  { "year": 2026, "month": 11, "day": 30, "time": "18-21" },
+  { "year": 2026, "month": 11, "day": 23, "time": "18-21" },
+  { "year": 2026, "month": 11, "day": 16, "time": "18-21" },
+  { "year": 2026, "month": 11, "day": 9,  "time": "18-21" },
+  { "year": 2026, "month": 11, "day": 2,  "time": "18-21" },
+  { "year": 2026, "month": 10, "day": 6,  "time": "20-23" },
+  { "year": 2026, "month": 10, "day": 1,  "time": "18-20" },
+  { "year": 2026, "month": 9,  "day": 23, "time": "20-23" },
+  { "year": 2026, "month": 9,  "day": 10, "time": "20-23" },
+  { "year": 2026, "month": 9,  "day": 2,  "time": "20-23" },
+  { "year": 2026, "month": 8,  "day": 24, "time": "20-23" }
+]
