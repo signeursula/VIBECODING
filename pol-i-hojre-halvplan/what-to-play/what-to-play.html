@@ -164,17 +164,6 @@
   .filter[aria-pressed="true"] .ico { background: var(--grad-red); }
   .filter[aria-pressed="true"] svg { stroke: var(--white); }
 
-  .clear {
-    margin-top: 12px;
-    background: none; border: 0;
-    color: var(--text-soft);
-    font: inherit; font-size: .82rem;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    cursor: pointer;
-  }
-  .clear[hidden] { display: none; }
-  .clear:hover { color: var(--white); }
 
   /* Sangliste */
   .summary {
@@ -206,29 +195,6 @@
   }
   .song .name { display: block; font-weight: 600; font-size: 1rem; line-height: 1.3; }
   .song .artist { display: block; margin-top: 2px; font-size: .85rem; color: var(--text-soft); }
-  .song .needs {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-size: .72rem;
-    font-weight: 500;
-    color: var(--bamboo-light);
-    background: rgba(169, 196, 127, .1);
-    border: 1px solid rgba(169, 196, 127, .22);
-  }
-
-  /* Sange der ikke kan spilles */
-  .unplayable-wrap { margin-top: 34px; }
-  .unplayable-wrap[hidden] { display: none; }
-  .unplayable-wrap .summary h2 { color: #e9c6ca; }
-  .unplayable .song { opacity: .55; }
-  .unplayable .song .name { text-decoration: line-through; text-decoration-color: rgba(194, 58, 75, .8); }
-  .unplayable .song .needs {
-    color: #f3dfe1;
-    background: rgba(142, 27, 38, .25);
-    border-color: rgba(194, 58, 75, .45);
-  }
 
   .empty {
     padding: 22px 16px;
@@ -252,20 +218,12 @@
 
   <p class="label" id="filter-label">Hvem mangler?</p>
   <ul class="filters" id="filters" aria-labelledby="filter-label"></ul>
-  <button type="button" class="clear" id="clear" hidden>Nulstil – alle er med</button>
 
   <div class="summary">
     <h2>Det kan vi spille</h2>
     <span class="count" id="count"></span>
   </div>
   <ul class="songs" id="songs"></ul>
-
-  <div class="unplayable-wrap" id="unplayable-wrap" hidden>
-    <div class="summary">
-      <h2>Kan ikke spilles</h2>
-    </div>
-    <ul class="songs unplayable" id="unplayable"></ul>
-  </div>
 
 </div>
 
@@ -304,7 +262,7 @@
     return names.slice(0, -1).join(', ') + ' og ' + names[names.length - 1];
   }
 
-  function songItem(song, needsText) {
+  function songItem(song) {
     var li = document.createElement('li');
     li.className = 'song';
     var parts = song.title.split(' – ');
@@ -318,31 +276,20 @@
       artist.textContent = parts.slice(1).join(' – ');
       li.appendChild(artist);
     }
-    if (needsText) {
-      var needs = document.createElement('span');
-      needs.className = 'needs';
-      needs.textContent = needsText;
-      li.appendChild(needs);
-    }
     return li;
   }
 
   function render() {
     var missingIds = allIds.filter(function (id) { return missing[id]; });
     var playList = document.getElementById('songs');
-    var noList = document.getElementById('unplayable');
     playList.innerHTML = '';
-    noList.innerHTML = '';
     var playable = 0;
 
     songs.forEach(function (song) {
-      var req = requiresOf(song);
-      var blockers = req.filter(function (id) { return missing[id]; });
-      if (blockers.length === 0) {
+      var blocked = requiresOf(song).some(function (id) { return missing[id]; });
+      if (!blocked) {
         playable++;
         playList.appendChild(songItem(song));
-      } else {
-        noList.appendChild(songItem(song, 'Mangler ' + listNames(blockers)));
       }
     });
 
@@ -354,8 +301,6 @@
     }
 
     document.getElementById('count').innerHTML = '<b>' + playable + '</b> af ' + songs.length + ' sange';
-    document.getElementById('unplayable-wrap').hidden = noList.children.length === 0;
-    document.getElementById('clear').hidden = missingIds.length === 0;
   }
 
   // Filterknapper
@@ -374,12 +319,6 @@
     });
     li.appendChild(btn);
     filterList.appendChild(li);
-  });
-
-  document.getElementById('clear').addEventListener('click', function () {
-    missing = {};
-    filterList.querySelectorAll('.filter').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
-    render();
   });
 
   fetch('../repertoire.json')
