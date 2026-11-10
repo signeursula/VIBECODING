@@ -484,6 +484,18 @@
   .row.open .panel { display: block; }
   .row .panel p + p { margin-top: 10px; }
   .row .panel a { color: var(--bamboo); }
+  /* Række der linker til en underside */
+  .row .row-link {
+    color: inherit; text-decoration: none;
+    font-size: 1.1rem; font-weight: 500; line-height: 1.35;
+    padding: 22px 20px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    border-radius: inherit;
+  }
+  .row .row-link:active { background: rgba(255, 255, 255, .04); }
+  .row .row-link:focus-visible { outline: 2px solid var(--bamboo); outline-offset: 2px; }
+  .row:has(.row-link):hover { border-color: rgba(169, 196, 127, .4); }
+  .row:has(.row-link):hover svg { background: var(--red); stroke: var(--white); transform: translateX(3px); }
 
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
@@ -562,13 +574,10 @@
 
 <footer class="footer">
   <div class="row">
-    <button type="button" aria-expanded="false">
+    <a class="row-link" href="what-to-play/what-to-play.html">
       Hvad kan vi spille, hvis vi mangler en person?
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h17M14 6l6 6-6 6"/></svg>
-    </button>
-    <div class="panel">
-      <p>...</p>
-    </div>
+    </a>
   </div>
   <div class="row">
     <button type="button" aria-expanded="false">
@@ -608,7 +617,7 @@
       .then(function (songs) {
         songs.forEach(function (song) {
           var li = document.createElement('li');
-          li.textContent = song;
+          li.textContent = typeof song === 'string' ? song : song.title;
           list.appendChild(li);
         });
       })
@@ -701,4 +710,3 @@
 </script>
 </body>
 </html>
- 
