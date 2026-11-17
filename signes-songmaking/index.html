@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chord Loop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Chord Loop</h1>
+      <p>Pick four chords. Press play. Sing.</p>
+    </header>
+
+    <section class="track" id="track" aria-label="Chord track"></section>
+
+    <section class="controls">
+      <button id="play" class="play" aria-label="Play">
+        <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="icon-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
+      </button>
+
+      <label class="field">
+        <span>Tempo</span>
+        <input id="tempo" type="range" min="50" max="160" step="1" value="90">
+        <output id="tempoOut">90 bpm</output>
+      </label>
+
+      <label class="field">
+        <span>Feel</span>
+        <select id="feel">
+          <option value="strum">Strum</option>
+          <option value="gentle">Gentle</option>
+          <option value="ring">Let ring</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="export">
+      <select id="loops" aria-label="Length of download">
+        <option value="4">4 loops</option>
+        <option value="8" selected>8 loops</option>
+        <option value="16">16 loops</option>
+      </select>
+      <button id="download" class="ghost">Download MP3</button>
+      <span id="status" class="status"></span>
+    </section>
+
+    <p class="hint">Space = play / stop</p>
+  </main>
+
+  <div id="picker" class="picker" hidden>
+    <div class="picker-label">Root</div>
+    <div class="grid roots" id="roots"></div>
+    <div class="picker-label">Type</div>
+    <div class="grid types" id="types"></div>
+    <button id="clear" class="link">Clear chord</button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

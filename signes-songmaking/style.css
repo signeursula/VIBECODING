@@ -1,0 +1,164 @@
+:root {
+  --bg: #fafaf8;
+  --card: #ffffff;
+  --line: #e6e5e1;
+  --text: #1a1a1a;
+  --muted: #8a8984;
+  --accent: #1a1a1a;
+  --active: #f2efe8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 16px 48px;
+}
+
+header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 4px;
+}
+header p { margin: 0 0 40px; color: var(--muted); }
+
+/* Track */
+.track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.slot {
+  position: relative;
+  height: 110px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .1s;
+}
+.slot:hover { border-color: #c9c7c1; }
+.slot:active { transform: scale(0.98); }
+.slot .num {
+  position: absolute; top: 10px; left: 12px;
+  font-size: 12px; color: var(--muted);
+}
+.slot .name { font-size: 24px; font-weight: 500; letter-spacing: -0.01em; }
+.slot.empty .name { color: #c9c7c1; font-weight: 300; font-size: 28px; }
+.slot.open { border-color: var(--accent); }
+.slot.now { background: var(--active); border-color: var(--accent); }
+
+/* Controls */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.play {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: transform .1s, opacity .15s;
+}
+.play:active { transform: scale(0.95); }
+.play svg { width: 22px; height: 22px; fill: currentColor; }
+.play .icon-stop { display: none; }
+.play.playing .icon-play { display: none; }
+.play.playing .icon-stop { display: block; }
+
+.field { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.field > span { color: var(--muted); }
+.field output { min-width: 56px; font-variant-numeric: tabular-nums; }
+
+input[type=range] { accent-color: var(--accent); width: 140px; }
+
+select {
+  font: inherit; font-size: 14px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+}
+
+/* Export */
+.export {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 40px; padding-top: 24px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.ghost {
+  font: inherit; font-size: 14px;
+  padding: 7px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+.ghost:hover { background: var(--accent); color: #fff; }
+.ghost:disabled { opacity: .4; cursor: default; background: transparent; color: var(--accent); }
+.status { font-size: 13px; color: var(--muted); }
+.hint { font-size: 12px; color: #b5b3ad; margin-top: 32px; }
+
+/* Picker */
+.picker {
+  position: absolute;
+  z-index: 10;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.08);
+}
+.picker[hidden] { display: none; }
+.picker-label { font-size: 12px; color: var(--muted); margin: 2px 2px 8px; }
+.grid { display: grid; gap: 6px; margin-bottom: 14px; }
+.roots { grid-template-columns: repeat(6, 1fr); }
+.types { grid-template-columns: repeat(5, 1fr); }
+.grid button {
+  font: inherit; font-size: 13px;
+  padding: 8px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+}
+.grid button:hover { border-color: #c9c7c1; }
+.grid button.sel { background: var(--accent); border-color: var(--accent); color: #fff; }
+.link {
+  font: inherit; font-size: 13px;
+  border: none; background: none; padding: 2px;
+  color: var(--muted); cursor: pointer;
+}
+.link:hover { color: var(--text); }
+
+@media (max-width: 560px) {
+  main { padding-top: 40px; }
+  .track { grid-template-columns: repeat(2, 1fr); }
+  .controls { gap: 18px; }
+  .field:has(#tempo) { flex: 1 1 100%; order: 2; }
+  input[type=range] { flex: 1; min-width: 0; width: auto; }
+}
