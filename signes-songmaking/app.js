@@ -147,13 +147,24 @@ function strum(eng, time, notes, dir, strength) {
   });
 }
 
-// One eighth-note step of the loop (shared by live playback and export)
+const FEEL_NAMES = { strum: 'Strum', gentle: 'Gentle', ring: 'Let ring' };
+const STEPS_PER_LOOP = 32; // 4 bars × 8 eighth notes
+
+// Where a step lands: which loop (wraps around the song), which bar, which eighth
+function position(step) {
+  return {
+    loop: Math.floor(step / STEPS_PER_LOOP) % state.loops.length,
+    bar: Math.floor(step / 8) % 4,
+    pos: step % 8,
+  };
+}
+
+// One eighth-note step (shared by live playback and export)
 function playStep(eng, step, time) {
-  const bar = Math.floor(step / 8) % 4;
-  const pos = step % 8;
+  const { loop, bar, pos } = position(step);
   const chord = state.chords[bar];
   if (!chord) { if (pos === 0) damp(eng, time); return; }
-  const hit = FEELS[state.feel].find((h) => h[0] === pos);
+  const hit = FEELS[state.loops[loop]].find((h) => h[0] === pos);
   if (hit) strum(eng, time, voicing(chord), hit[1], hit[2]);
 }
 
@@ -161,16 +172,22 @@ function playStep(eng, step, time) {
 const state = {
   chords: [null, null, null, null],
   bpm: 90,
-  feel: 'strum',
+  loops: ['ring', 'strum', 'strum', 'strum'],
 };
 try {
   const saved = JSON.parse(localStorage.getItem('chordloop') || 'null');
-  if (saved) Object.assign(state, saved);
+  if (saved) {
+    Object.assign(state, saved);
+    if (!Array.isArray(state.loops) || !state.loops.length) state.loops = [saved.feel || 'strum'];
+    state.loops = state.loops.map((f) => (FEELS[f] ? f : 'strum'));
+    delete state.feel;
+  }
 } catch (e) {}
 const save = () => { try { localStorage.setItem('chordloop', JSON.stringify(state)); } catch (e) {} };
 
 // ---------- Live playback ----------
 let ctx = null, eng = null, timer = null, step = 0, nextTime = 0;
+let nowBar = -1, nowLoop = -1;
 const timeouts = [];
 
 function ensureAudio() {
@@ -185,9 +202,9 @@ function tick() {
   const stepDur = 60 / state.bpm / 2;
   while (nextTime < ctx.currentTime + 0.12) {
     if (step % 8 === 0) {
-      const bar = Math.floor(step / 8) % 4;
+      const { bar, loop } = position(step);
       const delay = Math.max(0, (nextTime - ctx.currentTime) * 1000);
-      timeouts.push(setTimeout(() => highlight(bar), delay));
+      timeouts.push(setTimeout(() => highlight(bar, loop), delay));
     }
     playStep(eng, step, nextTime);
     nextTime += stepDur;
@@ -209,7 +226,7 @@ function stop() {
   clearInterval(timer); timer = null;
   timeouts.splice(0).forEach(clearTimeout);
   if (eng) damp(eng, ctx.currentTime);
-  highlight(-1);
+  highlight(-1, -1);
   $play.classList.remove('playing');
   $play.setAttribute('aria-label', 'Play');
 }
@@ -232,10 +249,10 @@ function loadLame() {
   });
 }
 
-async function renderLoop(loops) {
+async function renderSong(repeats) {
   const sr = 44100;
   const stepDur = 60 / state.bpm / 2;
-  const steps = loops * 32;
+  const steps = repeats * state.loops.length * STEPS_PER_LOOP;
   const seconds = 0.05 + steps * stepDur + 2.5;
   const oc = new OfflineAudioContext(2, Math.ceil(seconds * sr), sr);
   const e = makeEngine(oc);
@@ -296,7 +313,7 @@ async function download() {
   $download.disabled = true;
   setStatus('Rendering…');
   try {
-    const buffer = await renderLoop(Number($loops.value));
+    const buffer = await renderSong(Number($repeat.value));
     let blob, ext = 'mp3';
     try {
       await loadLame();
@@ -327,7 +344,7 @@ async function download() {
 // ---------- UI ----------
 const $ = (id) => document.getElementById(id);
 const $track = $('track'), $play = $('play'), $tempo = $('tempo'), $tempoOut = $('tempoOut');
-const $feel = $('feel'), $loops = $('loops'), $download = $('download'), $status = $('status');
+const $loopList = $('loopList'), $repeat = $('repeat'), $download = $('download'), $status = $('status');
 const $picker = $('picker'), $roots = $('roots'), $types = $('types'), $clear = $('clear');
 
 let openSlot = -1;
@@ -346,8 +363,73 @@ function renderTrack() {
   });
 }
 
-function highlight(bar) {
+function highlight(bar, loop) {
+  nowBar = bar;
+  nowLoop = loop;
   [...$track.children].forEach((el, i) => el.classList.toggle('now', i === bar));
+  [...$loopList.querySelectorAll('.loop')].forEach((el, i) => el.classList.toggle('now', i === loop));
+}
+
+const MAX_LOOPS = 16;
+
+function renderLoops() {
+  $loopList.innerHTML = '';
+  state.loops.forEach((feel, i) => {
+    const box = document.createElement('div');
+    box.className = 'loop' + (i === nowLoop ? ' now' : '');
+    const head = document.createElement('div');
+    head.className = 'loop-head';
+    head.innerHTML = `<span>Loop ${i + 1}</span>`;
+    if (state.loops.length > 1) {
+      const x = document.createElement('button');
+      x.className = 'x';
+      x.textContent = '×';
+      x.setAttribute('aria-label', `Remove loop ${i + 1}`);
+      x.addEventListener('click', () => removeLoop(i));
+      head.appendChild(x);
+    }
+    box.appendChild(head);
+    for (const f of Object.keys(FEEL_NAMES)) {
+      const b = document.createElement('button');
+      b.className = 'feel' + (f === feel ? ' sel' : '');
+      b.textContent = FEEL_NAMES[f];
+      b.addEventListener('click', () => setLoopFeel(i, f));
+      box.appendChild(b);
+    }
+    $loopList.appendChild(box);
+  });
+  if (state.loops.length < MAX_LOOPS) {
+    const add = document.createElement('button');
+    add.className = 'add-loop';
+    add.textContent = '+';
+    add.setAttribute('aria-label', 'Add a loop');
+    add.addEventListener('click', () => {
+      state.loops.push(state.loops[state.loops.length - 1]);
+      save();
+      renderLoops();
+    });
+    $loopList.appendChild(add);
+  }
+}
+
+// Takes effect right away — the next strum uses the new feel
+function setLoopFeel(i, feel) {
+  state.loops[i] = feel;
+  save();
+  renderLoops();
+}
+
+function removeLoop(i) {
+  state.loops.splice(i, 1);
+  save();
+  if (timer) {
+    // Keep playing from the same spot in the bar, inside a loop that still exists
+    const inLoop = step % STEPS_PER_LOOP;
+    const loop = Math.min(nowLoop, state.loops.length - 1);
+    step = loop * STEPS_PER_LOOP + inLoop;
+    nowLoop = loop;
+  }
+  renderLoops();
 }
 
 function renderPicker() {
@@ -417,13 +499,15 @@ $tempo.addEventListener('input', () => {
   save();
 });
 
-$feel.value = state.feel;
-$feel.addEventListener('change', () => { state.feel = $feel.value; save(); });
-
 $download.addEventListener('click', download);
+
+const FEEL_KEYS = { 1: 'strum', 2: 'gentle', 3: 'ring' };
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closePicker();
+  if (FEEL_KEYS[e.key] && timer && nowLoop >= 0 && e.target.tagName !== 'INPUT') {
+    setLoopFeel(nowLoop, FEEL_KEYS[e.key]);
+  }
   if (e.code === 'Space' && !['INPUT', 'SELECT'].includes(e.target.tagName)) {
     e.preventDefault();
     timer ? stop() : start();
@@ -431,3 +515,4 @@ document.addEventListener('keydown', (e) => {
 });
 
 renderTrack();
+renderLoops();
