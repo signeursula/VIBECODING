@@ -3,17 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chord Loop</title>
+  <title>Signe's songmaking</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main>
     <header>
-      <h1>Chord Loop</h1>
+      <h1>Signe's songmaking</h1>
       <p>Pick four chords. Press play. Sing.</p>
     </header>
 
     <section class="track" id="track" aria-label="Chord track"></section>
+
+    <section class="song">
+      <div class="section-head">
+        <h2>Loops</h2>
+        <span>Each loop plays your four chords. Tap a feel — it works while playing too.</span>
+      </div>
+      <div class="loops" id="loopList"></div>
+    </section>
 
     <section class="controls">
       <button id="play" class="play" aria-label="Play">
@@ -26,28 +34,19 @@
         <input id="tempo" type="range" min="50" max="160" step="1" value="90">
         <output id="tempoOut">90 bpm</output>
       </label>
-
-      <label class="field">
-        <span>Feel</span>
-        <select id="feel">
-          <option value="strum">Strum</option>
-          <option value="gentle">Gentle</option>
-          <option value="ring">Let ring</option>
-        </select>
-      </label>
     </section>
 
     <section class="export">
-      <select id="loops" aria-label="Length of download">
-        <option value="4">4 loops</option>
-        <option value="8" selected>8 loops</option>
-        <option value="16">16 loops</option>
+      <select id="repeat" aria-label="How many times to repeat the loops in the download">
+        <option value="1">Loops × 1</option>
+        <option value="2" selected>Loops × 2</option>
+        <option value="4">Loops × 4</option>
       </select>
       <button id="download" class="ghost">Download MP3</button>
       <span id="status" class="status"></span>
     </section>
 
-    <p class="hint">Space = play / stop</p>
+    <p class="hint">Space = play / stop · While playing: 1 = Strum, 2 = Gentle, 3 = Let ring (changes the loop that's playing)</p>
   </main>
 
   <div id="picker" class="picker" hidden>
